@@ -1,0 +1,8 @@
+datasets:
+  - name: unemployment_basic
+    source: statfi
+    endpoint: tyokay/statfin_tyokay_pxt_115x.px
+    payload:
+      query: []
+      response:
+        format: json
