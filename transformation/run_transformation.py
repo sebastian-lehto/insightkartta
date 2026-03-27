@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from transformation.pxweb_transformer import PXWebTransformer
-from transformation.unemployment import clean_unemployment
+from transformation.unemployment import clean_unemployment, enrich_with_region_mapping
 from pipelines.storage.processed import ProcessedStorage
 
 
@@ -23,9 +23,10 @@ def main():
     df = transformer.transform()
 
     df_clean = clean_unemployment(df)
+    df_mapped = enrich_with_region_mapping(df_clean) 
 
     storage = ProcessedStorage()
-    output_path = storage.save(dataset_name, df_clean)
+    output_path = storage.save(dataset_name, df_mapped)
 
     print(f"Processed data saved to {output_path}")
 
