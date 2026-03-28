@@ -1,240 +1,161 @@
-# InsightKartta 🇫🇮
+# InsightKartta
 
-**A Data Engineering & Analytics Platform for Exploring Finnish Statistics**
+InsightKartta is a data-driven analytics application focused on exploring regional statistics in Finland. It leverages official APIs from Statistics Finland to build a full data pipeline, perform analysis, and present interactive visualizations through a modern web application.
 
----
-
-## 📌 Overview
-
-**InsightKartta** is a data-driven analytics platform designed to explore, analyze, and visualize public datasets from Statistics Finland and other complementary APIs.
-
-The project goes beyond simple visualization by focusing on **deriving meaningful insights** from multi-source data. It combines a robust data pipeline, analytical models, and an interactive application to uncover patterns in areas such as:
-
-* Unemployment
-* Demographics
-* Education
-* Economic indicators
-* Regional development
-
-The goal of InsightKartta is to demonstrate **real-world software engineering practices** applied to data analytics, with a strong emphasis on clarity, reproducibility, and insight generation.
+The goal of this project is to go beyond simple data visualization by implementing a structured data pipeline, reusable analysis framework, and an interactive geospatial interface that enables meaningful insights.
 
 ---
 
-## 🎯 Objectives
+## 🚀 Features
 
-* Build a **production-like data pipeline** for ingesting and transforming public data
-* Combine multiple datasets to enable **cross-domain analysis**
-* Generate **actionable insights**, not just charts
-* Provide an **interactive application** for exploring trends and patterns
+* 📊 **Automated Data Pipeline**
 
----
+  * Ingestion from Statistics Finland PXWeb APIs
+  * Generic transformation layer for PXWeb datasets
+  * Dataset-specific cleaning and normalization
+  * Enrichment using external mapping tables (e.g. regions)
 
-## 🧠 Key Features
+* 🧠 **Analysis Framework**
 
-### 🔄 Data Pipeline
+  * Modular and extensible analysis engine
+  * Insight generation (not just raw charts)
+  * Designed to support multiple datasets and metrics
 
-* Automated ingestion from Statistics Finland APIs
-* Data validation and schema enforcement
-* Transformation into analysis-ready formats
-* Versioned storage (raw vs processed data)
+* 🌍 **Interactive Map Visualization**
 
-### 📊 Analysis Layer
+  * Regional unemployment data displayed on a map of Finland
+  * Time slider to explore changes over years
+  * Dynamic coloring based on values
+  * Hover tooltips with contextual information
 
-* Time-series analysis
-* Regional comparisons
-* Statistical modeling and forecasting
-* Feature engineering for derived metrics
+* ⚙️ **Fullstack Architecture**
 
-### 🗺️ Interactive Application
-
-* Dynamic dashboards
-* Interactive maps of Finland (regional insights)
-* Custom filtering (region, time, dataset)
-* Embedded explanations for insights
-
-### 🔍 Insight Engine
-
-* Identification of trends and anomalies
-* Regional clustering and comparisons
-* Socio-economic correlations across datasets
+  * FastAPI backend serving processed data and analysis
+  * React frontend with interactive charts and maps
+  * Clean separation between data, logic, and presentation
 
 ---
 
-## 🏗️ Architecture
-
-The project follows a modular, layered architecture:
-
-```
-External APIs (Statistics Finland, others)
-                ↓
-        Data Pipeline
- (Ingestion → Validation → Transformation)
-                ↓
-          Data Storage
-     (Parquet / Database)
-                ↓
-         Analysis Layer
-   (Metrics, Models, Insights)
-                ↓
-        Application Layer
-   (Interactive Dashboards & Maps)
-```
-
----
-
-## 🛠️ Tech Stack
-
-### Core
-
-* **Python** (primary language)
-
-### Data Processing
-
-* pandas / polars
-* numpy
-
-### Data Pipeline
-
-* requests / httpx
-* pydantic (validation)
-* Prefect or Dagster (orchestration)
-
-### Storage
-
-* Parquet files
-* (Optional) PostgreSQL + PostGIS
-
-### Analysis
-
-* scikit-learn
-* statsmodels
-
-### Application
-
-* FastAPI + React
-
-### Visualization
-
-* Plotly
-* PyDeck / Folium (maps)
-
----
-
-## 📂 Project Structure
+## 🏗️ Project Structure
 
 ```
 insightkartta/
 │
-├── data/
-│   ├── raw/
-│   └── processed/
+├── backend/
+│   ├── app/
+│   │   ├── api/              # FastAPI routes
+│   │   ├── services/         # Business logic (analysis, data access)
+│   │   └── main.py           # FastAPI entrypoint
 │
-├── pipelines/
-│   ├── ingestion.py
-│   ├── transformation.py
-│   └── orchestration.py
+│   └── data/                 # Data files
 │
-├── analysis/
-│   ├── trends.py
-│   ├── regional_analysis.py
-│   └── forecasting.py
+│   ├── pipelines/
+│   │   ├── ingestion/            # API data fetching
+│   │   ├── transformation/       # Data transformation pipeline
+│   │   └── analysis/             # Analysis framework
 │
-├── app/
-│   └── main.py
+├── frontend/
+│   ├── src/
+│   │   ├── components/       # React components (MapView, charts)
+│   │   ├── assets/           # Static assets
+│   │   └── App.jsx
+│   │
+│   └── public/
+│       └── maakunnat.geojson # Finland regions geometry
 │
-├── utils/
-│   ├── config.py
-│   └── logging.py
-│
-├── tests/
-│
-├── notebooks/        # exploratory only (non-core)
-│
-├── README.md
-├── requirements.txt
-└── pyproject.toml
+└── README.md
 ```
 
 ---
 
-## 📡 Data Sources
+## 🔄 Data Pipeline
 
-### Primary
+1. **Ingestion**
 
-* Statistics Finland API
+   * Fetch raw data from PXWeb APIs
 
-### Possible Extensions
+2. **Transformation**
 
-* Economic indicators (GDP, inflation)
-* Weather data (seasonality analysis)
-* Population and education datasets
-* Employment/job market data
+   * Convert PXWeb format → tabular DataFrame
+   * Normalize column names (e.g. `Alue → region`, `Vuosi → year`)
 
----
+3. **Enrichment**
 
-## 🔎 Example Insights (Planned)
+   * Map region codes → region names using `region_mapping.csv`
+   * Filter unsupported regions
 
-* Regions with persistently high unemployment
-* Seasonal employment patterns across industries
-* Correlation between education level and employment rates
-* Impact of economic shifts on regional unemployment
-* Clustering of regions based on socio-economic behavior
+4. **Analysis**
+
+   * Compute insights using reusable analysis modules
 
 ---
 
-## 🚀 Getting Started
+## 🗺️ Map Integration
 
-### 1. Clone the repository
+* Uses GeoJSON for Finnish regions (`maakunnat.geojson`)
+* Matches data to regions via `region_name`
+* Handles:
 
-```
-git clone https://github.com/your-username/insightkartta.git
-cd insightkartta
-```
+  * Missing mappings
+  * String normalization
+  * Dynamic styling
 
-### 2. Install dependencies
+---
 
-```
+## 🧪 Example Insight
+
+* Regional unemployment trends over time
+* Identification of high-unemployment regions
+* Temporal changes visualized via slider
+
+---
+
+## ⚙️ Running the Project
+
+### Backend
+
+```bash
+cd backend
 pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
 ```
 
-### 3. Run the data pipeline (initial version)
+### Frontend
 
-```
-python pipelines/ingestion.py
-python pipelines/transformation.py
-```
-
-### 4. Launch the application
-
-```
-streamlit run app/main.py
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
 
-## 🧪 Development Approach
+## 🧠 Design Principles
 
-This project is built with a strong emphasis on:
-
-* Clean architecture
-* Modular design
-* Reproducible data workflows
-* Clear separation between pipeline, analysis, and application
-* Incremental development with visible milestones
+* Separation of concerns (ingestion, transformation, analysis, presentation)
+* Extensibility for new datasets and APIs
+* Data validation and explicit mapping
+* Reproducible pipeline
 
 ---
 
-## 📖 Documentation
+## 🚧 Future Improvements
 
-Detailed documentation will include:
-
-* API usage
-* Data schema definitions
-* Pipeline design decisions
-* Insight methodologies
+* Add more datasets (income, education, population)
+* Improve region mapping automation
+* Add legend and UI controls to map
+* Advanced analytics (correlations, forecasting)
+* Data validation layer (schema checks, quality reports)
 
 ---
 
-## 🤝 Contributing
+## 🎯 Purpose
 
-* This is a personal portfolio project, but suggestions and feedback are welcome.
+This project is designed to demonstrate:
+
+* Data engineering skills (ETL pipelines)
+* Backend development (FastAPI)
+* Frontend development (React + visualization)
+* System design and architecture thinking
+
+---
