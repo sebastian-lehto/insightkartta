@@ -1,12 +1,12 @@
 import pandas as pd
 from pathlib import Path
 
-from analysis.engine import AnalysisEngine
-from analysis.unemployment.analysis import UnemploymentAnalysis
+from backend.pipelines.analysis.engine import AnalysisEngine
+from backend.pipelines.analysis.unemployment.analysis import UnemploymentAnalysis
 from backend.app.utils.serialization import clean_dict
 
 def load_data():
-    path = Path("data/processed/unemployment_basic/data.parquet")
+    path = Path("backend/data/processed/unemployment_basic/data.parquet")
     return pd.read_parquet(path)
 
 

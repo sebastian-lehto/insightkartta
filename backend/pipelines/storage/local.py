@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class LocalStorage:
-    def __init__(self, base_path: str = "data/raw"):
+    def __init__(self, base_path: str = "backend/data/raw"):
         self.base_path = Path(base_path)
 
     def save(self, dataset_name: str, data: dict) -> Path:

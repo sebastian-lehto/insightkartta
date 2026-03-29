@@ -7,7 +7,7 @@ function MapView({ data, year }) {
   // Load GeoJSON
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
-    fetch("/maakunnat.geojson")
+    fetch("/kunnat.geojson")
     .then(res => res.json())
     .then(data => setGeoData(data));
   }, []);
@@ -38,7 +38,7 @@ function MapView({ data, year }) {
   };
 
   const style = (feature) => {
-    const regionName = feature.properties.Maakunta;
+    const regionName = feature.properties.Kunta;
     const value = dataMap[regionName];
 
     return {
@@ -51,13 +51,15 @@ function MapView({ data, year }) {
 
   const onEachFeature = (feature, layer) => {
     
-    const regionName = feature.properties.Maakunta;
+    const regionName = feature.properties.Kunta ?? feature.properties.name_fi;
     const value = dataMap[regionName];
 
     layer.bindTooltip(
-      `${regionName}: ${value ?? "No data"}%`
+      `${regionName}: ${value != null ? value.toFixed(1) + "%" : "No data"}`
     );
   };
+
+  const isDataReady = yearData.length > 0;
   
   return (
     <MapContainer
@@ -69,8 +71,9 @@ function MapView({ data, year }) {
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {geoData && dataMap && (
+      {geoData && isDataReady && (
         <GeoJSON
+          key={year}
           data={geoData}
           style={style}
           onEachFeature={onEachFeature}

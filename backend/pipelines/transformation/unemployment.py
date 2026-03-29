@@ -17,7 +17,7 @@ def clean_unemployment(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def enrich_with_region_mapping(df: pd.DataFrame) -> pd.DataFrame:
-    mapping_df = pd.read_csv("data/region_mapping.csv")
+    mapping_df = pd.read_csv("backend/data/region_mapping.csv")
 
     df_merged = df.merge(
         mapping_df,

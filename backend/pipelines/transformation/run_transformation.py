@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
 
-from transformation.pxweb_transformer import PXWebTransformer
-from transformation.unemployment import clean_unemployment, enrich_with_region_mapping
-from pipelines.storage.processed import ProcessedStorage
+from backend.pipelines.transformation.pxweb_transformer import PXWebTransformer
+from backend.pipelines.transformation.unemployment import clean_unemployment, enrich_with_region_mapping
+from backend.pipelines.storage.processed import ProcessedStorage
 
 
 def load_latest_raw(dataset_name: str) -> dict:
-    path = Path(f"data/raw/{dataset_name}")
+    path = Path(f"backend/data/raw/{dataset_name}")
     latest_file = sorted(path.glob("*.json"))[-1]
 
     with open(latest_file) as f:

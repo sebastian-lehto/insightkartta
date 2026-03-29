@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any
-from pipelines.ingestion.base import BaseAPIClient
-from pipelines.storage.local import LocalStorage
+from backend.pipelines.ingestion.base import BaseAPIClient
+from backend.pipelines.storage.local import LocalStorage
 
 logger = logging.getLogger(__name__)
 

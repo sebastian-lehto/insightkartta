@@ -1,12 +1,12 @@
 import pandas as pd
 from pathlib import Path
 
-from analysis.engine import AnalysisEngine
-from analysis.unemployment.analysis import UnemploymentAnalysis
+from backend.pipelines.analysis.engine import AnalysisEngine
+from backend.pipelines.analysis.unemployment.analysis import UnemploymentAnalysis
 
 
 def load_processed(dataset_name: str) -> pd.DataFrame:
-    path = Path(f"data/processed/{dataset_name}/data.parquet")
+    path = Path(f"backend/data/processed/{dataset_name}/data.parquet")
     return pd.read_parquet(path)
 
 
