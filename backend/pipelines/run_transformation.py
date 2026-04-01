@@ -4,6 +4,7 @@ from datetime import datetime
 
 from backend.pipelines.utils.config_loader import load_config
 from backend.pipelines.transformation.transform_runner import run_transformation
+from backend.pipelines.storage.processed import ProcessedStorage
 
 
 RAW_BASE_PATH = Path("backend/data/raw")
@@ -19,6 +20,7 @@ def get_latest_file(dataset_path: Path):
 
 def main():
     config = load_config("backend/pipelines/config/datasets.yaml")
+    storage = ProcessedStorage()
 
     for dataset in config["datasets"]:
         name = dataset["name"]
@@ -40,19 +42,11 @@ def main():
 
             df = run_transformation(raw_data, dataset)
 
-            # Ensure output directory exists
-            processed_path.mkdir(parents=True, exist_ok=True)
+            versioned_file, latest_file_path = storage.save(name, df)
 
-            # Save timestamped file
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_file = processed_path / f"{name}_{timestamp}.csv"
-            df.to_csv(output_file, index=False)
-
-            # ALSO save/update "latest.csv" (used by API)
-            latest_output = processed_path / "latest.csv"
-            df.to_csv(latest_output, index=False)
-
-            print(f"✅ Processed: {name} → {output_file.name}")
+            print(f"✅ Processed: {name}")
+            print(f"   versioned: {versioned_file}")
+            print(f"   latest:    {latest_file_path}")
 
         except Exception as e:
             print(f"❌ Failed {name}: {e}")
