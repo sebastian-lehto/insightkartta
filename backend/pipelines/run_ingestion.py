@@ -1,10 +1,10 @@
 import logging
 
-from pipelines.ingestion.statfi import StatisticsFinlandClient
-from pipelines.ingestion.fetcher import DataFetcher
-from pipelines.storage.local import LocalStorage
-from pipelines.utils.logging import setup_logging
-from pipelines.utils.config_loader import load_config
+from backend.pipelines.ingestion.statfi import StatisticsFinlandClient
+from backend.pipelines.ingestion.fetcher import DataFetcher
+from backend.pipelines.storage.local import LocalStorage
+from backend.pipelines.utils.logging import setup_logging
+from backend.pipelines.utils.config_loader import load_config
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting ingestion pipeline")
 
-    config = load_config("pipelines/config/datasets.yaml")
+    config = load_config("backend/pipelines/config/datasets.yaml")
 
     client = StatisticsFinlandClient()
     storage = LocalStorage()

@@ -1,9 +1,11 @@
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useMemo, useEffect, useState } from "react";
 
+import MapLegend from "./MapLegend";
 
 
-function MapView({ data, year }) {
+
+function MapView({ data, year, onRegionSelect, unit }) {
   // Load GeoJSON
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
@@ -21,7 +23,7 @@ function MapView({ data, year }) {
   const dataMap = useMemo(() => {
     const map = {};
     yearData.forEach(d => {
-      map[d.region_name] = d.unemployment_rate;
+      map[d.region_name] = d.value;
     });
     return map;
   }, [yearData]);
@@ -55,8 +57,14 @@ function MapView({ data, year }) {
     const value = dataMap[regionName];
 
     layer.bindTooltip(
-      `${regionName}: ${value != null ? value.toFixed(1) + "%" : "No data"}`
+      `${regionName}: ${value != null ? value : "No data"}${value != null && unit ? ` ${unit}` : ""}`
     );
+    
+    layer.on({
+      click: () => {
+        onRegionSelect(regionName);
+      },
+    });
   };
 
   const isDataReady = yearData.length > 0;
@@ -79,6 +87,7 @@ function MapView({ data, year }) {
           onEachFeature={onEachFeature}
         />
       )}
+      <MapLegend />
     </MapContainer>
   );
 }
