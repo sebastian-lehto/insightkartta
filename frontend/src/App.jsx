@@ -150,6 +150,7 @@ function App() {
           year={year}
           onRegionSelect={setSelectedRegion}
           unit={meta.unit}
+          meta={meta}
         />
       )}
     </div>

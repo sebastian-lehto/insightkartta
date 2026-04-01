@@ -2,10 +2,10 @@ import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useMemo, useEffect, useState } from "react";
 
 import MapLegend from "./MapLegend";
+import { getBins, getColor } from "../utils/mapScale";
 
 
-
-function MapView({ data, year, onRegionSelect, unit }) {
+function MapView({ data, year, onRegionSelect, unit, meta }) {
   // Load GeoJSON
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
@@ -28,14 +28,17 @@ function MapView({ data, year, onRegionSelect, unit }) {
     return map;
   }, [yearData]);
 
+  // Get bins for color scale
+  const bins = useMemo(() => getBins(meta, yearData), [meta, yearData]);
+
   // Color scale
-  const getColor = (value) => {
+  const getColor = (value, bins) => {
     if (value == null) return "#ccc";
-    if (value > 15) return "#800026";
-    if (value > 10) return "#BD0026";
-    if (value > 8) return "#E31A1C";
-    if (value > 6) return "#FC4E2A";
-    if (value > 4) return "#FD8D3C";
+    if (value > bins[4]) return "#800026";
+    if (value > bins[3]) return "#BD0026";
+    if (value > bins[2]) return "#E31A1C";
+    if (value > bins[1]) return "#FC4E2A";
+    if (value > bins[0]) return "#FD8D3C";
     return "#FEB24C";
   };
 
@@ -44,7 +47,7 @@ function MapView({ data, year, onRegionSelect, unit }) {
     const value = dataMap[regionName];
 
     return {
-      fillColor: getColor(value),
+      fillColor: getColor(value, bins),
       weight: 1,
       color: "white",
       fillOpacity: 0.7,
@@ -87,7 +90,7 @@ function MapView({ data, year, onRegionSelect, unit }) {
           onEachFeature={onEachFeature}
         />
       )}
-      <MapLegend />
+      <MapLegend bins={bins} unit={unit} />
     </MapContainer>
   );
 }

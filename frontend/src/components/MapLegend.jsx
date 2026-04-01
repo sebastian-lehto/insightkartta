@@ -1,13 +1,13 @@
 import { getColor } from "../utils/colorScale";
 
-function MapLegend() {
+function MapLegend({ bins, unit }) {
   const legendItems = [
-    { label: "> 15%", value: 16 },
-    { label: "10 – 15%", value: 12 },
-    { label: "8 – 10%", value: 9 },
-    { label: "6 – 8%", value: 7 },
-    { label: "4 – 6%", value: 5 },
-    { label: "< 4%", value: 2 },
+    { label: `> ${bins[4]}${unit || '%'}`, value: 16 },
+    { label: `${bins[3]} – ${bins[4]}${unit || '%'}`, value: 12 },
+    { label: `${bins[2]} – ${bins[3]}${unit || '%'}`, value: 9 },
+    { label: `${bins[1]} – ${bins[2]}${unit || '%'}`, value: 7 },
+    { label: `${bins[0]} – ${bins[1]}${unit || '%'}`, value: 5 },
+    { label: `< ${bins[0]}${unit || '%'}`, value: 2 },
     { label: "No data", value: null },
   ];
 
