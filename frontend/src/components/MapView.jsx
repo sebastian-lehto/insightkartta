@@ -1,13 +1,15 @@
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useMemo, useEffect, useState } from "react";
 
+import MapLegend from "./MapLegend";
 
 
-function MapView({ data, year }) {
+
+function MapView({ data, year, onRegionSelect, unit }) {
   // Load GeoJSON
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
-    fetch("/maakunnat.geojson")
+    fetch("/kunnat.geojson")
     .then(res => res.json())
     .then(data => setGeoData(data));
   }, []);
@@ -21,7 +23,7 @@ function MapView({ data, year }) {
   const dataMap = useMemo(() => {
     const map = {};
     yearData.forEach(d => {
-      map[d.region_name] = d.unemployment_rate;
+      map[d.region_name] = d.value;
     });
     return map;
   }, [yearData]);
@@ -38,7 +40,7 @@ function MapView({ data, year }) {
   };
 
   const style = (feature) => {
-    const regionName = feature.properties.Maakunta;
+    const regionName = feature.properties.Kunta;
     const value = dataMap[regionName];
 
     return {
@@ -51,13 +53,21 @@ function MapView({ data, year }) {
 
   const onEachFeature = (feature, layer) => {
     
-    const regionName = feature.properties.Maakunta;
+    const regionName = feature.properties.Kunta ?? feature.properties.name_fi;
     const value = dataMap[regionName];
 
     layer.bindTooltip(
-      `${regionName}: ${value ?? "No data"}%`
+      `${regionName}: ${value != null ? value : "No data"}${value != null && unit ? ` ${unit}` : ""}`
     );
+    
+    layer.on({
+      click: () => {
+        onRegionSelect(regionName);
+      },
+    });
   };
+
+  const isDataReady = yearData.length > 0;
   
   return (
     <MapContainer
@@ -69,13 +79,15 @@ function MapView({ data, year }) {
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {geoData && dataMap && (
+      {geoData && isDataReady && (
         <GeoJSON
+          key={year}
           data={geoData}
           style={style}
           onEachFeature={onEachFeature}
         />
       )}
+      <MapLegend />
     </MapContainer>
   );
 }

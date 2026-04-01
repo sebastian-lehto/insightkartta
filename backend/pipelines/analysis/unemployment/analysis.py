@@ -1,9 +1,9 @@
 import pandas as pd
 from typing import Dict, Any
 
-from analysis.base import BaseAnalysis
-from analysis.metrics import compute_trend, find_peak_year, compute_average
-from analysis.insights import trend_insight, peak_insight
+from backend.pipelines.analysis.base import BaseAnalysis
+from backend.pipelines.analysis.metrics import compute_trend, find_peak_year, compute_average
+from backend.pipelines.analysis.insights import trend_insight, peak_insight
 
 
 class UnemploymentAnalysis(BaseAnalysis):

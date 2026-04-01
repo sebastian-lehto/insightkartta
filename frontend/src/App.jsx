@@ -1,89 +1,157 @@
-import { useEffect, useState } from "react";
-import { fetchUnemployment } from "./api";
+import { useEffect, useMemo, useState } from "react";
+import { fetchDataset, fetchDatasets } from "./api";
+
+import DatasetSelector from "./components/DatasetSelector";
+import DataChart from "./components/DataChart";
+import YearSlider from "./components/YearSlider";
 import MapView from "./components/MapView";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import InsightsPanel from "./components/InsightsPanel";
 
 function App() {
+  const [datasets, setDatasets] = useState([]);
+  const [selectedDataset, setSelectedDataset] = useState("");
   const [data, setData] = useState([]);
+  const [meta, setMeta] = useState({});
   const [analysis, setAnalysis] = useState(null);
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [year, setYear] = useState(2000);
-  const years = data.map(d => d.year);
-  const minYear = Math.min(...years);
-  const maxYear = Math.max(...years);
 
-  // Fetch data once
+  const [selectedRegion, setSelectedRegion] = useState("KOKO MAA");
+  const [year, setYear] = useState(null);
+
   useEffect(() => {
-    fetchUnemployment().then((res) => {
-      const dataset = res.data.data;
-      setData(dataset);
-      setAnalysis(res.data.analysis);
+    const loadDatasets = async () => {
+      try {
+        const res = await fetchDatasets();
+        const availableDatasets = res.data;
 
-      // Set default region immediately
-      const regions = [...new Set(dataset.map(d => d.region))];
-      setSelectedRegion(regions[0]);
-    });
+        setDatasets(availableDatasets);
+
+        if (availableDatasets.length > 0) {
+          setSelectedDataset(availableDatasets[0].name);
+        }
+      } catch (error) {
+        console.error("Failed to load datasets:", error);
+      }
+    };
+
+    loadDatasets();
   }, []);
 
-  // Get unique regions
-  const regions = [...new Set(data.map(d => d.region))];
+  useEffect(() => {
+    if (!selectedDataset) return;
 
-  // Filter data by selected region
-  const filteredData = data
-    .filter(d => d.region === selectedRegion)
-    .sort((a, b) => a.year - b.year);
+    const loadDataset = async () => {
+      try {
+        const res = await fetchDataset(selectedDataset);
+        const datasetData = res.data.data ?? [];
+        const datasetMeta = res.data.meta ?? {};
+        const datasetAnalysis = res.data.analysis ?? null;
+
+        setData(datasetData);
+        setMeta(datasetMeta);
+        setAnalysis(datasetAnalysis);
+
+        const years = datasetData.map((d) => d.year).filter((y) => y != null);
+
+        if (years.length > 0) {
+          setYear(Math.min(...years));
+        } else {
+          setYear(null);
+        }
+
+        const hasWholeFinland = datasetData.some(
+          (d) => d.region_name === "KOKO MAA"
+        );
+
+        if (hasWholeFinland) {
+          setSelectedRegion("KOKO MAA");
+        } else if (datasetData.length > 0) {
+          setSelectedRegion(datasetData[0].region_name);
+        } else {
+          setSelectedRegion("");
+        }
+      } catch (error) {
+        console.error(`Failed to load dataset '${selectedDataset}':`, error);
+        setData([]);
+        setMeta({});
+        setAnalysis(null);
+        setYear(null);
+        setSelectedRegion("");
+      }
+    };
+
+    loadDataset();
+  }, [selectedDataset]);
+
+  const regions = useMemo(() => {
+    return [...new Set(data.map((d) => d.region_name).filter(Boolean))];
+  }, [data]);
+
+  const chartData = useMemo(() => {
+    return data
+      .filter((d) => d.region_name === selectedRegion)
+      .sort((a, b) => a.year - b.year);
+  }, [data, selectedRegion]);
+
+  const yearBounds = useMemo(() => {
+    if (data.length === 0) {
+      return { minYear: 0, maxYear: 0 };
+    }
+
+    const years = data.map((d) => d.year).filter((y) => y != null);
+
+    if (years.length === 0) {
+      return { minYear: 0, maxYear: 0 };
+    }
+
+    return {
+      minYear: Math.min(...years),
+      maxYear: Math.max(...years),
+    };
+  }, [data]);
+
+  const chartTitle =
+    selectedRegion === "KOKO MAA"
+      ? `${meta.label ?? selectedDataset} - Finland`
+      : `${meta.label ?? selectedDataset} - ${selectedRegion}`;
+
+  const isReady = data.length > 0 && year !== null;
 
   return (
     <div style={{ padding: 20 }}>
       <h1>InsightKartta</h1>
 
-      <h2>Insights</h2>
-      {analysis &&
-        analysis.UnemploymentAnalysis.insights.map((i, idx) => (
-          <p key={idx}>{i}</p>
-        ))}
-
-      <h2>Unemployment Trend</h2>
-
-      <label>Select Region: </label>
-      <select
-        value={selectedRegion}
-        onChange={(e) => setSelectedRegion(e.target.value)}
-      >
-        {regions.map((region) => (
-          <option key={region} value={region}>
-            {region}
-          </option>
-        ))}
-      </select>
-
-      <LineChart width={600} height={300} data={filteredData}>
-        <XAxis dataKey="year" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="unemployment_rate" />
-      </LineChart>
-
-      <h2>Year: {year}</h2>
-      <input
-        type="range"
-        min={minYear}
-        max={maxYear}
-        value={year}
-        onChange={(e) => setYear(Number(e.target.value))}
+      <DatasetSelector
+        datasets={datasets}
+        selectedDataset={selectedDataset}
+        onChange={setSelectedDataset}
       />
 
-      <h2>Regional Map</h2>
-      <MapView data={data} year={year} />
+      <InsightsPanel analysis={analysis} />
 
-      <h2>Data (sample)</h2>
-      <pre>{JSON.stringify(data.slice(0, 5), null, 2)}</pre>
+      <DataChart
+        data={chartData}
+        title={chartTitle}
+        unit={meta.unit}
+      />
+
+      {isReady && (
+        <YearSlider
+          year={year}
+          minYear={yearBounds.minYear}
+          maxYear={yearBounds.maxYear}
+          onChange={setYear}
+        />
+      )}
+
+      <h2>Regional Map</h2>
+      {isReady && (
+        <MapView
+          data={data}
+          year={year}
+          onRegionSelect={setSelectedRegion}
+          unit={meta.unit}
+        />
+      )}
     </div>
   );
 }

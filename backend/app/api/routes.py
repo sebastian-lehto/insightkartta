@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.app.services.analysis_service import get_unemployment_analysis
+from backend.app.services.dataset_service import get_dataset, list_datasets
 
 router = APIRouter()
 
@@ -9,6 +9,11 @@ def health():
     return {"status": "ok"}
 
 
-@router.get("/unemployment")
-def unemployment():
-    return get_unemployment_analysis()
+@router.get("/datasets")
+def datasets():
+    return list_datasets()
+
+
+@router.get("/{dataset_name}")
+def dataset(dataset_name: str):
+    return get_dataset(dataset_name)

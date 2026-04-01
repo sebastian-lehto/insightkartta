@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 import pandas as pd
-from analysis.base import BaseAnalysis
+from backend.pipelines.analysis.base import BaseAnalysis
 
 
 class AnalysisEngine:

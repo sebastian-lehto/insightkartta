@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class ProcessedStorage:
-    def __init__(self, base_path: str = "data/processed"):
+    def __init__(self, base_path: str = "backend/data/processed"):
         self.base_path = Path(base_path)
 
     def save(self, dataset_name: str, df: pd.DataFrame) -> Path:
