@@ -1,0 +1,12 @@
+{
+  "dataset": "municipal_elections_party_votes",
+  "year": 2025,
+  "region": "KU889",
+  "source_url": "https://tulospalvelu.vaalit.fi/KV-2025/en/kutulos_889.html",
+  "http_status": 200,
+  "fetched_at": "2026-04-02T13:04:51.102976+00:00",
+  "content_hash": "e9ee305db1579d2da162475c99c9c2c900593127ed98239c86baa6102524d2ca",
+  "html_path": "backend\\data\\raw\\municipal_elections_party_votes\\2025\\KU889.html",
+  "status": "ok",
+  "error": null
+}
