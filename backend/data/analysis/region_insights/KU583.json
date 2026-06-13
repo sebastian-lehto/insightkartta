@@ -1,0 +1,130 @@
+{
+  "region": {
+    "code": "KU583",
+    "name": "Pelkosenniemi"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 243,
+      "votes_previous": 55,
+      "vote_change": 188,
+      "vote_share_latest": 46.1,
+      "vote_share_previous": 11.4,
+      "vote_share_change_pct": 34.7
+    },
+    {
+      "party": "Pyhä-Pelkosenniemi yhteislista",
+      "votes_latest": 138,
+      "votes_previous": 0,
+      "vote_change": 138,
+      "vote_share_latest": 26.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 26.2
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 105,
+      "votes_previous": 0,
+      "vote_change": 105,
+      "vote_share_latest": 19.9,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 19.9
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 41,
+      "votes_previous": 54,
+      "vote_change": -13,
+      "vote_share_latest": 7.8,
+      "vote_share_previous": 11.2,
+      "vote_share_change_pct": -3.3999999999999995
+    },
+    {
+      "party": "Yhteinen Pelkosenniemi -yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 50,
+      "vote_change": -50,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 10.4,
+      "vote_share_change_pct": -10.4
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 0,
+      "votes_previous": 52,
+      "vote_change": -52,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 10.8,
+      "vote_share_change_pct": -10.8
+    },
+    {
+      "party": "Pelkosenniemen kylät -yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 131,
+      "vote_change": -131,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 27.2,
+      "vote_share_change_pct": -27.2
+    },
+    {
+      "party": "Pyhä-Pelkosenniemi -yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 140,
+      "vote_change": -140,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 29.0,
+      "vote_share_change_pct": -29.0
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 924.0,
+      "end_value": 932.0,
+      "absolute_change": 8.0,
+      "relative_change_pct": 0.8658008658008658
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 12.4,
+      "end_value": 7.0,
+      "absolute_change": -5.4,
+      "relative_change_pct": -43.54838709677419
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 74.7,
+      "end_value": 77.0,
+      "absolute_change": 2.299999999999997,
+      "relative_change_pct": 3.0789825970548823
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 24.7,
+      "end_value": 24.9,
+      "absolute_change": 0.1999999999999993,
+      "relative_change_pct": 0.8097165991902806
+    }
+  }
+}

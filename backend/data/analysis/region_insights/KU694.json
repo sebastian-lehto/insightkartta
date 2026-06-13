@@ -1,0 +1,157 @@
+{
+  "region": {
+    "code": "KU694",
+    "name": "Riihimäki"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 3538,
+      "votes_previous": 2453,
+      "vote_change": 1085,
+      "vote_share_latest": 30.9,
+      "vote_share_previous": 21.1,
+      "vote_share_change_pct": 9.799999999999997
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 2872,
+      "votes_previous": 2770,
+      "vote_change": 102,
+      "vote_share_latest": 25.1,
+      "vote_share_previous": 23.8,
+      "vote_share_change_pct": 1.3000000000000007
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 513,
+      "votes_previous": 396,
+      "vote_change": 117,
+      "vote_share_latest": 4.5,
+      "vote_share_previous": 3.4,
+      "vote_share_change_pct": 1.1
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 1999,
+      "votes_previous": 2002,
+      "vote_change": -3,
+      "vote_share_latest": 17.5,
+      "vote_share_previous": 17.2,
+      "vote_share_change_pct": 0.3000000000000007
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 787,
+      "votes_previous": 795,
+      "vote_change": -8,
+      "vote_share_latest": 6.9,
+      "vote_share_previous": 6.8,
+      "vote_share_change_pct": 0.10000000000000053
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 870,
+      "votes_previous": 878,
+      "vote_change": -8,
+      "vote_share_latest": 7.6,
+      "vote_share_previous": 7.5,
+      "vote_share_change_pct": 0.09999999999999964
+    },
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 28,
+      "vote_change": -28,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.2,
+      "vote_share_change_pct": -0.2
+    },
+    {
+      "party": "Pirate Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 18,
+      "vote_change": -18,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.2,
+      "vote_share_change_pct": -0.2
+    },
+    {
+      "party": "Crystal Party",
+      "votes_latest": 0,
+      "votes_previous": 110,
+      "vote_change": -110,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.9,
+      "vote_share_change_pct": -0.9
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 32,
+      "votes_previous": 290,
+      "vote_change": -258,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 2.5,
+      "vote_share_change_pct": -2.2
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 822,
+      "votes_previous": 1909,
+      "vote_change": -1087,
+      "vote_share_latest": 7.2,
+      "vote_share_previous": 16.4,
+      "vote_share_change_pct": -9.2
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 28521.0,
+      "end_value": 28555.0,
+      "absolute_change": 34.0,
+      "relative_change_pct": 0.11921040636723819
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 9.4,
+      "end_value": 11.9,
+      "absolute_change": 2.5,
+      "relative_change_pct": 26.595744680851062
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 73.2,
+      "end_value": 73.1,
+      "absolute_change": -0.10000000000000853,
+      "relative_change_pct": -0.13661202185793514
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 29.2,
+      "end_value": 29.4,
+      "absolute_change": 0.1999999999999993,
+      "relative_change_pct": 0.6849315068493127
+    }
+  }
+}

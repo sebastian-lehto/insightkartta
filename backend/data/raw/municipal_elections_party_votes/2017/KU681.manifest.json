@@ -1,0 +1,12 @@
+{
+  "dataset": "municipal_elections_party_votes",
+  "year": 2017,
+  "region": "KU681",
+  "source_url": "https://tulospalvelu.vaalit.fi/KV-2017/en/kutulos_681.html",
+  "http_status": 200,
+  "fetched_at": "2026-04-02T12:56:27.465884+00:00",
+  "content_hash": "d90986adae13005213ce909714a351a039a89fd800393fc6c281ec75bff7c95f",
+  "html_path": "backend\\data\\raw\\municipal_elections_party_votes\\2017\\KU681.html",
+  "status": "ok",
+  "error": null
+}

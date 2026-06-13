@@ -1,0 +1,12 @@
+{
+  "dataset": "municipal_elections_party_votes",
+  "year": 2021,
+  "region": "KU739",
+  "source_url": "https://tulospalvelu.vaalit.fi/KV-2021/en/kutulos_739.html",
+  "http_status": 200,
+  "fetched_at": "2026-04-02T13:00:24.014589+00:00",
+  "content_hash": "53d3cbc3b900f10829e3f982ad52bd00d8a4d715404cdb05e012cf00bf78d2e9",
+  "html_path": "backend\\data\\raw\\municipal_elections_party_votes\\2021\\KU739.html",
+  "status": "ok",
+  "error": null
+}

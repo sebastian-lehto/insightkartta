@@ -1,0 +1,292 @@
+{
+  "region": {
+    "code": "KU091",
+    "name": "Helsinki"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 79505,
+      "votes_previous": 48096,
+      "vote_change": 31409,
+      "vote_share_latest": 23.3,
+      "vote_share_previous": 14.4,
+      "vote_share_change_pct": 8.9
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 58195,
+      "votes_previous": 42366,
+      "vote_change": 15829,
+      "vote_share_latest": 17.0,
+      "vote_share_previous": 12.7,
+      "vote_share_change_pct": 4.300000000000001
+    },
+    {
+      "party": "The Liberal Party - Freedom to choose",
+      "votes_latest": 2341,
+      "votes_previous": 0,
+      "vote_change": 2341,
+      "vote_share_latest": 0.7,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.7
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 9335,
+      "votes_previous": 7929,
+      "vote_change": 1406,
+      "vote_share_latest": 2.7,
+      "vote_share_previous": 2.4,
+      "vote_share_change_pct": 0.30000000000000027
+    },
+    {
+      "party": "Vapauden liitto",
+      "votes_latest": 1154,
+      "votes_previous": 0,
+      "vote_change": 1154,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.3
+    },
+    {
+      "party": "Asukkaiden ääni -yhteislista",
+      "votes_latest": 1076,
+      "votes_previous": 0,
+      "vote_change": 1076,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.3
+    },
+    {
+      "party": "The Open Party",
+      "votes_latest": 637,
+      "votes_previous": 0,
+      "vote_change": 637,
+      "vote_share_latest": 0.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.2
+    },
+    {
+      "party": "Constituency association Samuli Yliluoma",
+      "votes_latest": 287,
+      "votes_previous": 0,
+      "vote_change": 287,
+      "vote_share_latest": 0.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.1
+    },
+    {
+      "party": "Ympäristöpuolue -yhteislista",
+      "votes_latest": 304,
+      "votes_previous": 0,
+      "vote_change": 304,
+      "vote_share_latest": 0.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.1
+    },
+    {
+      "party": "Constituency association Pekka Tiainen",
+      "votes_latest": 0,
+      "votes_previous": 11,
+      "vote_change": -11,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Constituency association Abdirahman Mohamud Yusuf",
+      "votes_latest": 0,
+      "votes_previous": 52,
+      "vote_change": -52,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Constituency association Hannu (Miki) Sileoni",
+      "votes_latest": 0,
+      "votes_previous": 56,
+      "vote_change": -56,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Constituency association Rahim Alizada",
+      "votes_latest": 0,
+      "votes_previous": 125,
+      "vote_change": -125,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Blue Reform",
+      "votes_latest": 0,
+      "votes_previous": 259,
+      "vote_change": -259,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.1,
+      "vote_share_change_pct": -0.1
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 5907,
+      "votes_previous": 5913,
+      "vote_change": -6,
+      "vote_share_latest": 1.7,
+      "vote_share_previous": 1.8,
+      "vote_share_change_pct": -0.10000000000000009
+    },
+    {
+      "party": "Animal Justice Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 675,
+      "vote_change": -675,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.2,
+      "vote_share_change_pct": -0.2
+    },
+    {
+      "party": "Pirate Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 927,
+      "vote_change": -927,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.3,
+      "vote_share_change_pct": -0.3
+    },
+    {
+      "party": "Asukkaiden Helsinki yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 1718,
+      "vote_change": -1718,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "Crystal Party",
+      "votes_latest": 0,
+      "votes_previous": 1747,
+      "vote_change": -1747,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "Ympäristöliike Helsinki yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 2754,
+      "vote_change": -2754,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.8,
+      "vote_share_change_pct": -0.8
+    },
+    {
+      "party": "The Feminist Party",
+      "votes_latest": 0,
+      "votes_previous": 2680,
+      "vote_change": -2680,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.8,
+      "vote_share_change_pct": -0.8
+    },
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 17788,
+      "votes_previous": 21866,
+      "vote_change": -4078,
+      "vote_share_latest": 5.2,
+      "vote_share_previous": 6.5,
+      "vote_share_change_pct": -1.2999999999999998
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 81879,
+      "votes_previous": 85624,
+      "vote_change": -3745,
+      "vote_share_latest": 24.0,
+      "vote_share_previous": 25.6,
+      "vote_share_change_pct": -1.6000000000000014
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 61186,
+      "votes_previous": 66093,
+      "vote_change": -4907,
+      "vote_share_latest": 17.9,
+      "vote_share_previous": 19.8,
+      "vote_share_change_pct": -1.9000000000000021
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 3330,
+      "votes_previous": 11058,
+      "vote_change": -7728,
+      "vote_share_latest": 1.0,
+      "vote_share_previous": 3.3,
+      "vote_share_change_pct": -2.3
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 18687,
+      "votes_previous": 33946,
+      "vote_change": -15259,
+      "vote_share_latest": 5.5,
+      "vote_share_previous": 10.2,
+      "vote_share_change_pct": -4.699999999999999
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 658457.0,
+      "end_value": 694392.0,
+      "absolute_change": 35935.0,
+      "relative_change_pct": 5.457455839940953
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 11.0,
+      "end_value": 12.3,
+      "absolute_change": 1.3000000000000007,
+      "relative_change_pct": 11.818181818181825
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 76.9,
+      "end_value": 76.6,
+      "absolute_change": -0.30000000000001137,
+      "relative_change_pct": -0.3901170351105479
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 45.4,
+      "end_value": 46.2,
+      "absolute_change": 0.8000000000000043,
+      "relative_change_pct": 1.7621145374449434
+    }
+  }
+}

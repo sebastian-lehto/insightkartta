@@ -1,0 +1,148 @@
+{
+  "region": {
+    "code": "KU410",
+    "name": "Laukaa"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 2178,
+      "votes_previous": 1611,
+      "vote_change": 567,
+      "vote_share_latest": 29.6,
+      "vote_share_previous": 22.2,
+      "vote_share_change_pct": 7.400000000000002
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 2374,
+      "votes_previous": 2085,
+      "vote_change": 289,
+      "vote_share_latest": 32.3,
+      "vote_share_previous": 28.8,
+      "vote_share_change_pct": 3.4999999999999964
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 549,
+      "votes_previous": 511,
+      "vote_change": 38,
+      "vote_share_latest": 7.5,
+      "vote_share_previous": 7.1,
+      "vote_share_change_pct": 0.40000000000000036
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 811,
+      "votes_previous": 768,
+      "vote_change": 43,
+      "vote_share_latest": 11.0,
+      "vote_share_previous": 10.6,
+      "vote_share_change_pct": 0.40000000000000036
+    },
+    {
+      "party": "Valta kuuluu kansalle",
+      "votes_latest": 17,
+      "votes_previous": 0,
+      "vote_change": 17,
+      "vote_share_latest": 0.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.2
+    },
+    {
+      "party": "Animal Justice Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 20,
+      "vote_change": -20,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.3,
+      "vote_share_change_pct": -0.3
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 319,
+      "votes_previous": 352,
+      "vote_change": -33,
+      "vote_share_latest": 4.3,
+      "vote_share_previous": 4.9,
+      "vote_share_change_pct": -0.6000000000000005
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 272,
+      "votes_previous": 378,
+      "vote_change": -106,
+      "vote_share_latest": 3.7,
+      "vote_share_previous": 5.2,
+      "vote_share_change_pct": -1.5
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 0,
+      "votes_previous": 156,
+      "vote_change": -156,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 2.2,
+      "vote_share_change_pct": -2.2
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 838,
+      "votes_previous": 1366,
+      "vote_change": -528,
+      "vote_share_latest": 11.4,
+      "vote_share_previous": 18.8,
+      "vote_share_change_pct": -7.4
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 18788.0,
+      "end_value": 18808.0,
+      "absolute_change": 20.0,
+      "relative_change_pct": 0.10645092612305727
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 10.1,
+      "end_value": 12.1,
+      "absolute_change": 2.0,
+      "relative_change_pct": 19.801980198019802
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 75.9,
+      "end_value": 76.6,
+      "absolute_change": 0.6999999999999886,
+      "relative_change_pct": 0.9222661396574289
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 28.8,
+      "end_value": 29.7,
+      "absolute_change": 0.8999999999999986,
+      "relative_change_pct": 3.124999999999995
+    }
+  }
+}

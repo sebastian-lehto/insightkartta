@@ -1,0 +1,103 @@
+{
+  "region": {
+    "code": "KU152",
+    "name": "Isokyrö"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 606,
+      "votes_previous": 503,
+      "vote_change": 103,
+      "vote_share_latest": 29.2,
+      "vote_share_previous": 23.0,
+      "vote_share_change_pct": 6.199999999999999
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1035,
+      "votes_previous": 1059,
+      "vote_change": -24,
+      "vote_share_latest": 49.8,
+      "vote_share_previous": 48.5,
+      "vote_share_change_pct": 1.2999999999999972
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 230,
+      "votes_previous": 256,
+      "vote_change": -26,
+      "vote_share_latest": 11.1,
+      "vote_share_previous": 11.7,
+      "vote_share_change_pct": -0.5999999999999996
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 103,
+      "votes_previous": 132,
+      "vote_change": -29,
+      "vote_share_latest": 5.0,
+      "vote_share_previous": 6.0,
+      "vote_share_change_pct": -1.0
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 103,
+      "votes_previous": 235,
+      "vote_change": -132,
+      "vote_share_latest": 5.0,
+      "vote_share_previous": 10.8,
+      "vote_share_change_pct": -5.800000000000001
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 4480.0,
+      "end_value": 4261.0,
+      "absolute_change": -219.0,
+      "relative_change_pct": -4.888392857142857
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 6.9,
+      "end_value": 7.4,
+      "absolute_change": 0.5,
+      "relative_change_pct": 7.246376811594203
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 71.8,
+      "end_value": 73.7,
+      "absolute_change": 1.9000000000000057,
+      "relative_change_pct": 2.6462395543175568
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 25.1,
+      "end_value": 26.5,
+      "absolute_change": 1.3999999999999986,
+      "relative_change_pct": 5.577689243027883
+    }
+  }
+}

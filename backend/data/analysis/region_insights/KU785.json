@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU785",
+    "name": "Vaala"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 229,
+      "votes_previous": 165,
+      "vote_change": 64,
+      "vote_share_latest": 17.8,
+      "vote_share_previous": 12.3,
+      "vote_share_change_pct": 5.5
+    },
+    {
+      "party": "Constituency association Marko Hiltunen",
+      "votes_latest": 26,
+      "votes_previous": 0,
+      "vote_change": 26,
+      "vote_share_latest": 2.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 2.0
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 34,
+      "votes_previous": 8,
+      "vote_change": 26,
+      "vote_share_latest": 2.6,
+      "vote_share_previous": 0.6,
+      "vote_share_change_pct": 2.0
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 56,
+      "votes_previous": 33,
+      "vote_change": 23,
+      "vote_share_latest": 4.4,
+      "vote_share_previous": 2.5,
+      "vote_share_change_pct": 1.9000000000000004
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 16,
+      "votes_previous": 0,
+      "vote_change": 16,
+      "vote_share_latest": 1.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 1.2
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 587,
+      "votes_previous": 600,
+      "vote_change": -13,
+      "vote_share_latest": 45.6,
+      "vote_share_previous": 44.7,
+      "vote_share_change_pct": 0.8999999999999986
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 0,
+      "votes_previous": 7,
+      "vote_change": -7,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 198,
+      "votes_previous": 273,
+      "vote_change": -75,
+      "vote_share_latest": 15.4,
+      "vote_share_previous": 20.4,
+      "vote_share_change_pct": -4.999999999999998
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 141,
+      "votes_previous": 255,
+      "vote_change": -114,
+      "vote_share_latest": 11.0,
+      "vote_share_previous": 19.0,
+      "vote_share_change_pct": -8.0
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 2673.0,
+      "end_value": 2544.0,
+      "absolute_change": -129.0,
+      "relative_change_pct": -4.8260381593714925
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 14.6,
+      "end_value": 17.7,
+      "absolute_change": 3.0999999999999996,
+      "relative_change_pct": 21.232876712328768
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 70.0,
+      "end_value": 71.7,
+      "absolute_change": 1.7000000000000028,
+      "relative_change_pct": 2.428571428571433
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 19.6,
+      "end_value": 20.7,
+      "absolute_change": 1.0999999999999979,
+      "relative_change_pct": 5.612244897959172
+    }
+  }
+}

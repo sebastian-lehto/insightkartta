@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import { fetchDataset, fetchDatasets } from "./api";
 
 import DatasetSelector from "./components/DatasetSelector";
@@ -6,6 +7,8 @@ import DataChart from "./components/DataChart";
 import YearSlider from "./components/YearSlider";
 import MapView from "./components/MapView";
 import InsightsPanel from "./components/InsightsPanel";
+import MunicipalityPage from "./components/RegionPage";
+import RegionPage from "./components/RegionPage";
 
 function App() {
   const [datasets, setDatasets] = useState([]);
@@ -116,7 +119,7 @@ function App() {
 
   const isReady = data.length > 0 && year !== null;
 
-  return (
+  const dashboard = (
     <div style={{ padding: 20 }}>
       <h1>InsightKartta</h1>
 
@@ -154,6 +157,13 @@ function App() {
         />
       )}
     </div>
+  );
+
+  return (
+    <Routes>
+      <Route path="/" element={dashboard} />
+      <Route path="/region/:regionCode" element={<RegionPage />} />
+    </Routes>
   );
 }
 

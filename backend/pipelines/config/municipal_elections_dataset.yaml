@@ -1,0 +1,38 @@
+datasets:
+  - name: municipal_elections_party_votes
+    source: vaalit_html
+    years: [2012, 2017, 2021, 2025]
+    url_template: "https://tulospalvelu.vaalit.fi/KV-{year}/en/kutulos_{region_code_numeric}.html"
+
+    geography:
+      level: municipality
+      region_code_format: statfi_ku
+      url_code_transform: strip_prefix_ku
+
+    extraction:
+      table_selector: "table.tulosPuolueTaulu"
+      party_row_selector: "tr.clickable"
+      totals_row_first_cell_class: "tulosPuolueYhteensa"
+      parse_strategy: positional_first_7_metrics
+
+    transformation:
+      dimensions:
+        region: region
+        year: year
+        category: party_name
+      rename: {}
+      types:
+        year: int
+        votes: int
+        seats: int
+      value_column: votes
+      filters: []
+      join:
+        region_mapping: true
+        party_mapping: true
+
+    metadata:
+      label: "Municipal election votes by party"
+      unit: "votes"
+      visualization:
+        default_metric: votes

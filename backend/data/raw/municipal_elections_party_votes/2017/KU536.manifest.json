@@ -1,0 +1,12 @@
+{
+  "dataset": "municipal_elections_party_votes",
+  "year": 2017,
+  "region": "KU536",
+  "source_url": "https://tulospalvelu.vaalit.fi/KV-2017/en/kutulos_536.html",
+  "http_status": 200,
+  "fetched_at": "2026-04-02T12:55:54.788240+00:00",
+  "content_hash": "912bda1cf60d3509b011ad1c94f701c9657923df041fe7a25a60e3a6783972f5",
+  "html_path": "backend\\data\\raw\\municipal_elections_party_votes\\2017\\KU536.html",
+  "status": "ok",
+  "error": null
+}

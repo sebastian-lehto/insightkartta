@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU407",
+    "name": "Lapinjärvi"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 220,
+      "votes_previous": 191,
+      "vote_change": 29,
+      "vote_share_latest": 21.3,
+      "vote_share_previous": 16.3,
+      "vote_share_change_pct": 5.0
+    },
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 410,
+      "votes_previous": 407,
+      "vote_change": 3,
+      "vote_share_latest": 39.7,
+      "vote_share_previous": 34.7,
+      "vote_share_change_pct": 5.0
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 170,
+      "votes_previous": 169,
+      "vote_change": 1,
+      "vote_share_latest": 16.5,
+      "vote_share_previous": 14.4,
+      "vote_share_change_pct": 2.0999999999999996
+    },
+    {
+      "party": "The Communist Party of Finland",
+      "votes_latest": 4,
+      "votes_previous": 11,
+      "vote_change": -7,
+      "vote_share_latest": 0.4,
+      "vote_share_previous": 0.9,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 0,
+      "votes_previous": 11,
+      "vote_change": -11,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.9,
+      "vote_share_change_pct": -0.9
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 0,
+      "votes_previous": 14,
+      "vote_change": -14,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.2,
+      "vote_share_change_pct": -1.2
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 81,
+      "votes_previous": 113,
+      "vote_change": -32,
+      "vote_share_latest": 7.8,
+      "vote_share_previous": 9.6,
+      "vote_share_change_pct": -1.7999999999999998
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 147,
+      "votes_previous": 188,
+      "vote_change": -41,
+      "vote_share_latest": 14.2,
+      "vote_share_previous": 16.0,
+      "vote_share_change_pct": -1.8000000000000007
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 0,
+      "votes_previous": 68,
+      "vote_change": -68,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 5.8,
+      "vote_share_change_pct": -5.8
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 2580.0,
+      "end_value": 2430.0,
+      "absolute_change": -150.0,
+      "relative_change_pct": -5.813953488372093
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 11.0,
+      "end_value": 10.0,
+      "absolute_change": -1.0,
+      "relative_change_pct": -9.090909090909092
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 64.5,
+      "end_value": 66.8,
+      "absolute_change": 2.299999999999997,
+      "relative_change_pct": 3.5658914728682127
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 21.6,
+      "end_value": 22.4,
+      "absolute_change": 0.7999999999999972,
+      "relative_change_pct": 3.7037037037036904
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "dataset": "municipal_elections_party_votes",
+  "year": 2012,
+  "region": "KU768",
+  "source_url": "https://tulospalvelu.vaalit.fi/KV-2012/en/kutulos_768.html",
+  "http_status": 200,
+  "fetched_at": "2026-04-02T12:52:56.539059+00:00",
+  "content_hash": "96c6d6863fc0a0b944ef3ae360ba9974de5f78b1c6e42284f1355b63b35ee74a",
+  "html_path": "backend\\data\\raw\\municipal_elections_party_votes\\2012\\KU768.html",
+  "status": "ok",
+  "error": null
+}

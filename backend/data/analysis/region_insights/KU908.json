@@ -1,0 +1,148 @@
+{
+  "region": {
+    "code": "KU908",
+    "name": "Valkeakoski"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 3733,
+      "votes_previous": 2797,
+      "vote_change": 936,
+      "vote_share_latest": 43.6,
+      "vote_share_previous": 31.7,
+      "vote_share_change_pct": 11.900000000000002
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 653,
+      "votes_previous": 324,
+      "vote_change": 329,
+      "vote_share_latest": 7.6,
+      "vote_share_previous": 3.7,
+      "vote_share_change_pct": 3.8999999999999995
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 403,
+      "votes_previous": 319,
+      "vote_change": 84,
+      "vote_share_latest": 4.7,
+      "vote_share_previous": 3.6,
+      "vote_share_change_pct": 1.1
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 794,
+      "votes_previous": 788,
+      "vote_change": 6,
+      "vote_share_latest": 9.3,
+      "vote_share_previous": 8.9,
+      "vote_share_change_pct": 0.40000000000000036
+    },
+    {
+      "party": "The Liberal Party - Freedom to choose",
+      "votes_latest": 0,
+      "votes_previous": 41,
+      "vote_change": -41,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 0,
+      "votes_previous": 89,
+      "vote_change": -89,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.0,
+      "vote_share_change_pct": -1.0
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 1974,
+      "votes_previous": 2159,
+      "vote_change": -185,
+      "vote_share_latest": 23.1,
+      "vote_share_previous": 24.5,
+      "vote_share_change_pct": -1.3999999999999986
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 215,
+      "votes_previous": 497,
+      "vote_change": -282,
+      "vote_share_latest": 2.5,
+      "vote_share_previous": 5.6,
+      "vote_share_change_pct": -3.0999999999999996
+    },
+    {
+      "party": "Valkeakosken Sitoutumattomat yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 274,
+      "vote_change": -274,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 3.1,
+      "vote_share_change_pct": -3.1
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 787,
+      "votes_previous": 1540,
+      "vote_change": -753,
+      "vote_share_latest": 9.2,
+      "vote_share_previous": 17.4,
+      "vote_share_change_pct": -8.2
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 20695.0,
+      "end_value": 20762.0,
+      "absolute_change": 67.0,
+      "relative_change_pct": 0.3237496979946847
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 9.8,
+      "end_value": 12.4,
+      "absolute_change": 2.5999999999999996,
+      "relative_change_pct": 26.530612244897956
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 74.9,
+      "end_value": 75.0,
+      "absolute_change": 0.09999999999999432,
+      "relative_change_pct": 0.1335113484646119
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 28.1,
+      "end_value": 28.6,
+      "absolute_change": 0.5,
+      "relative_change_pct": 1.779359430604982
+    }
+  }
+}

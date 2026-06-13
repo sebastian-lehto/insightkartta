@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU580",
+    "name": "Parikkala"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Parikkala-ryhmän yhteislista",
+      "votes_latest": 843,
+      "votes_previous": 0,
+      "vote_change": 843,
+      "vote_share_latest": 39.6,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 39.6
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 183,
+      "votes_previous": 212,
+      "vote_change": -29,
+      "vote_share_latest": 8.6,
+      "vote_share_previous": 8.7,
+      "vote_share_change_pct": -0.09999999999999964
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 113,
+      "votes_previous": 144,
+      "vote_change": -31,
+      "vote_share_latest": 5.3,
+      "vote_share_previous": 5.9,
+      "vote_share_change_pct": -0.6000000000000005
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 218,
+      "votes_previous": 264,
+      "vote_change": -46,
+      "vote_share_latest": 10.2,
+      "vote_share_previous": 10.9,
+      "vote_share_change_pct": -0.7000000000000011
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 70,
+      "votes_previous": 114,
+      "vote_change": -44,
+      "vote_share_latest": 3.3,
+      "vote_share_previous": 4.7,
+      "vote_share_change_pct": -1.4000000000000004
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 0,
+      "votes_previous": 38,
+      "vote_change": -38,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.6,
+      "vote_share_change_pct": -1.6
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 657,
+      "votes_previous": 837,
+      "vote_change": -180,
+      "vote_share_latest": 30.9,
+      "vote_share_previous": 34.5,
+      "vote_share_change_pct": -3.6000000000000014
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 45,
+      "votes_previous": 165,
+      "vote_change": -120,
+      "vote_share_latest": 2.1,
+      "vote_share_previous": 6.8,
+      "vote_share_change_pct": -4.699999999999999
+    },
+    {
+      "party": "Parikkala-ryhmä yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 655,
+      "vote_change": -655,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 27.0,
+      "vote_share_change_pct": -27.0
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 4567.0,
+      "end_value": 4235.0,
+      "absolute_change": -332.0,
+      "relative_change_pct": -7.269542369170133
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 11.6,
+      "end_value": 13.1,
+      "absolute_change": 1.5,
+      "relative_change_pct": 12.931034482758621
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 67.2,
+      "end_value": 70.0,
+      "absolute_change": 2.799999999999997,
+      "relative_change_pct": 4.1666666666666625
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 19.4,
+      "end_value": 20.5,
+      "absolute_change": 1.1000000000000014,
+      "relative_change_pct": 5.6701030927835125
+    }
+  }
+}
