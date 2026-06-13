@@ -239,7 +239,7 @@ def load_manifests(raw_dataset_root: Path) -> list[dict]:
 
 
 def load_region_mapping(region_mapping_path: Path) -> pd.DataFrame:
-    df = pd.read_csv(region_mapping_path)
+    df = pd.read_csv(region_mapping_path, encoding="utf-8")
 
     required_cols = {"region_code", "region_name"}
     missing_cols = required_cols - set(df.columns)
@@ -255,7 +255,7 @@ def load_region_mapping(region_mapping_path: Path) -> pd.DataFrame:
 def load_party_mapping(party_mapping_path: Path | None) -> pd.DataFrame | None:
     if party_mapping_path is None or not party_mapping_path.exists():
         return None
-    return pd.read_csv(party_mapping_path)
+    return pd.read_csv(party_mapping_path, encoding="utf-8")
 
 
 def normalize_rows(manifests: list[dict]) -> pd.DataFrame:
@@ -395,6 +395,9 @@ def main() -> None:
     party_mapping_df = load_party_mapping(args.party_mapping)
     if party_mapping_df is not None:
         df = df.merge(party_mapping_df, on="party_raw", how="left")
+        # Fill unmapped parties with their raw names
+        df["party_code"] = df["party_code"].fillna(df["party_raw"])
+        df["party_name"] = df["party_name"].fillna(df["party_raw"])
     else:
         df["party_code"] = df["party_raw"]
         df["party_name"] = df["party_raw"]

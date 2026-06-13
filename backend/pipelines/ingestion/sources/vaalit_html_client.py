@@ -191,7 +191,9 @@ class VaalitHtmlClient:
         if response.status_code != 200:
             raise FetchError(f"Failed to fetch {target.url}: HTTP {response.status_code}")
 
-        html = response.text
+        # The source pages use UTF-8, but requests may detect the wrong encoding.
+        # Decode explicitly to preserve special characters in downloaded HTML.
+        html = response.content.decode("utf-8", errors="replace")
         self._validate_basic_structure(html=html, url=target.url)
 
         content_hash = hashlib.sha256(html.encode("utf-8")).hexdigest()
