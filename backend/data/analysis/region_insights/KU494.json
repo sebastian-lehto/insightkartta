@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU494",
+    "name": "Muhos"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Muhoksen sitoutumattomat yhteislista",
+      "votes_latest": 396,
+      "votes_previous": 0,
+      "vote_change": 396,
+      "vote_share_latest": 12.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 12.0
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1471,
+      "votes_previous": 1313,
+      "vote_change": 158,
+      "vote_share_latest": 44.7,
+      "vote_share_previous": 39.6,
+      "vote_share_change_pct": 5.100000000000001
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 264,
+      "votes_previous": 211,
+      "vote_change": 53,
+      "vote_share_latest": 8.0,
+      "vote_share_previous": 6.4,
+      "vote_share_change_pct": 1.5999999999999996
+    },
+    {
+      "party": "Constituency association Olavi Rönkä",
+      "votes_latest": 21,
+      "votes_previous": 0,
+      "vote_change": 21,
+      "vote_share_latest": 0.6,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.6
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 285,
+      "votes_previous": 274,
+      "vote_change": 11,
+      "vote_share_latest": 8.7,
+      "vote_share_previous": 8.3,
+      "vote_share_change_pct": 0.3999999999999986
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 29,
+      "votes_previous": 30,
+      "vote_change": -1,
+      "vote_share_latest": 0.9,
+      "vote_share_previous": 0.9,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 345,
+      "votes_previous": 356,
+      "vote_change": -11,
+      "vote_share_latest": 10.5,
+      "vote_share_previous": 10.7,
+      "vote_share_change_pct": -0.1999999999999993
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 481,
+      "votes_previous": 795,
+      "vote_change": -314,
+      "vote_share_latest": 14.6,
+      "vote_share_previous": 24.0,
+      "vote_share_change_pct": -9.4
+    },
+    {
+      "party": "Muhoksen Sitoutumattomat yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 339,
+      "vote_change": -339,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 10.2,
+      "vote_share_change_pct": -10.2
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 8909.0,
+      "end_value": 8767.0,
+      "absolute_change": -142.0,
+      "relative_change_pct": -1.5938938152430127
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 12.1,
+      "end_value": 11.0,
+      "absolute_change": -1.0999999999999996,
+      "relative_change_pct": -9.090909090909088
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 74.7,
+      "end_value": 77.2,
+      "absolute_change": 2.5,
+      "relative_change_pct": 3.3467202141900936
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 26.3,
+      "end_value": 28.1,
+      "absolute_change": 1.8000000000000007,
+      "relative_change_pct": 6.8441064638783295
+    }
+  }
+}

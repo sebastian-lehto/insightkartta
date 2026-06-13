@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU250",
+    "name": "Kihniö"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Yhteislista Savupirtti",
+      "votes_latest": 39,
+      "votes_previous": 0,
+      "vote_change": 39,
+      "vote_share_latest": 4.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 4.1
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 37,
+      "votes_previous": 0,
+      "vote_change": 37,
+      "vote_share_latest": 3.9,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 3.9
+    },
+    {
+      "party": "Constituency association Hannu Tiainen",
+      "votes_latest": 29,
+      "votes_previous": 0,
+      "vote_change": 29,
+      "vote_share_latest": 3.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 3.0
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 336,
+      "votes_previous": 334,
+      "vote_change": 2,
+      "vote_share_latest": 35.1,
+      "vote_share_previous": 33.5,
+      "vote_share_change_pct": 1.6000000000000014
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 137,
+      "votes_previous": 130,
+      "vote_change": 7,
+      "vote_share_latest": 14.3,
+      "vote_share_previous": 13.1,
+      "vote_share_change_pct": 1.200000000000001
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 43,
+      "votes_previous": 52,
+      "vote_change": -9,
+      "vote_share_latest": 4.5,
+      "vote_share_previous": 5.2,
+      "vote_share_change_pct": -0.7000000000000002
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 295,
+      "votes_previous": 348,
+      "vote_change": -53,
+      "vote_share_latest": 30.9,
+      "vote_share_previous": 34.9,
+      "vote_share_change_pct": -4.0
+    },
+    {
+      "party": "Kyykystä ylös yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 43,
+      "vote_change": -43,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 4.3,
+      "vote_share_change_pct": -4.3
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 40,
+      "votes_previous": 89,
+      "vote_change": -49,
+      "vote_share_latest": 4.2,
+      "vote_share_previous": 8.9,
+      "vote_share_change_pct": -4.7
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 1808.0,
+      "end_value": 1670.0,
+      "absolute_change": -138.0,
+      "relative_change_pct": -7.6327433628318575
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 7.9,
+      "end_value": 8.4,
+      "absolute_change": 0.5,
+      "relative_change_pct": 6.329113924050632
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 65.0,
+      "end_value": 68.1,
+      "absolute_change": 3.0999999999999943,
+      "relative_change_pct": 4.76923076923076
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 16.4,
+      "end_value": 18.6,
+      "absolute_change": 2.200000000000003,
+      "relative_change_pct": 13.41463414634148
+    }
+  }
+}

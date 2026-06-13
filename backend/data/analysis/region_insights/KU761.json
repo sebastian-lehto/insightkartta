@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU761",
+    "name": "Somero"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Someron Edistys yhteislista",
+      "votes_latest": 462,
+      "votes_previous": 0,
+      "vote_change": 462,
+      "vote_share_latest": 12.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 12.1
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 842,
+      "votes_previous": 750,
+      "vote_change": 92,
+      "vote_share_latest": 22.0,
+      "vote_share_previous": 17.8,
+      "vote_share_change_pct": 4.199999999999999
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1365,
+      "votes_previous": 1428,
+      "vote_change": -63,
+      "vote_share_latest": 35.6,
+      "vote_share_previous": 33.8,
+      "vote_share_change_pct": 1.8000000000000043
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 115,
+      "votes_previous": 75,
+      "vote_change": 40,
+      "vote_share_latest": 3.0,
+      "vote_share_previous": 1.8,
+      "vote_share_change_pct": 1.2
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 60,
+      "votes_previous": 75,
+      "vote_change": -15,
+      "vote_share_latest": 1.6,
+      "vote_share_previous": 1.8,
+      "vote_share_change_pct": -0.19999999999999996
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 0,
+      "votes_previous": 29,
+      "vote_change": -29,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.7,
+      "vote_share_change_pct": -0.7
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 79,
+      "votes_previous": 170,
+      "vote_change": -91,
+      "vote_share_latest": 2.1,
+      "vote_share_previous": 4.0,
+      "vote_share_change_pct": -1.9
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 479,
+      "votes_previous": 802,
+      "vote_change": -323,
+      "vote_share_latest": 12.5,
+      "vote_share_previous": 19.0,
+      "vote_share_change_pct": -6.5
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 428,
+      "votes_previous": 892,
+      "vote_change": -464,
+      "vote_share_latest": 11.2,
+      "vote_share_previous": 21.1,
+      "vote_share_change_pct": -9.900000000000002
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 8563.0,
+      "end_value": 8339.0,
+      "absolute_change": -224.0,
+      "relative_change_pct": -2.6159056405465373
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 8.1,
+      "end_value": 11.4,
+      "absolute_change": 3.3000000000000007,
+      "relative_change_pct": 40.74074074074075
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 65.8,
+      "end_value": 66.9,
+      "absolute_change": 1.1000000000000085,
+      "relative_change_pct": 1.6717325227963657
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 21.3,
+      "end_value": 22.3,
+      "absolute_change": 1.0,
+      "relative_change_pct": 4.694835680751173
+    }
+  }
+}

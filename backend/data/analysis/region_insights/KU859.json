@@ -1,0 +1,130 @@
+{
+  "region": {
+    "code": "KU859",
+    "name": "Tyrnävä"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 595,
+      "votes_previous": 314,
+      "vote_change": 281,
+      "vote_share_latest": 24.3,
+      "vote_share_previous": 13.2,
+      "vote_share_change_pct": 11.100000000000001
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 197,
+      "votes_previous": 141,
+      "vote_change": 56,
+      "vote_share_latest": 8.0,
+      "vote_share_previous": 5.9,
+      "vote_share_change_pct": 2.0999999999999996
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 216,
+      "votes_previous": 183,
+      "vote_change": 33,
+      "vote_share_latest": 8.8,
+      "vote_share_previous": 7.7,
+      "vote_share_change_pct": 1.1000000000000005
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 12,
+      "votes_previous": 0,
+      "vote_change": 12,
+      "vote_share_latest": 0.5,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.5
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 17,
+      "votes_previous": 12,
+      "vote_change": 5,
+      "vote_share_latest": 0.7,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": 0.19999999999999996
+    },
+    {
+      "party": "Blue Reform",
+      "votes_latest": 0,
+      "votes_previous": 1,
+      "vote_change": -1,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1222,
+      "votes_previous": 1353,
+      "vote_change": -131,
+      "vote_share_latest": 49.9,
+      "vote_share_previous": 56.9,
+      "vote_share_change_pct": -7.0
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 189,
+      "votes_previous": 374,
+      "vote_change": -185,
+      "vote_share_latest": 7.7,
+      "vote_share_previous": 15.7,
+      "vote_share_change_pct": -7.999999999999999
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 6593.0,
+      "end_value": 6470.0,
+      "absolute_change": -123.0,
+      "relative_change_pct": -1.8656150462611862
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 8.4,
+      "end_value": 9.7,
+      "absolute_change": 1.299999999999999,
+      "relative_change_pct": 15.476190476190462
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 74.1,
+      "end_value": 74.5,
+      "absolute_change": 0.4000000000000057,
+      "relative_change_pct": 0.5398110661268632
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 23.8,
+      "end_value": 24.6,
+      "absolute_change": 0.8000000000000007,
+      "relative_change_pct": 3.3613445378151288
+    }
+  }
+}

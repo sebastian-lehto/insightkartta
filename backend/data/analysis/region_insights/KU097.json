@@ -1,0 +1,112 @@
+{
+  "region": {
+    "code": "KU097",
+    "name": "Hirvensalmi"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 350,
+      "votes_previous": 280,
+      "vote_change": 70,
+      "vote_share_latest": 35.0,
+      "vote_share_previous": 25.8,
+      "vote_share_change_pct": 9.2
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 451,
+      "votes_previous": 442,
+      "vote_change": 9,
+      "vote_share_latest": 45.1,
+      "vote_share_previous": 40.7,
+      "vote_share_change_pct": 4.399999999999999
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 200,
+      "votes_previous": 194,
+      "vote_change": 6,
+      "vote_share_latest": 20.0,
+      "vote_share_previous": 17.9,
+      "vote_share_change_pct": 2.1000000000000014
+    },
+    {
+      "party": "Blue Reform",
+      "votes_latest": 0,
+      "votes_previous": 37,
+      "vote_change": -37,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 3.4,
+      "vote_share_change_pct": -3.4
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 0,
+      "votes_previous": 52,
+      "vote_change": -52,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 4.8,
+      "vote_share_change_pct": -4.8
+    },
+    {
+      "party": "Hirvensalmi-ItsenäinenKuntaLiike yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 81,
+      "vote_change": -81,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 7.5,
+      "vote_share_change_pct": -7.5
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 2131.0,
+      "end_value": 2023.0,
+      "absolute_change": -108.0,
+      "relative_change_pct": -5.068043172219616
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 12.1,
+      "end_value": 12.0,
+      "absolute_change": -0.09999999999999964,
+      "relative_change_pct": -0.8264462809917326
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 67.4,
+      "end_value": 70.1,
+      "absolute_change": 2.6999999999999886,
+      "relative_change_pct": 4.005934718100873
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 21.3,
+      "end_value": 23.2,
+      "absolute_change": 1.8999999999999986,
+      "relative_change_pct": 8.920187793427223
+    }
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "region": {
+    "code": "KU398",
+    "name": "Lahti"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Pro Lahti yhteislista",
+      "votes_latest": 3894,
+      "votes_previous": 0,
+      "vote_change": 3894,
+      "vote_share_latest": 8.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 8.0
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 15389,
+      "votes_previous": 12549,
+      "vote_change": 2840,
+      "vote_share_latest": 31.8,
+      "vote_share_previous": 24.9,
+      "vote_share_change_pct": 6.900000000000002
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 11975,
+      "votes_previous": 10977,
+      "vote_change": 998,
+      "vote_share_latest": 24.8,
+      "vote_share_previous": 21.8,
+      "vote_share_change_pct": 3.0
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 3782,
+      "votes_previous": 2532,
+      "vote_change": 1250,
+      "vote_share_latest": 7.8,
+      "vote_share_previous": 5.0,
+      "vote_share_change_pct": 2.8
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 3300,
+      "votes_previous": 3075,
+      "vote_change": 225,
+      "vote_share_latest": 6.8,
+      "vote_share_previous": 6.1,
+      "vote_share_change_pct": 0.7000000000000002
+    },
+    {
+      "party": "The Liberal Party - Freedom to choose",
+      "votes_latest": 113,
+      "votes_previous": 0,
+      "vote_change": 113,
+      "vote_share_latest": 0.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.2
+    },
+    {
+      "party": "Constituency association Viivi Rantajääskö",
+      "votes_latest": 32,
+      "votes_previous": 0,
+      "vote_change": 32,
+      "vote_share_latest": 0.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.1
+    },
+    {
+      "party": "Constituency association Jani Hietala",
+      "votes_latest": 0,
+      "votes_previous": 6,
+      "vote_change": -6,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Finnish Nation First",
+      "votes_latest": 0,
+      "votes_previous": 44,
+      "vote_change": -44,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.1,
+      "vote_share_change_pct": -0.1
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 3777,
+      "votes_previous": 3994,
+      "vote_change": -217,
+      "vote_share_latest": 7.8,
+      "vote_share_previous": 7.9,
+      "vote_share_change_pct": -0.10000000000000053
+    },
+    {
+      "party": "Kestävän tulevaisuuden Lahti yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 155,
+      "vote_change": -155,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.3,
+      "vote_share_change_pct": -0.3
+    },
+    {
+      "party": "Animal Justice Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 126,
+      "vote_change": -126,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.3,
+      "vote_share_change_pct": -0.3
+    },
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 168,
+      "votes_previous": 355,
+      "vote_change": -187,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.7,
+      "vote_share_change_pct": -0.39999999999999997
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 145,
+      "votes_previous": 399,
+      "vote_change": -254,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.8,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "Asukkaiden Lahti -yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 414,
+      "vote_change": -414,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.8,
+      "vote_share_change_pct": -0.8
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 2157,
+      "votes_previous": 3046,
+      "vote_change": -889,
+      "vote_share_latest": 4.5,
+      "vote_share_previous": 6.0,
+      "vote_share_change_pct": -1.5
+    },
+    {
+      "party": "Pro Lahti -yhteislista",
+      "votes_latest": 0,
+      "votes_previous": 4273,
+      "vote_change": -4273,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 8.5,
+      "vote_share_change_pct": -8.5
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 3643,
+      "votes_previous": 8443,
+      "vote_change": -4800,
+      "vote_share_latest": 7.5,
+      "vote_share_previous": 16.8,
+      "vote_share_change_pct": -9.3
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 120027.0,
+      "end_value": 121832.0,
+      "absolute_change": 1805.0,
+      "relative_change_pct": 1.5038283052979746
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 14.7,
+      "end_value": 16.0,
+      "absolute_change": 1.3000000000000007,
+      "relative_change_pct": 8.843537414965992
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 72.9,
+      "end_value": 73.0,
+      "absolute_change": 0.09999999999999432,
+      "relative_change_pct": 0.1371742112482775
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 29.8,
+      "end_value": 30.8,
+      "absolute_change": 1.0,
+      "relative_change_pct": 3.3557046979865772
+    }
+  }
+}

@@ -1,7 +1,9 @@
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Popup } from "react-leaflet";
 import { useMemo, useEffect, useState } from "react";
+import L from "leaflet";
 
 import MapLegend from "./MapLegend";
+import RegionPopup from "./RegionPopup";
 import { getBins, getColor } from "../utils/mapScale";
 
 
@@ -57,11 +59,22 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
   const onEachFeature = (feature, layer) => {
     
     const regionName = feature.properties.Kunta ?? feature.properties.name_fi;
+    const regionCode = feature.properties.Koodi;
     const value = dataMap[regionName];
 
     layer.bindTooltip(
       `${regionName}: ${value != null ? value : "No data"}${value != null && unit ? ` ${unit}` : ""}`
     );
+    
+    layer.bindPopup(`
+      <div>
+        <strong>${regionName}</strong>
+        <br />
+        <a href="/region/${feature.properties.Koodi}" target="_blank">
+          View insights
+        </a>
+      </div>
+    `);
     
     layer.on({
       click: () => {

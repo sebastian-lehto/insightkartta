@@ -1,0 +1,184 @@
+{
+  "region": {
+    "code": "KU297",
+    "name": "Kuopio"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 11511,
+      "votes_previous": 7854,
+      "vote_change": 3657,
+      "vote_share_latest": 22.9,
+      "vote_share_previous": 16.0,
+      "vote_share_change_pct": 6.899999999999999
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 13609,
+      "votes_previous": 11235,
+      "vote_change": 2374,
+      "vote_share_latest": 27.1,
+      "vote_share_previous": 22.9,
+      "vote_share_change_pct": 4.200000000000003
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 3833,
+      "votes_previous": 3283,
+      "vote_change": 550,
+      "vote_share_latest": 7.6,
+      "vote_share_previous": 6.7,
+      "vote_share_change_pct": 0.8999999999999995
+    },
+    {
+      "party": "The Liberal Party - Freedom to choose",
+      "votes_latest": 129,
+      "votes_previous": 0,
+      "vote_change": 129,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.3
+    },
+    {
+      "party": "Vapauden liitto",
+      "votes_latest": 157,
+      "votes_previous": 0,
+      "vote_change": 157,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.3
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 2271,
+      "votes_previous": 2070,
+      "vote_change": 201,
+      "vote_share_latest": 4.5,
+      "vote_share_previous": 4.2,
+      "vote_share_change_pct": 0.2999999999999998
+    },
+    {
+      "party": "The Communist Party of Finland",
+      "votes_latest": 38,
+      "votes_previous": 60,
+      "vote_change": -22,
+      "vote_share_latest": 0.1,
+      "vote_share_previous": 0.1,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 130,
+      "vote_change": -130,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.3,
+      "vote_share_change_pct": -0.3
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 10049,
+      "votes_previous": 9999,
+      "vote_change": 50,
+      "vote_share_latest": 20.0,
+      "vote_share_previous": 20.4,
+      "vote_share_change_pct": -0.3999999999999986
+    },
+    {
+      "party": "Constituency association Harri Makkonen",
+      "votes_latest": 0,
+      "votes_previous": 183,
+      "vote_change": -183,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.4,
+      "vote_share_change_pct": -0.4
+    },
+    {
+      "party": "Crystal Party",
+      "votes_latest": 0,
+      "votes_previous": 223,
+      "vote_change": -223,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 6018,
+      "votes_previous": 6523,
+      "vote_change": -505,
+      "vote_share_latest": 12.0,
+      "vote_share_previous": 13.3,
+      "vote_share_change_pct": -1.3000000000000007
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 0,
+      "votes_previous": 941,
+      "vote_change": -941,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.9,
+      "vote_share_change_pct": -1.9
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 2691,
+      "votes_previous": 6491,
+      "vote_change": -3800,
+      "vote_share_latest": 5.3,
+      "vote_share_previous": 13.2,
+      "vote_share_change_pct": -7.8999999999999995
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 121543.0,
+      "end_value": 126572.0,
+      "absolute_change": 5029.0,
+      "relative_change_pct": 4.137630303678534
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 10.5,
+      "end_value": 12.4,
+      "absolute_change": 1.9000000000000004,
+      "relative_change_pct": 18.0952380952381
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 79.3,
+      "end_value": 79.6,
+      "absolute_change": 0.29999999999999716,
+      "relative_change_pct": 0.3783102143757846
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 35.0,
+      "end_value": 36.2,
+      "absolute_change": 1.2000000000000028,
+      "relative_change_pct": 3.4285714285714364
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "region": {
+    "code": "KU280",
+    "name": "Korsnäs"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 1045,
+      "votes_previous": 1110,
+      "vote_change": -65,
+      "vote_share_latest": 93.9,
+      "vote_share_previous": 90.0,
+      "vote_share_change_pct": 3.9000000000000057
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 68,
+      "votes_previous": 123,
+      "vote_change": -55,
+      "vote_share_latest": 6.1,
+      "vote_share_previous": 10.0,
+      "vote_share_change_pct": -3.9000000000000004
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 2050.0,
+      "end_value": 1984.0,
+      "absolute_change": -66.0,
+      "relative_change_pct": -3.2195121951219514
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 6.8,
+      "end_value": 7.8,
+      "absolute_change": 1.0,
+      "relative_change_pct": 14.705882352941178
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 70.4,
+      "end_value": 72.2,
+      "absolute_change": 1.7999999999999972,
+      "relative_change_pct": 2.5568181818181777
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 24.9,
+      "end_value": 26.5,
+      "absolute_change": 1.6000000000000014,
+      "relative_change_pct": 6.425702811244986
+    }
+  }
+}

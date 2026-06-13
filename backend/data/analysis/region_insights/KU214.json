@@ -1,0 +1,148 @@
+{
+  "region": {
+    "code": "KU214",
+    "name": "Kankaanpää"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1996,
+      "votes_previous": 1765,
+      "vote_change": 231,
+      "vote_share_latest": 35.1,
+      "vote_share_previous": 28.3,
+      "vote_share_change_pct": 6.800000000000001
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 1235,
+      "votes_previous": 952,
+      "vote_change": 283,
+      "vote_share_latest": 21.7,
+      "vote_share_previous": 15.3,
+      "vote_share_change_pct": 6.399999999999999
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 181,
+      "votes_previous": 172,
+      "vote_change": 9,
+      "vote_share_latest": 3.2,
+      "vote_share_previous": 2.8,
+      "vote_share_change_pct": 0.40000000000000036
+    },
+    {
+      "party": "Vapauden liitto",
+      "votes_latest": 12,
+      "votes_previous": 0,
+      "vote_change": 12,
+      "vote_share_latest": 0.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.2
+    },
+    {
+      "party": "The Liberal Party - Freedom to choose",
+      "votes_latest": 6,
+      "votes_previous": 0,
+      "vote_change": 6,
+      "vote_share_latest": 0.1,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.1
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 619,
+      "votes_previous": 678,
+      "vote_change": -59,
+      "vote_share_latest": 10.9,
+      "vote_share_previous": 10.9,
+      "vote_share_change_pct": 0.0
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 196,
+      "votes_previous": 267,
+      "vote_change": -71,
+      "vote_share_latest": 3.5,
+      "vote_share_previous": 4.3,
+      "vote_share_change_pct": -0.7999999999999998
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 273,
+      "votes_previous": 349,
+      "vote_change": -76,
+      "vote_share_latest": 4.8,
+      "vote_share_previous": 5.6,
+      "vote_share_change_pct": -0.7999999999999998
+    },
+    {
+      "party": "Constituency association Janne Katajamäki",
+      "votes_latest": 0,
+      "votes_previous": 62,
+      "vote_change": -62,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.0,
+      "vote_share_change_pct": -1.0
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 1161,
+      "votes_previous": 1991,
+      "vote_change": -830,
+      "vote_share_latest": 20.4,
+      "vote_share_previous": 31.9,
+      "vote_share_change_pct": -11.5
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 12662.0,
+      "end_value": 12508.0,
+      "absolute_change": -154.0,
+      "relative_change_pct": -1.2162375612067604
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 10.1,
+      "end_value": 13.0,
+      "absolute_change": 2.9000000000000004,
+      "relative_change_pct": 28.712871287128717
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 69.7,
+      "end_value": 70.4,
+      "absolute_change": 0.7000000000000028,
+      "relative_change_pct": 1.0043041606886698
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 22.1,
+      "end_value": 22.9,
+      "absolute_change": 0.7999999999999972,
+      "relative_change_pct": 3.6199095022624306
+    }
+  }
+}

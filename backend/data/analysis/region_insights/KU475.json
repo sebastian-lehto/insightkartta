@@ -1,0 +1,121 @@
+{
+  "region": {
+    "code": "KU475",
+    "name": "Maalahti"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Swedish People's Party of Finland",
+      "votes_latest": 2177,
+      "votes_previous": 2232,
+      "vote_change": -55,
+      "vote_share_latest": 79.3,
+      "vote_share_previous": 75.5,
+      "vote_share_change_pct": 3.799999999999997
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 82,
+      "votes_previous": 46,
+      "vote_change": 36,
+      "vote_share_latest": 3.0,
+      "vote_share_previous": 1.6,
+      "vote_share_change_pct": 1.4
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 22,
+      "votes_previous": 16,
+      "vote_change": 6,
+      "vote_share_latest": 0.8,
+      "vote_share_previous": 0.5,
+      "vote_share_change_pct": 0.30000000000000004
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 9,
+      "votes_previous": 0,
+      "vote_change": 9,
+      "vote_share_latest": 0.3,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.3
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 20,
+      "votes_previous": 47,
+      "vote_change": -27,
+      "vote_share_latest": 0.7,
+      "vote_share_previous": 1.6,
+      "vote_share_change_pct": -0.9000000000000001
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 0,
+      "votes_previous": 51,
+      "vote_change": -51,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 1.7,
+      "vote_share_change_pct": -1.7
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 434,
+      "votes_previous": 564,
+      "vote_change": -130,
+      "vote_share_latest": 15.8,
+      "vote_share_previous": 19.1,
+      "vote_share_change_pct": -3.3000000000000007
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 5487.0,
+      "end_value": 5392.0,
+      "absolute_change": -95.0,
+      "relative_change_pct": -1.7313650446509934
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 3.4,
+      "end_value": 4.6,
+      "absolute_change": 1.1999999999999997,
+      "relative_change_pct": 35.29411764705881
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 73.6,
+      "end_value": 74.3,
+      "absolute_change": 0.7000000000000028,
+      "relative_change_pct": 0.951086956521743
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 29.4,
+      "end_value": 30.8,
+      "absolute_change": 1.4000000000000021,
+      "relative_change_pct": 4.761904761904769
+    }
+  }
+}

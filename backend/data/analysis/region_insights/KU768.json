@@ -1,0 +1,112 @@
+{
+  "region": {
+    "code": "KU768",
+    "name": "Sulkava"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 41,
+      "votes_previous": 23,
+      "vote_change": 18,
+      "vote_share_latest": 3.2,
+      "vote_share_previous": 1.8,
+      "vote_share_change_pct": 1.4000000000000001
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 592,
+      "votes_previous": 573,
+      "vote_change": 19,
+      "vote_share_latest": 45.6,
+      "vote_share_previous": 44.6,
+      "vote_share_change_pct": 1.0
+    },
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 341,
+      "votes_previous": 325,
+      "vote_change": 16,
+      "vote_share_latest": 26.3,
+      "vote_share_previous": 25.3,
+      "vote_share_change_pct": 1.0
+    },
+    {
+      "party": "Vapauden liitto",
+      "votes_latest": 6,
+      "votes_previous": 0,
+      "vote_change": 6,
+      "vote_share_latest": 0.5,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.5
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 259,
+      "votes_previous": 263,
+      "vote_change": -4,
+      "vote_share_latest": 20.0,
+      "vote_share_previous": 20.5,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 59,
+      "votes_previous": 100,
+      "vote_change": -41,
+      "vote_share_latest": 4.5,
+      "vote_share_previous": 7.8,
+      "vote_share_change_pct": -3.3
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 2430.0,
+      "end_value": 2310.0,
+      "absolute_change": -120.0,
+      "relative_change_pct": -4.938271604938271
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 11.7,
+      "end_value": 13.8,
+      "absolute_change": 2.1000000000000014,
+      "relative_change_pct": 17.948717948717963
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 64.7,
+      "end_value": 68.7,
+      "absolute_change": 4.0,
+      "relative_change_pct": 6.182380216383308
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 20.7,
+      "end_value": 23.4,
+      "absolute_change": 2.6999999999999993,
+      "relative_change_pct": 13.043478260869563
+    }
+  }
+}

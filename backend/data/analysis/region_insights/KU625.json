@@ -1,0 +1,94 @@
+{
+  "region": {
+    "code": "KU625",
+    "name": "Pyhäjoki"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 327,
+      "votes_previous": 243,
+      "vote_change": 84,
+      "vote_share_latest": 23.7,
+      "vote_share_previous": 17.1,
+      "vote_share_change_pct": 6.599999999999998
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 144,
+      "votes_previous": 132,
+      "vote_change": 12,
+      "vote_share_latest": 10.4,
+      "vote_share_previous": 9.3,
+      "vote_share_change_pct": 1.0999999999999996
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 789,
+      "votes_previous": 836,
+      "vote_change": -47,
+      "vote_share_latest": 57.3,
+      "vote_share_previous": 58.7,
+      "vote_share_change_pct": -1.4000000000000057
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 118,
+      "votes_previous": 213,
+      "vote_change": -95,
+      "vote_share_latest": 8.6,
+      "vote_share_previous": 15.0,
+      "vote_share_change_pct": -6.4
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 3048.0,
+      "end_value": 2938.0,
+      "absolute_change": -110.0,
+      "relative_change_pct": -3.608923884514436
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 9.2,
+      "end_value": 12.1,
+      "absolute_change": 2.9000000000000004,
+      "relative_change_pct": 31.52173913043479
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 70.8,
+      "end_value": 72.8,
+      "absolute_change": 2.0,
+      "relative_change_pct": 2.824858757062147
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 20.7,
+      "end_value": 22.4,
+      "absolute_change": 1.6999999999999993,
+      "relative_change_pct": 8.212560386473426
+    }
+  }
+}

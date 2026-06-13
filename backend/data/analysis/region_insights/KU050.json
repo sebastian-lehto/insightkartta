@@ -1,0 +1,139 @@
+{
+  "region": {
+    "code": "KU050",
+    "name": "Eura"
+  },
+  "election_summary": {
+    "latest_year": 2025,
+    "previous_year": 2021
+  },
+  "party_changes": [
+    {
+      "party": "The Finnish Social Democratic Party",
+      "votes_latest": 1583,
+      "votes_previous": 1556,
+      "vote_change": 27,
+      "vote_share_latest": 30.5,
+      "vote_share_previous": 28.6,
+      "vote_share_change_pct": 1.8999999999999986
+    },
+    {
+      "party": "Christian Democrats in Finland",
+      "votes_latest": 172,
+      "votes_previous": 124,
+      "vote_change": 48,
+      "vote_share_latest": 3.3,
+      "vote_share_previous": 2.3,
+      "vote_share_change_pct": 1.0
+    },
+    {
+      "party": "The Left Alliance",
+      "votes_latest": 539,
+      "votes_previous": 551,
+      "vote_change": -12,
+      "vote_share_latest": 10.4,
+      "vote_share_previous": 10.1,
+      "vote_share_change_pct": 0.3000000000000007
+    },
+    {
+      "party": "Movement Now",
+      "votes_latest": 10,
+      "votes_previous": 0,
+      "vote_change": 10,
+      "vote_share_latest": 0.2,
+      "vote_share_previous": 0.0,
+      "vote_share_change_pct": 0.2
+    },
+    {
+      "party": "The Finns Party",
+      "votes_latest": 706,
+      "votes_previous": 734,
+      "vote_change": -28,
+      "vote_share_latest": 13.6,
+      "vote_share_previous": 13.5,
+      "vote_share_change_pct": 0.09999999999999964
+    },
+    {
+      "party": "Pirate Party of Finland",
+      "votes_latest": 0,
+      "votes_previous": 7,
+      "vote_change": -7,
+      "vote_share_latest": 0.0,
+      "vote_share_previous": 0.1,
+      "vote_share_change_pct": -0.1
+    },
+    {
+      "party": "The Greens",
+      "votes_latest": 78,
+      "votes_previous": 110,
+      "vote_change": -32,
+      "vote_share_latest": 1.5,
+      "vote_share_previous": 2.0,
+      "vote_share_change_pct": -0.5
+    },
+    {
+      "party": "Centre Party of Finland",
+      "votes_latest": 1240,
+      "votes_previous": 1362,
+      "vote_change": -122,
+      "vote_share_latest": 23.9,
+      "vote_share_previous": 25.1,
+      "vote_share_change_pct": -1.2000000000000028
+    },
+    {
+      "party": "National Coalition Party",
+      "votes_latest": 868,
+      "votes_previous": 988,
+      "vote_change": -120,
+      "vote_share_latest": 16.7,
+      "vote_share_previous": 18.2,
+      "vote_share_change_pct": -1.5
+    }
+  ],
+  "indicators": {
+    "population": {
+      "dataset": "population",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2025,
+      "start_value": 11417.0,
+      "end_value": 11005.0,
+      "absolute_change": -412.0,
+      "relative_change_pct": -3.608653761933958
+    },
+    "unemployment": {
+      "dataset": "unemployment",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 7.3,
+      "end_value": 7.8,
+      "absolute_change": 0.5,
+      "relative_change_pct": 6.8493150684931505
+    },
+    "education_upper_secondary": {
+      "dataset": "education_upper_secondary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 67.6,
+      "end_value": 70.0,
+      "absolute_change": 2.4000000000000057,
+      "relative_change_pct": 3.550295857988174
+    },
+    "education_tertiary": {
+      "dataset": "education_tertiary",
+      "election_start_year": 2021,
+      "election_end_year": 2025,
+      "indicator_start_year": 2021,
+      "indicator_end_year": 2024,
+      "start_value": 22.6,
+      "end_value": 23.6,
+      "absolute_change": 1.0,
+      "relative_change_pct": 4.424778761061947
+    }
+  }
+}
