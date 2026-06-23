@@ -51,6 +51,7 @@ export default function PartyChangeChart({ partyChanges, electionSummary }) {
         >
           <XAxis
             dataKey="party_code"
+            tickFormatter={(code) => code.length > 6 ? code.slice(0, 5) + "…" : code}
             tick={{ fontSize: 13, fill: "var(--text)" }}
             axisLine={false}
             tickLine={false}
@@ -64,7 +65,7 @@ export default function PartyChangeChart({ partyChanges, electionSummary }) {
           />
           <ReferenceLine y={0} stroke="var(--border)" />
           <Tooltip content={<PartyTooltip />} cursor={{ fill: "var(--accent-bg)" }} />
-          <Bar dataKey="vote_share_change_pct" radius={[3, 3, 0, 0]}>
+          <Bar dataKey="vote_share_change_pct" radius={[3, 3, 0, 0]} stroke="none">
             {chartData.map((entry, index) => (
               <Cell
                 key={index}
