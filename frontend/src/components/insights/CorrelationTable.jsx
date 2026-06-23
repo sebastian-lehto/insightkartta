@@ -1,5 +1,3 @@
-import { useRef, useEffect } from "react";
-
 const INDICATOR_LABELS = {
   unemployment: "Unemployment",
   education_upper_secondary: "Upper secondary edu.",
@@ -18,51 +16,6 @@ const CLASSIFICATION_META = {
 };
 
 export default function CorrelationTable({ correlationsData }) {
-  const wrapperRef = useRef(null);
-
-  useEffect(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
-
-    const onWheel = (e) => {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
-    };
-
-    let isDragging = false;
-    let startX = 0;
-    let startScrollLeft = 0;
-
-    const onMouseDown = (e) => {
-      isDragging = true;
-      startX = e.pageX;
-      startScrollLeft = el.scrollLeft;
-      el.classList.add("corr-table-wrapper--dragging");
-    };
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      el.scrollLeft = startScrollLeft - (e.pageX - startX);
-    };
-    const stopDragging = () => {
-      isDragging = false;
-      el.classList.remove("corr-table-wrapper--dragging");
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", stopDragging);
-
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", stopDragging);
-    };
-  }, []);
-
   if (!correlationsData) return null;
 
   const years = Object.keys(correlationsData).sort().reverse();
@@ -93,7 +46,7 @@ export default function CorrelationTable({ correlationsData }) {
         correlations are a valid finding.
       </p>
 
-      <div className="corr-table-wrapper" ref={wrapperRef}>
+      <div className="corr-table-wrapper">
         <table className="corr-table">
           <thead>
             <tr>

@@ -272,52 +272,40 @@ code {
   margin-bottom: 1rem;
 }
 
-.corr-table-wrapper {
-  overflow-x: auto;
-  cursor: grab;
-  user-select: none;
-}
-
-.corr-table-wrapper--dragging {
-  cursor: grabbing;
-}
-
 .corr-table {
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 13px;
-  min-width: 480px;
   width: 100%;
 }
 
 .corr-th {
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.4rem;
   text-align: center;
   font-weight: 600;
   color: var(--text-h);
   border-bottom: 2px solid var(--border);
-  white-space: nowrap;
 }
 
 .corr-th-indicator {
   text-align: left;
-  min-width: 160px;
+  width: 22%;
 }
 
 .corr-td {
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 0.4rem;
   text-align: center;
   border-bottom: 1px solid var(--border);
-  white-space: nowrap;
   font-size: 12px;
   border-radius: 3px;
+  overflow-wrap: break-word;
 }
 
 .corr-td-indicator {
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 0.4rem;
   border-bottom: 1px solid var(--border);
   color: var(--text-h);
   font-weight: 500;
-  white-space: nowrap;
 }
 
 .corr-none       { color: var(--text); }
@@ -376,12 +364,6 @@ code {
   scrollbar-width: none;
   flex: 1;
   min-width: 0;
-  cursor: grab;
-  user-select: none;
-}
-
-.dataset-tabs:active {
-  cursor: grabbing;
 }
 
 .dataset-tabs::-webkit-scrollbar {
