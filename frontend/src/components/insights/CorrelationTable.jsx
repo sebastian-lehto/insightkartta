@@ -15,14 +15,17 @@ const CLASSIFICATION_META = {
   strong_negative:   { label: "strong −",            className: "corr-strong-neg" },
 };
 
-export default function CorrelationTable({ correlationsData }) {
+export default function CorrelationTable({ correlationsData, selectedEndYear }) {
   if (!correlationsData) return null;
 
   const years = Object.keys(correlationsData).sort().reverse();
   if (years.length === 0) return null;
 
-  const latestYear = years[0];
-  const entry = correlationsData[latestYear];
+  const year =
+    selectedEndYear != null && correlationsData[String(selectedEndYear)]
+      ? String(selectedEndYear)
+      : years[0];
+  const entry = correlationsData[year];
   const { election_period, correlations } = entry;
 
   const indicatorKeys = Object.keys(correlations);

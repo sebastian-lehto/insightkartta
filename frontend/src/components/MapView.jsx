@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import { useMemo, useEffect, useState, useRef } from "react";
 
 import MapLegend from "./MapLegend";
@@ -7,8 +7,19 @@ import { getBins, getColor } from "../utils/mapScale";
 const SELECTED_STYLE = { weight: 3, color: "#fff", fillOpacity: 1 };
 const HOVER_STYLE    = { weight: 2.5, color: "#fff", fillOpacity: 1 };
 
-function MapView({ data, year, onRegionSelect, unit, meta }) {
+// Closes any open popup whenever `watch` (the dataset's data array) changes,
+// so switching datasets doesn't leave a stale region popup on screen.
+function PopupCloser({ watch }) {
+  const map = useMap();
+  useEffect(() => {
+    map.closePopup();
+  }, [watch, map]);
+  return null;
+}
+
+function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
   const selectedLayerRef = useRef(null); // { layer, baseStyle }
+  const layersByNameRef = useRef({}); // regionName -> { layer, baseStyle }
 
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
@@ -20,7 +31,26 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
   // Clear selection when GeoJSON remounts
   useEffect(() => {
     selectedLayerRef.current = null;
+    layersByNameRef.current = {};
   }, [year]);
+
+  // Selecting a region elsewhere (e.g. the search bar's map-pin button)
+  // should behave like clicking it directly on the map.
+  useEffect(() => {
+    if (!focusRegion?.name) return;
+    const entry = layersByNameRef.current[focusRegion.name];
+    if (!entry) return;
+
+    const { layer, baseStyle } = entry;
+
+    if (selectedLayerRef.current && selectedLayerRef.current.layer !== layer) {
+      selectedLayerRef.current.layer.setStyle(selectedLayerRef.current.baseStyle);
+    }
+
+    selectedLayerRef.current = { layer, baseStyle };
+    layer.setStyle(SELECTED_STYLE);
+    layer.openPopup();
+  }, [focusRegion]);
 
   const yearData = useMemo(() => {
     return data.filter((d) => d.year === year && d.region !== "SSS");
@@ -53,6 +83,7 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
     const regionCode = feature.properties.Koodi;
     const value = dataMap[regionName];
     const baseStyle = style(feature);
+    layersByNameRef.current[regionName] = { layer, baseStyle };
 
     const valueDisplay =
       value != null ? `${value}${unit ? ` ${unit}` : ""}` : "No data";
@@ -121,6 +152,7 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <PopupCloser watch={data} />
       {geoData && isDataReady && (
         <GeoJSON
           key={year}

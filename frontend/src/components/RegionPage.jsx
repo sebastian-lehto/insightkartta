@@ -12,10 +12,12 @@ export default function RegionPage() {
   const [insight, setInsight] = useState(null);
   const [error, setError] = useState(null);
   const [correlations, setCorrelations] = useState(null);
+  const [periodIndex, setPeriodIndex] = useState(0);
 
   useEffect(() => {
     setInsight(null);
     setError(null);
+    setPeriodIndex(0);
     fetchRegionInsights(regionCode)
       .then((res) => setInsight(res.data))
       .catch(() => setError("Could not load insights for this region."));
@@ -45,26 +47,34 @@ export default function RegionPage() {
     );
   }
 
+  const periods = insight.periods ?? [];
+  const currentPeriod = periods[periodIndex] ?? periods[0];
+
   return (
     <div className="region-page">
       <Link to="/" className="back-link">← Back to map</Link>
 
       <RegionHeader
         region={insight.region}
-        electionSummary={insight.election_summary}
+        periods={periods}
+        selectedIndex={periodIndex}
+        onSelectPeriod={setPeriodIndex}
       />
 
       <IndicatorGrid
-        indicators={insight.indicators}
-        relationships={insight.indicator_relationships}
+        indicators={currentPeriod?.indicators}
+        relationships={currentPeriod?.indicator_relationships}
       />
 
       <PartyChangeChart
-        partyChanges={insight.party_changes}
-        electionSummary={insight.election_summary}
+        partyChanges={currentPeriod?.party_changes}
+        electionSummary={currentPeriod?.election_summary}
       />
 
-      <CorrelationTable correlationsData={correlations} />
+      <CorrelationTable
+        correlationsData={correlations}
+        selectedEndYear={currentPeriod?.election_summary?.latest_year}
+      />
     </div>
   );
 }
