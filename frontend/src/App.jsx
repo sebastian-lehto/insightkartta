@@ -8,6 +8,7 @@ import YearSlider from "./components/YearSlider";
 import MapView from "./components/MapView";
 import InsightsPanel from "./components/InsightsPanel";
 import RegionPage from "./components/RegionPage";
+import RegionSearch from "./components/RegionSearch";
 
 function App() {
   const [datasets, setDatasets] = useState([]);
@@ -55,7 +56,7 @@ function App() {
         const years = datasetData.map((d) => d.year).filter((y) => y != null);
 
         if (years.length > 0) {
-          setYear(Math.min(...years));
+          setYear(Math.max(...years));
         } else {
           setYear(null);
         }
@@ -88,7 +89,7 @@ function App() {
     return [...new Set(data.map((d) => d.region_name).filter(Boolean))];
   }, [data]);
 
-  const chartData = useMemo(() => {
+const chartData = useMemo(() => {
     return data
       .filter((d) => d.region_name === selectedRegion)
       .sort((a, b) => a.year - b.year);
@@ -119,42 +120,50 @@ function App() {
   const isReady = data.length > 0 && year !== null;
 
   const dashboard = (
-    <div style={{ padding: 20 }}>
-      <h1>InsightKartta</h1>
-
-      <DatasetSelector
-        datasets={datasets}
-        selectedDataset={selectedDataset}
-        onChange={setSelectedDataset}
-      />
-
-      <InsightsPanel analysis={analysis} />
-
-      <DataChart
-        data={chartData}
-        title={chartTitle}
-        unit={meta.unit}
-      />
-
-      {isReady && (
-        <YearSlider
-          year={year}
-          minYear={yearBounds.minYear}
-          maxYear={yearBounds.maxYear}
-          onChange={setYear}
+    <div className="dashboard">
+      <nav className="top-bar">
+        <span className="top-bar-brand">InsightKartta</span>
+        <DatasetSelector
+          datasets={datasets}
+          selectedDataset={selectedDataset}
+          onChange={setSelectedDataset}
         />
-      )}
+        <RegionSearch />
+      </nav>
 
-      <h2>Regional Map</h2>
-      {isReady && (
-        <MapView
-          data={data}
-          year={year}
-          onRegionSelect={setSelectedRegion}
-          unit={meta.unit}
-          meta={meta}
-        />
-      )}
+      <div className="dashboard-columns">
+        <div className="dashboard-left">
+          <InsightsPanel analysis={analysis} />
+
+          <DataChart
+            data={chartData}
+            title={chartTitle}
+            unit={meta.unit}
+          />
+        </div>
+
+        <div className="dashboard-right">
+          {isReady && (
+            <>
+              <YearSlider
+                year={year}
+                minYear={yearBounds.minYear}
+                maxYear={yearBounds.maxYear}
+                onChange={setYear}
+              />
+              <div className="map-fill">
+                <MapView
+                  data={data}
+                  year={year}
+                  onRegionSelect={setSelectedRegion}
+                  unit={meta.unit}
+                  meta={meta}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 

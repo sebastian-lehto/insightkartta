@@ -1,84 +1,121 @@
-import { MapContainer, TileLayer, GeoJSON, Popup } from "react-leaflet";
-import { useMemo, useEffect, useState } from "react";
-import L from "leaflet";
+import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { useMemo, useEffect, useState, useRef } from "react";
 
 import MapLegend from "./MapLegend";
-import RegionPopup from "./RegionPopup";
 import { getBins, getColor } from "../utils/mapScale";
 
+const SELECTED_STYLE = { weight: 3, color: "#fff", fillOpacity: 1 };
+const HOVER_STYLE    = { weight: 2.5, color: "#fff", fillOpacity: 1 };
 
 function MapView({ data, year, onRegionSelect, unit, meta }) {
-  // Load GeoJSON
+  const selectedLayerRef = useRef(null); // { layer, baseStyle }
+
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
     fetch("/kunnat.geojson")
-    .then(res => res.json())
-    .then(data => setGeoData(data));
+      .then((res) => res.json())
+      .then((data) => setGeoData(data));
   }, []);
 
-  // Filter data for selected year
+  // Clear selection when GeoJSON remounts
+  useEffect(() => {
+    selectedLayerRef.current = null;
+  }, [year]);
+
   const yearData = useMemo(() => {
-    return data.filter(d => d.year === year && d.region !== "SSS");
+    return data.filter((d) => d.year === year && d.region !== "SSS");
   }, [data, year]);
 
-  // Convert to lookup: region → unemployment
   const dataMap = useMemo(() => {
     const map = {};
-    yearData.forEach(d => {
+    yearData.forEach((d) => {
       map[d.region_name] = d.value;
     });
     return map;
   }, [yearData]);
 
-  // Get bins for color scale
   const bins = useMemo(() => getBins(meta, yearData), [meta, yearData]);
 
   const style = (feature) => {
-    const regionName = feature.properties.Kunta;
-    const value = dataMap[regionName];
-
+    const value = dataMap[feature.properties.Kunta];
     return {
       fillColor: getColor(value, bins),
       weight: 1,
-      color: "white",
-      fillOpacity: 0.7,
+      color: "rgba(255,255,255,0.6)",
+      fillOpacity: 0.78,
     };
   };
 
+  const indicatorLabel = meta?.label ?? "";
+
   const onEachFeature = (feature, layer) => {
-    
     const regionName = feature.properties.Kunta ?? feature.properties.name_fi;
     const regionCode = feature.properties.Koodi;
     const value = dataMap[regionName];
+    const baseStyle = style(feature);
+
+    const valueDisplay =
+      value != null ? `${value}${unit ? ` ${unit}` : ""}` : "No data";
 
     layer.bindTooltip(
-      `${regionName}: ${value != null ? value : "No data"}${value != null && unit ? ` ${unit}` : ""}`
+      `<div class="map-tooltip-inner">
+        <div class="map-tooltip-name">${regionName}</div>
+        <div class="map-tooltip-value">${valueDisplay}</div>
+      </div>`,
+      {
+        className: "map-tooltip",
+        sticky: true,
+        direction: "top",
+        offset: [0, -6],
+      }
     );
-    
-    layer.bindPopup(`
-      <div>
-        <strong>${regionName}</strong>
-        <br />
-        <a href="/region/${feature.properties.Koodi}">
-          View insights
-        </a>
-      </div>
-    `);
-    
+
+    layer.bindPopup(
+      `<div class="map-popup">
+        <div class="map-popup-name">${regionName}</div>
+        <div class="map-popup-stats">
+          <div class="map-popup-value">${valueDisplay}</div>
+          ${indicatorLabel ? `<div class="map-popup-label">${indicatorLabel}</div>` : ""}
+        </div>
+        <a class="map-popup-link" href="/region/${regionCode}">View region insights →</a>
+      </div>`,
+      { maxWidth: 260, offset: [0, -20], autoPanPadding: [10, 60] }
+    );
+
     layer.on({
-      click: () => {
+      mouseover(e) {
+        e.target.setStyle(HOVER_STYLE);
+        e.target.bringToFront();
+      },
+      mouseout(e) {
+        if (selectedLayerRef.current?.layer === e.target) {
+          e.target.setStyle(SELECTED_STYLE);
+        } else {
+          e.target.setStyle(baseStyle);
+        }
+      },
+      click(e) {
+        e.target.closeTooltip();
+
+        if (selectedLayerRef.current && selectedLayerRef.current.layer !== layer) {
+          selectedLayerRef.current.layer.setStyle(selectedLayerRef.current.baseStyle);
+        }
+
+        selectedLayerRef.current = { layer, baseStyle };
+        layer.setStyle(SELECTED_STYLE);
+
         onRegionSelect(regionName);
       },
     });
   };
 
   const isDataReady = yearData.length > 0;
-  
+
   return (
     <MapContainer
       center={[64.5, 26]}
       zoom={5}
-      style={{ height: "500px", width: "100%" }}
+      style={{ height: "100%", width: "100%" }}
     >
       <TileLayer
         attribution="&copy; OpenStreetMap"

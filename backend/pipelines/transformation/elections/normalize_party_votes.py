@@ -229,6 +229,44 @@ class MunicipalElectionPartyParser:
         return float(normalized)
 
 
+_QUOTE_MAP = str.maketrans({
+    "\x91": "'",   # Windows-1252 left single quotation mark
+    "\x92": "'",   # Windows-1252 right single quotation mark / apostrophe
+    "‘": "'", # U+2018 LEFT SINGLE QUOTATION MARK
+    "’": "'", # U+2019 RIGHT SINGLE QUOTATION MARK
+    "ʼ": "'", # U+02BC MODIFIER LETTER APOSTROPHE
+})
+
+
+def _fix_mojibake(text: str) -> str:
+    """Reverse UTF-8→Latin-1 mojibake: encode back to Latin-1, then decode as UTF-8.
+
+    Applies only when the string is actually mojibake. Strings that are already
+    valid UTF-8 will fail the Latin-1 re-encode (ä in U+00E4 is in Latin-1 range,
+    but its Latin-1 byte 0xE4 is not valid standalone UTF-8), so the original
+    string is returned unchanged.
+    """
+    try:
+        return text.encode("latin-1").decode("utf-8")
+    except (UnicodeDecodeError, UnicodeEncodeError):
+        return text
+
+
+def _normalize_quotes(text: str) -> str:
+    """Normalize typographic and Windows-1252 apostrophes to ASCII apostrophe."""
+    return text.translate(_QUOTE_MAP)
+
+
+def fix_party_encoding(df: pd.DataFrame) -> pd.DataFrame:
+    """Fix mojibake and normalize apostrophe variants in party_raw."""
+    before = df["party_raw"].copy()
+    df["party_raw"] = df["party_raw"].apply(_fix_mojibake).apply(_normalize_quotes)
+    fixed_count = (df["party_raw"] != before).sum()
+    if fixed_count:
+        LOGGER.info("Fixed encoding in %s party_raw values", fixed_count)
+    return df
+
+
 def load_manifests(raw_dataset_root: Path) -> list[dict]:
     manifests = []
     for manifest_path in sorted(raw_dataset_root.glob("*/*.manifest.json")):
@@ -379,6 +417,8 @@ def main() -> None:
 
     df = normalize_rows(manifests)
     LOGGER.info("Parsed %s election party rows", len(df))
+
+    df = fix_party_encoding(df)
 
     region_mapping_df = load_region_mapping(args.region_mapping)
 

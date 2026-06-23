@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 const INDICATOR_LABELS = {
   unemployment: "Unemployment",
   education_upper_secondary: "Upper secondary edu.",
@@ -16,6 +18,20 @@ const CLASSIFICATION_META = {
 };
 
 export default function CorrelationTable({ correlationsData }) {
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const onWheel = (e) => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   if (!correlationsData) return null;
 
   const years = Object.keys(correlationsData).sort().reverse();
@@ -46,7 +62,7 @@ export default function CorrelationTable({ correlationsData }) {
         correlations are a valid finding.
       </p>
 
-      <div className="corr-table-wrapper">
+      <div className="corr-table-wrapper" ref={wrapperRef}>
         <table className="corr-table">
           <thead>
             <tr>
