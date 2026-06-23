@@ -113,19 +113,23 @@ Purpose:
 - generate reusable insights from processed datasets
 
 Structure:
-- `GenericAnalysis` in `backend/pipelines/analysis/generic.py`: runs for every StatFin dataset. Filters to the national aggregate row (`region_code == "SSS"`), then computes trend, average, and peak year on the `value` column. Uses the dataset's `metadata.label` for human-readable insight text.
+- `GenericAnalysis` in `backend/pipelines/analysis/generic.py`: runs for every StatFin dataset. Filters to the national aggregate row (`region_code == "SSS"`), then computes trend, average, and peak year on the `value` column. Uses the dataset's `metadata.label` for human-readable insight text. Its output is still produced by `run_analysis.py` and still served in the `analysis` field of `GET /{dataset_name}` — but **the main dashboard frontend no longer reads it** (see "Dashboard insights are computed client-side" below). It is kept because it is still a generic, free output of the config-driven pipeline and may be useful to other consumers later; it is not actively wired into any current UI.
 - Dataset-specific analysis modules: only needed when a dataset genuinely requires logic that `GenericAnalysis` cannot provide.
-- `generate_region_insights.py`: an elections-specific script that produces two outputs:
-  1. Per-municipality JSON files at `backend/data/analysis/region_insights/<region_code>.json` — each containing party change data, raw indicator changes (`indicators`), and indicator-vs-national context (`indicator_relationships`).
-  2. A national-level cross-municipality correlation file at `backend/data/analysis/election_indicator_correlations.json` — Pearson correlation between each indicator's change and each major party's vote share change, across all municipalities.
-- `relationship_calculator.py` in `backend/services/`: computes the data for both new outputs. Key functions:
-  - `compute_indicator_baselines()`: for each indicator, computes the mean and std dev of change across all KU... municipalities (not the SSS national total — see note below).
+- `generate_region_insights.py`: an elections-specific script that derives **every consecutive pair of election years** present in the data (currently `[(2012, 2017), (2017, 2021), (2021, 2025)]`) and produces two outputs covering all of them:
+  1. Per-municipality JSON files at `backend/data/analysis/region_insights/<region_code>.json` — each containing a `periods` array (most recent period first), where every entry has its own `election_summary`, `party_changes`, `indicators`, and `indicator_relationships` for that specific period.
+  2. A national-level cross-municipality correlation file at `backend/data/analysis/election_indicator_correlations.json` — keyed by each period's end year (e.g. `"2017"`, `"2021"`, `"2025"`), each containing the Pearson correlation between that period's indicator change and each major party's vote share change, across all municipalities.
+- `relationship_calculator.py` in `backend/services/`: computes the data for both outputs above, called once per period (baselines and correlations are period-specific, not global). Key functions:
+  - `compute_indicator_baselines()`: for each indicator and a given `(start_year, end_year)` period, computes the mean and std dev of change across all KU... municipalities (not the SSS national total — see note below).
   - `calculate_indicator_relationships()`: per-region comparison against those baselines, producing `relative_to_national` classification (above_average / similar / below_average).
-  - `calculate_national_correlations()`: cross-municipality Pearson r between indicator change and party vote share change for all major parties.
+  - `calculate_national_correlations()`: cross-municipality Pearson r between indicator change and party vote share change for all major parties, for one explicit `(election_year, previous_election_year)` pair.
+- `election_change_calculator.py` in `backend/services/`: `calculate_party_changes(region_df, start_year, end_year)` joins each party's latest-period row to its previous-period row. It joins on **`party_code`**, not `party_raw`/`party_name` — see the data quality note below.
 - Analysis results saved under `backend/data/analysis/`
 
 Important note on national baseline:
 The SSS row (national aggregate) is used for rate-based indicators in `GenericAnalysis`. For the `indicator_relationships` comparison, the baseline is the **mean of KU... municipality changes**, not the SSS row. The SSS row for absolute-count indicators like population represents Finland's total population change, which is not a meaningful per-municipality reference.
+
+Data quality note — join election rows on `party_code`, not `party_raw`:
+The English `party_raw` label for the same party has been re-translated between some election cycles (e.g. "Green League" in 2012/2017 became "The Greens" in 2021/2025), while `party_code` (e.g. `VIHR`) stays stable. `calculate_party_changes` originally joined on `party_raw`, which made every relabeled party look like it went from 0 votes to its full total whenever a comparison period crossed a relabeling boundary. Once period comparisons were extended back to 2012–2017 and 2017–2021, this became visibly wrong and was fixed by joining on `party_code` instead. Do not reintroduce a join on `party_raw`/`party_name`.
 
 `run_analysis.py` reads the dataset list from `datasets.yaml` and runs `GenericAnalysis` for every entry. Adding a new dataset to config automatically produces analysis output without any code changes.
 
@@ -191,14 +195,18 @@ The frontend is built around normalized data and metadata, with two distinct vie
 - List and switch between StatFin datasets
 - Line chart for selected region over time
 - Year slider controlling the map
-- `InsightsPanel`: styled card showing GenericAnalysis text insights (trend + peak sentences) for the current dataset
+- `InsightsPanel`: styled card with a region-name heading and icon-led insight rows. **Computed entirely client-side** by `frontend/src/utils/insights.js`, from whichever region's time series (`chartData`) and dataset (`meta.label`/`meta.unit`) are currently on screen — not from the backend's `GenericAnalysis` output. Insights produced: trend (first→last value), peak, trough, and a comparison against the national figure for the same year (percentage-point difference for `%`-unit datasets, or "share of Finland's total" for absolute-count datasets like population — see the note in section 3.3 about why these two need different wording). This guarantees the panel's numbers can never drift from the chart, which they could when the panel showed precomputed national-only `GenericAnalysis` text regardless of the selected region.
+- `RegionSearch`: typeahead in the top bar. Each result row has two independently clickable parts: a pin-icon button that selects the region on the dashboard (updates the chart/insights and tells `MapView` to style and open the popup for that region, via a `focusRegion` prop — same effect as clicking it on the map), and the rest of the row (text + chevron), which is a normal `<Link>` to that region's full insights page. The dropdown is rendered with a z-index above Leaflet's own panes/controls (which go up to `z-index: 1000`) so it isn't visually clipped by the map.
+- `MapView`: also closes any open Leaflet popup whenever the dataset's `data` changes (a small `PopupCloser` child using `useMap()`), so switching datasets never leaves a stale region popup on screen next to insights that have already reset to national.
 
 ### Region insights page (`/region/:regionCode`)
-Navigated to from the Leaflet map popup (same tab — no `target="_blank"`). Four sections:
-1. **Header**: region name + election period from `election_summary`
-2. **Socioeconomic context** (`IndicatorGrid` + `IndicatorCard`): 4-column responsive grid. Each card merges `indicators` (raw change) and `indicator_relationships` (national context). Shows the data period, absolute change, and a `relative_to_national` badge (above/similar/below) using neutral colours — no red/green judgment since direction is indicator-dependent.
-3. **Party vote shifts** (`PartyChangeChart`): bar chart of `vote_share_change_pct` (percentage points, not raw vote count), green for gains, red for losses, `party_code` on axis, full `party_name` in tooltip.
-4. **National correlations** (`CorrelationTable`): table of Pearson r between indicator changes and party vote share changes across all 292 municipalities. Fetched from `GET /elections/correlations`. Absent silently if endpoint returns 404.
+Navigated to from the Leaflet map popup or `RegionSearch` (same tab — no `target="_blank"`). The API returns **all available election periods** for the region in one response (`insight.periods`, most recent first); the page keeps a `periodIndex` state and re-derives every section below from `periods[periodIndex]` client-side — there is no per-period API call.
+
+Four sections:
+1. **Header** (`RegionHeader`): region name, plus a prominent period switcher — one pill per available period (currently 2012→2017, 2017→2021, 2021→2025), the active one filled solid in the accent colour. This is the page's explicit "what am I looking at" affordance; clicking a pill re-renders everything below for that period.
+2. **Socioeconomic context** (`IndicatorGrid` + `IndicatorCard`): 4-column responsive grid. Each card merges the selected period's `indicators` (raw change) and `indicator_relationships` (national context). Shows the data period, absolute change, and a `relative_to_national` badge (above/similar/below) using neutral colours — no red/green judgment since direction is indicator-dependent.
+3. **Party vote shifts** (`PartyChangeChart`): bar chart of the selected period's `vote_share_change_pct` (percentage points, not raw vote count), green for gains, red for losses, `party_code` on axis, full `party_name` in tooltip.
+4. **National correlations** (`CorrelationTable`): table of Pearson r between indicator changes and party vote share changes across all 292 municipalities, for the selected period. Fetched once from `GET /elections/correlations` (which now returns all periods, keyed by end year); the component picks the entry matching the page's selected period (`selectedEndYear` prop), falling back to the latest available if that period isn't present. Absent silently if the endpoint returns 404.
 
 Important frontend principles:
 - use `value` instead of dataset-specific metric names
@@ -378,6 +386,7 @@ The following areas are known to be sensitive:
 - transformation errors when config is incomplete
 - frontend breakage if metadata is missing or inconsistent
 - the elections pipeline is entirely outside the config-driven flow and requires manual execution of multiple scripts in sequence
+- `frontend/src/components/RegionPopup.jsx` and `RegionSelector.jsx` are orphaned — not imported anywhere. `RegionPopup.jsx` even links to a nonexistent `/municipality/:code` route (the real route is `/region/:regionCode`, handled inline by `MapView`'s Leaflet popup HTML and `RegionSearch`'s `<Link>`, not by either of these components). Do not assume they are part of the current architecture; they are candidates for deletion, not examples to extend.
 
 ---
 
@@ -405,8 +414,9 @@ InsightKartta is a config-driven analytics platform with:
 
 - reusable ingestion and generic transformation for StatFin datasets
 - a generic analysis engine that produces output for every configured dataset
-- a parallel elections pipeline that handles HTML scraping and party-level data
+- a parallel elections pipeline that handles HTML scraping and party-level data, now comparing every available consecutive election period rather than only the latest
 - a generic API with proper error handling
 - metadata-driven frontend rendering with a consistent colour scale
+- dashboard insights computed client-side from whatever is currently on screen, so they cannot drift from the chart they sit next to
 
 That direction should be preserved. New StatFin datasets should strengthen the config-driven pattern. The elections pipeline is a known explicit exception.

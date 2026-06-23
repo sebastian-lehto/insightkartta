@@ -41,11 +41,11 @@ Implemented and operational:
 
 - HTML scraper for vaalit.fi election results (2012, 2017, 2021, 2025)
 - Party-level vote share normalization to processed CSV
-- Per-municipality insight JSON generation covering:
-  - party vote share changes between elections
-  - StatFin indicator changes over each election period
+- Per-municipality insight JSON generation, covering **every consecutive election period** (2012→2017, 2017→2021, 2021→2025), each with:
+  - party vote share changes between that period's two elections
+  - StatFin indicator changes over that election period
   - indicator-vs-national comparison (above / similar / below average) using mean of municipalities as the reference
-- National-level Pearson correlation between indicator changes and party vote share changes across all 292 municipalities
+- National-level Pearson correlation between indicator changes and party vote share changes across all 292 municipalities, for every period
 
 ### API
 
@@ -56,19 +56,20 @@ Five endpoints:
 | `GET /health` | Health check |
 | `GET /datasets` | List of all configured datasets with metadata |
 | `GET /{dataset_name}` | Processed data + metadata + GenericAnalysis results |
-| `GET /regions/{region}/insights` | Per-municipality election + indicator insight JSON |
-| `GET /elections/correlations` | National indicator–party vote correlation table |
+| `GET /regions/{region}/insights` | Per-municipality insight JSON covering all available election periods |
+| `GET /elections/correlations` | National indicator–party vote correlation table, keyed by period |
 
 ### Frontend
 
 - Dataset selector and line chart for region-over-time trends
 - Year slider and choropleth map with per-dataset color bins
-- `InsightsPanel`: styled card showing national trend and peak insights for the current dataset
+- Region search with two distinct actions per result: a pin icon selects the region on the dashboard map/chart, while the rest of the row opens its full insights page
+- `InsightsPanel`: styled card computed **client-side** from whichever region/dataset is currently selected (trend, peak, trough, and a national comparison) — so it always matches the chart next to it, instead of always showing the national figures
 - Region insights page (`/region/:regionCode`) with four sections:
-  1. Region name and election period
-  2. Socioeconomic context grid: 4 indicator cards with change + national comparison
-  3. Party vote shift bar chart (vote share change in pp, green/red per bar)
-  4. National correlation table: Pearson r between indicators and party vote shifts
+  1. Region name and an election-period switcher (2012→2017, 2017→2021, 2021→2025), with the active period clearly emphasized
+  2. Socioeconomic context grid: 4 indicator cards with change + national comparison, for the selected period
+  3. Party vote shift bar chart (vote share change in pp, green/red per bar), for the selected period
+  4. National correlation table: Pearson r between indicators and party vote shifts, for the selected period
 
 ---
 
@@ -128,15 +129,19 @@ insightkartta/
 │   │   └── maakunnat.geojson
 │   └── src/
 │       ├── components/
+│       │   ├── InsightsPanel.jsx    ← computed client-side, see utils/insights.js
+│       │   ├── RegionSearch.jsx     ← pin = select on map, row = navigate to region page
+│       │   ├── MapView.jsx
 │       │   ├── insights/
-│       │   │   ├── RegionHeader.jsx
+│       │   │   ├── RegionHeader.jsx     ← now an election-period switcher
 │       │   │   ├── IndicatorGrid.jsx
 │       │   │   ├── IndicatorCard.jsx
 │       │   │   ├── PartyChangeChart.jsx
 │       │   │   └── CorrelationTable.jsx
 │       │   └── ...
 │       ├── utils/
-│       │   └── mapScale.js
+│       │   ├── mapScale.js
+│       │   └── insights.js          ← main-dashboard insight computation
 │       ├── api.js
 │       └── App.jsx
 │
@@ -230,9 +235,9 @@ Adding a dataset to this file automatically gives it ingestion, transformation, 
 
 | File | Produced by | Description |
 |---|---|---|
-| `backend/data/analysis/<dataset>.json` | `make analysis` | GenericAnalysis trend/average/peak for each StatFin dataset |
-| `backend/data/analysis/region_insights/<code>.json` | `make region-insights` | Per-municipality insight JSON with party changes, indicator changes, and national comparisons |
-| `backend/data/analysis/election_indicator_correlations.json` | `make region-insights` | Pearson r between indicator changes and party vote share changes across all municipalities |
+| `backend/data/analysis/<dataset>.json` | `make analysis` | GenericAnalysis trend/average/peak for each StatFin dataset (national only; served via the API but no longer read by the dashboard frontend, which computes its own region-aware insights client-side) |
+| `backend/data/analysis/region_insights/<code>.json` | `make region-insights` | Per-municipality insight JSON — a `periods` array (most recent first), one entry per consecutive election period, each with party changes, indicator changes, and national comparisons |
+| `backend/data/analysis/election_indicator_correlations.json` | `make region-insights` | Pearson r between indicator changes and party vote share changes across all municipalities, keyed by each period's end year |
 
 ---
 
