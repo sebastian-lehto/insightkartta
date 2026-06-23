@@ -357,7 +357,7 @@ def write_processed_dataset(df: pd.DataFrame, output_root: Path, dataset_name: s
     dataset_dir = output_root / dataset_name
     dataset_dir.mkdir(parents=True, exist_ok=True)
     latest_path = dataset_dir / "latest.csv"
-    df.sort_values(["year", "region", "party_code", "party_raw"]).to_csv(latest_path, index=False)
+    df.sort_values(["year", "region_code", "party_code", "party_raw"]).to_csv(latest_path, index=False)
     return latest_path
 
 
@@ -407,6 +407,8 @@ def main() -> None:
     df["value"] = df["votes"]
 
     validate_dataset(df)
+
+    df = df.rename(columns={"region": "region_code"})
 
     output_path = write_processed_dataset(df, args.processed_root, DATASET_NAME)
     LOGGER.info("Wrote processed dataset to %s", output_path)

@@ -8,17 +8,18 @@ Read this before adding or changing datasets, backend pipeline logic, API behavi
 
 ## 1. General rules
 
-1. Preserve the config-driven architecture.
+1. Preserve the config-driven architecture for StatFin datasets.
 2. Prefer generic pipeline steps over dataset-specific code.
 3. Do not introduce one-off hacks into the frontend if the problem belongs in the backend or config.
 4. Keep the frontend generic.
 5. Keep metadata complete and explicit.
 6. Be careful with geography level alignment.
-7. Do not reintroduce outdated assumptions such as parquet-only paths or unemployment-only endpoints.
+7. Do not reintroduce outdated assumptions such as parquet-only paths or single-dataset endpoints.
+8. The elections pipeline is an explicit exception to the config-driven pattern. Treat it as such, not as a model to replicate for future StatFin datasets.
 
 ---
 
-## 2. Before adding a new dataset
+## 2. Before adding a new StatFin dataset
 
 Before implementing a new dataset, verify all of the following:
 
@@ -26,14 +27,14 @@ Before implementing a new dataset, verify all of the following:
 - the PXWeb payload actually works
 - the geography level is understood
 - the metric to normalize into `value` is identified
-- the frontend label and unit are known
-- the map bins are at least initially defined
+- the frontend label and unit are known (no leading space in unit)
+- the map bins are at least initially defined (exactly 5 values)
 
 Do not proceed with a partial dataset definition if these basics are unknown.
 
 ---
 
-## 3. Every dataset entry in `datasets.yaml` must include
+## 3. Every StatFin dataset entry in `datasets.yaml` must include
 
 At minimum:
 
@@ -62,8 +63,8 @@ Even if some are empty.
 Always remember to include:
 
 - `label`
-- `unit`
-- `visualization.map.bins`
+- `unit` — no leading space
+- `visualization.map.bins` — exactly 5 values
 
 Do not omit visualization metadata just because the dataset ingests successfully.
 
@@ -71,7 +72,7 @@ Do not omit visualization metadata just because the dataset ingests successfully
 
 ## 4. Mandatory dataset checklist
 
-When adding a dataset, confirm:
+When adding a StatFin dataset, confirm:
 
 ### Payload
 - the query actually returns the intended data
@@ -88,27 +89,34 @@ When adding a dataset, confirm:
 
 ### Metadata
 - label is human-readable
-- unit is correct
-- bins make sense for the value range
+- unit is correct and has no leading space
+- bins have exactly 5 values that make sense for the value range
+
+### After adding
+- run `run_ingestion.py` to fetch raw data
+- run `run_transformation.py` to produce processed CSV
+- run `run_analysis.py` to produce analysis JSON — this is required for the API `analysis` field to be populated
+- restart the API server (config is cached at startup)
 
 ---
 
 ## 5. Things to remember about transformation
 
-1. New datasets should need as little custom code as possible.
+1. New StatFin datasets should need as little custom code as possible.
 2. If a dataset only needs:
    - `Alue -> region`
    - `Vuosi -> year`
    - one metric rename
    - `year -> int`
-   then do not create a dataset-specific cleaning module unless there is a real need.
+   then do not create a dataset-specific cleaning module.
 3. Prefer the generic config-driven transformation flow.
 4. Keep dataset-specific transformation files only for genuinely unusual cases.
 
 ### Important
-Remember to add the `rename` section and `value_column` section with the right values, so transformation does not fail with new datasets.
+Remember to add the `rename` section and `value_column` section with the right values. This has already caused failures.
 
-This has already caused failures.
+### Elections exception
+The elections pipeline has its own transformation script (`normalize_party_votes.py`) because the input is HTML, not PXWeb JSON. Its output still uses `region_code` as the canonical column name and is stored in the same processed directory convention.
 
 ---
 
@@ -120,15 +128,15 @@ Always remember to add all necessary metadata.
 
 At minimum:
 - `label`
-- `unit`
-- `visualization.map.bins`
+- `unit` — no leading space before the unit string
+- `visualization.map.bins` — exactly 5 values
 
 Without metadata:
 - chart titles become weak or wrong
-- units disappear
+- units disappear or display incorrectly
 - map colors and legend become misleading or useless
 
-This has already caused frontend problems.
+The colour scale uses all 5 bin thresholds to produce 6 colour bands. Fewer than 5 values will silently drop the top band(s).
 
 ---
 
@@ -140,6 +148,8 @@ Always verify:
 - whether the dataset is municipality-level or region-level
 - whether the selected GeoJSON is `kunnat.geojson` or `maakunnat.geojson`
 - whether `region_name` matches GeoJSON property names exactly
+
+The frontend map currently hardcodes `kunnat.geojson` and `feature.properties.Kunta`. If you add a region-level dataset, the map will render incorrectly without additional metadata-driven geography selection.
 
 If the geography does not match:
 - the map may render with no colors
@@ -154,16 +164,18 @@ Do not treat this as a minor detail.
 
 1. The frontend should use `value`, not dataset-specific metric names.
 2. The frontend should use `meta.label` and `meta.unit`.
-3. The frontend should prefer `region_name` over `region` code.
+3. The frontend should prefer `region_name` over `region_code`.
 4. The frontend should not hardcode dataset names.
 5. The frontend should get the dataset list from `/datasets`.
 
-### Map-specific rules
-- do not hardcode unemployment bins
-- use metadata-driven bins
-- keep legend and color scale in sync
-- do not mount Leaflet layers before data is ready
-- if tooltips fail to update, remember that `GeoJSON` may need a changing `key`
+### Map and colour scale rules
+- Do not hardcode bins for any specific dataset.
+- Use `meta.visualization.map.bins` for the colour scale.
+- Both `MapView` and `MapLegend` must use `getColor` from `mapScale.js` with the same `bins` array.
+- There is no `colorScale.js`. Do not create a second colour utility.
+- Keep legend and colour scale in sync by using the same function and same bins.
+- Do not mount Leaflet layers before data is ready.
+- If tooltips fail to update, remember that `GeoJSON` may need a changing `key`.
 
 ---
 
@@ -171,9 +183,12 @@ Do not treat this as a minor detail.
 
 1. The API should be generic.
 2. Do not add old-style dataset-specific endpoints unless absolutely necessary.
-3. Processed data loading should use the current CSV-based structure.
+3. Processed data loading uses the current CSV-based structure.
 4. Do not reintroduce hardcoded parquet assumptions.
 5. Keep service logic generic and dataset-driven.
+6. Unknown dataset names must return HTTP 404, not 500.
+7. Missing region insight files must return HTTP 404, not 500.
+8. Config is cached at startup — restart the server after changing `datasets.yaml`.
 
 ---
 
@@ -186,11 +201,55 @@ Preferred approach:
 - define shared area lists with YAML anchors
 - reuse them with aliases inside `datasets.yaml`
 
-Do not build a custom resolver unless there is a strong future need.
+Do not build a custom resolver.
+
+### `bins` must have exactly 5 values
+The colour scale uses thresholds at indices 0–4. Providing fewer values silently drops the upper colour bands.
 
 ---
 
-## 11. Debugging rules
+## 11. Analysis rules
+
+1. `GenericAnalysis` runs automatically for every dataset in `datasets.yaml`. Do not create a dataset-specific analysis class unless the required logic genuinely differs from trend/average/peak on the national aggregate.
+2. `run_analysis.py` must be run after adding or re-running a dataset to persist analysis results. The API reads from `backend/data/analysis/<dataset>.json` and returns `null` if the file does not exist.
+3. `generate_region_insights.py` is elections-specific. It reads the StatFin indicator list from `datasets.yaml` automatically — no hardcoded paths.
+4. `generate_region_insights.py` produces **two** outputs: per-region JSON files and `election_indicator_correlations.json`. Both are regenerated every time the script runs. Do not treat them as independent — they share the same baselines computation.
+5. `relationship_calculator.py` contains three functions that must stay in sync with each other:
+   - `compute_indicator_baselines()` — call once before the region loop; uses mean of KU... municipalities
+   - `calculate_indicator_relationships()` — call per region with the precomputed baselines
+   - `calculate_national_correlations()` — call once after the region loop
+6. The national baseline for `indicator_relationships` is the **mean of KU... municipality changes**, not the SSS national aggregate. Do not change this to use the SSS row — for absolute-count indicators like population, the SSS row is the national total and renders the comparison meaningless.
+7. The `GET /elections/correlations` API endpoint returns 404 if `election_indicator_correlations.json` does not exist. This is the correct behaviour — it is not an error in the API, it means `make region-insights` has not been run yet.
+
+---
+
+## 12. Elections pipeline rules
+
+The elections pipeline is a custom path that runs independently of the StatFin config-driven flow:
+
+1. Run `fetch_municipal_elections.py` to scrape HTML.
+2. Run `normalize_party_votes.py` to produce processed CSV.
+3. Run `generate_region_insights.py` to produce:
+   - 292 per-municipality JSON files in `backend/data/analysis/region_insights/`
+   - `backend/data/analysis/election_indicator_correlations.json`
+
+None of these are called by `run_ingestion.py`, `run_transformation.py`, or `run_analysis.py`. That is intentional.
+
+The elections processed CSV uses `region_code` as the canonical column name, matching the StatFin convention.
+
+Do not use the elections pipeline as a model for adding new StatFin datasets.
+
+### Frontend rules for election insights
+
+- Use `vote_share_change_pct` for all party comparisons, never `vote_change` (raw count).
+- Display `party_code` as the axis label and `party_name` in tooltips — full Finnish party names are too long for axis labels.
+- The `indicator_relationships` section of a region JSON provides the national context (above/below/similar). Use neutral colour coding — do not assign good/bad colours to direction, because the same direction has opposite implications depending on the indicator.
+- The `CorrelationTable` component fetches from `GET /elections/correlations` independently and fails silently with `null` if the endpoint is not available. Do not make it a blocking dependency for the rest of the region page.
+- The map popup link to the region page must not use `target="_blank"`. It should open in the same tab so the back-link in `RegionPage` works correctly. The back-link must use React Router `<Link>`, not `<a href>`, to avoid a full page reload.
+
+---
+
+## 13. Debugging rules
 
 When something fails, check in this order:
 
@@ -201,27 +260,34 @@ When something fails, check in this order:
 5. Does `value_column` exist after renaming?
 6. Is `region_mapping.csv` complete enough?
 7. Does `region_name` match the GeoJSON?
-8. Does metadata include bins and units?
+8. Does metadata include `bins` with exactly 5 values and a correct `unit` (no leading space)?
 9. Is the frontend using `value` and `meta`, not old dataset-specific fields?
+10. Was `run_analysis.py` run after the last transformation? (API `analysis` is `null` if the JSON file is missing.)
+11. Was the server restarted after changing `datasets.yaml`? (Config is cached at startup.)
+12. Was `make region-insights` run after changing `relationship_calculator.py`? (Both per-region JSONs and `election_indicator_correlations.json` must be regenerated.)
+13. Does `GET /elections/correlations` return 404? If so, run `make region-insights` — the file has not been generated yet. This is not an API bug.
+14. Is the `indicator_relationships` national reference using the mean of municipalities? If it looks wrong for population (every region "below average"), the SSS row has crept back in — `compute_indicator_baselines` must use `mean_municipal_change`, not `national_change`.
 
 This order avoids wasting time.
 
 ---
 
-## 12. Things not to forget when resuming later
+## 14. Things not to forget when resuming later
 
 When resuming after a break, explicitly re-check:
 
 - CSV vs parquet assumptions
 - current backend structure
-- whether API routes are generic
+- whether API routes are generic and return 404 correctly
 - whether frontend dataset switching still uses metadata correctly
-- whether new datasets have full transformation and metadata blocks
-- whether map legend/color scale are dataset-aware
+- whether new datasets have full transformation and metadata blocks with 5 bins
+- whether map legend and colour scale both use `mapScale.js`
+- whether `run_analysis.py` was run after the last pipeline run
+- whether geography level is consistent with the GeoJSON loaded by the frontend
 
 ---
 
-## 13. Preferred development direction
+## 15. Preferred development direction
 
 Good direction:
 - more generic
@@ -233,13 +299,15 @@ Good direction:
 Bad direction:
 - hardcoding special cases into the frontend
 - adding custom loaders when YAML can already solve the problem
-- adding dataset-specific cleaning for trivial rename/type tasks
-- skipping metadata because “it works for now”
+- adding dataset-specific analysis or cleaning for trivial rename/type tasks
+- skipping metadata because "it works for now"
 - ignoring geography mismatches
+- adding a second colour utility alongside `mapScale.js`
+- treating the elections pipeline pattern as the default for new datasets
 
 ---
 
-## 14. Final reminder
+## 16. Final reminder
 
 The project should feel like a coherent data platform.
 

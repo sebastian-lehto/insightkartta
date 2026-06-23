@@ -1,14 +1,15 @@
+import json
+import numpy as np
 import pandas as pd
 from pathlib import Path
 
 from backend.pipelines.utils.config_loader import load_config
 from backend.pipelines.analysis.engine import AnalysisEngine
-
-# Import analyses (expand as needed)
-from backend.pipelines.analysis.unemployment.analysis import UnemploymentAnalysis
+from backend.pipelines.analysis.generic import GenericAnalysis
 
 
 PROCESSED_BASE_PATH = Path("backend/data/processed")
+ANALYSIS_BASE_PATH = Path("backend/data/analysis")
 
 
 def load_processed(dataset_name: str) -> pd.DataFrame:
@@ -20,19 +21,21 @@ def load_processed(dataset_name: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
-def get_analyses_for_dataset(dataset_name: str):
-    """
-    Map dataset → analyses.
-    Later this can be made fully dynamic.
-    """
-    if dataset_name == "unemployment":
-        return [UnemploymentAnalysis()]
+class _NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        return super().default(obj)
 
-    # Future datasets:
-    # if dataset_name == "education":
-    #     return [EducationAnalysis()]
 
-    return []
+def save_analysis(dataset_name: str, results: dict) -> None:
+    ANALYSIS_BASE_PATH.mkdir(parents=True, exist_ok=True)
+    path = ANALYSIS_BASE_PATH / f"{dataset_name}.json"
+    with open(path, "w") as f:
+        json.dump(results, f, indent=2, cls=_NumpyEncoder)
+    print(f"💾 Saved analysis to {path}")
 
 
 def main():
@@ -40,24 +43,21 @@ def main():
 
     for dataset in config["datasets"]:
         name = dataset["name"]
+        label = dataset.get("metadata", {}).get("label", name)
 
         try:
             print(f"\n🔍 Running analysis for: {name}")
 
             df = load_processed(name)
 
-            analyses = get_analyses_for_dataset(name)
-
-            if not analyses:
-                print(f"⚠️ No analyses defined for {name}, skipping...")
-                continue
-
-            engine = AnalysisEngine(analyses)
-
+            engine = AnalysisEngine([GenericAnalysis(label=label)])
             results = engine.run(df)
 
-            print(f"✅ Results for {name}:")
-            print(results)
+            save_analysis(name, results)
+
+            for analysis_name, output in results.items():
+                insights = output.get("insights", [])
+                print(f"✅ {name} ({analysis_name}): {len(insights)} insight(s)")
 
         except Exception as e:
             print(f"❌ Failed analysis for {name}: {e}")

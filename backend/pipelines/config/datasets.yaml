@@ -496,7 +496,7 @@ datasets:
 
     metadata:
       label: "Population"
-      unit: " persons"
+      unit: "persons"
       visualization:
         map:
           bins: [5000, 20000, 50000, 100000, 300000]

@@ -21,6 +21,8 @@ def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
         region_df[region_df["year"] == latest_year][
             [
                 "party_raw",
+                "party_name",
+                "party_code",
                 "votes",
                 "vote_share_pct",
             ]
@@ -38,6 +40,8 @@ def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
         region_df[region_df["year"] == previous_year][
             [
                 "party_raw",
+                "party_name",
+                "party_code",
                 "votes",
                 "vote_share_pct",
             ]
@@ -55,6 +59,14 @@ def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
         previous,
         on="party_raw",
         how="outer",
+        suffixes=("_latest", "_previous"),
+    )
+
+    merged["party_name"] = merged["party_name_latest"].fillna(
+        merged["party_name_previous"]
+    )
+    merged["party_code"] = merged["party_code_latest"].fillna(
+        merged["party_code_previous"]
     )
 
     merged["votes_latest"] = merged["votes_latest"].fillna(0)
@@ -84,6 +96,8 @@ def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
         records.append(
             {
                 "party": row["party_raw"],
+                "party_name": row["party_name"],
+                "party_code": row["party_code"],
                 "votes_latest": int(row["votes_latest"]),
                 "votes_previous": int(row["votes_previous"]),
                 "vote_change": int(row["vote_change"]),

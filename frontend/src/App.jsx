@@ -7,7 +7,6 @@ import DataChart from "./components/DataChart";
 import YearSlider from "./components/YearSlider";
 import MapView from "./components/MapView";
 import InsightsPanel from "./components/InsightsPanel";
-import MunicipalityPage from "./components/RegionPage";
 import RegionPage from "./components/RegionPage";
 
 function App() {

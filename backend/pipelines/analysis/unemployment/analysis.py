@@ -10,11 +10,9 @@ class UnemploymentAnalysis(BaseAnalysis):
     def run(self, df: pd.DataFrame) -> Dict[str, Any]:
         df = df.sort_values("year")
 
-        metric = "unemployment_rate"
-
-        trend = compute_trend(df, metric)
-        avg = compute_average(df, metric)
-        peak_year, peak_value = find_peak_year(df, metric, "year")
+        trend = compute_trend(df, "value")
+        avg = compute_average(df, "value")
+        peak_year, peak_value = find_peak_year(df, "value", "year")
 
         return {
             "metrics": {
