@@ -1,22 +1,37 @@
 import IndicatorCard from "./IndicatorCard";
 
-export default function IndicatorGrid({
-  indicators,
-}) {
+const INDICATOR_ORDER = [
+  "unemployment",
+  "education_upper_secondary",
+  "education_tertiary",
+  "population",
+];
+
+export default function IndicatorGrid({ indicators = {}, relationships = {} }) {
+  const allKeys = [
+    ...new Set([
+      ...INDICATOR_ORDER.filter(
+        (k) => k in indicators || k in relationships
+      ),
+      ...Object.keys(indicators).filter((k) => !INDICATOR_ORDER.includes(k)),
+    ]),
+  ];
+
+  if (allKeys.length === 0) return null;
+
   return (
-    <div className="indicator-grid">
-      {Object.entries(indicators).map(
-        ([name, data]) => (
+    <section className="insight-section">
+      <h2>Socioeconomic context</h2>
+      <div className="indicator-grid">
+        {allKeys.map((name) => (
           <IndicatorCard
             key={name}
-            title={name}
-            absoluteChange={data.absolute_change}
-            relativeChangePct={
-              data.relative_change_pct
-            }
+            name={name}
+            indicatorData={indicators[name]}
+            relationshipData={relationships[name]}
           />
-        )
-      )}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 }

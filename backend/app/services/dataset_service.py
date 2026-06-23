@@ -2,6 +2,7 @@ import pandas as pd
 import yaml
 import json
 from pathlib import Path
+from functools import lru_cache
 
 from backend.pipelines.analysis.engine import AnalysisEngine
 from backend.app.utils.serialization import clean_dict
@@ -12,6 +13,7 @@ PROCESSED_BASE = Path("backend/data/processed")
 ANALYSIS_BASE = Path("backend/data/analysis")
 
 
+@lru_cache(maxsize=1)
 def load_config():
     with open(CONFIG_PATH) as f:
         return yaml.safe_load(f)
@@ -19,7 +21,10 @@ def load_config():
 
 def get_dataset_config(name):
     config = load_config()
-    return next(d for d in config["datasets"] if d["name"] == name)
+    match = next((d for d in config["datasets"] if d["name"] == name), None)
+    if match is None:
+        raise KeyError(f"Dataset '{name}' not found")
+    return match
 
 
 def list_datasets():

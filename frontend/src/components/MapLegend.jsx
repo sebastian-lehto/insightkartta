@@ -1,14 +1,15 @@
-import { getColor } from "../utils/colorScale";
+import { getColor } from "../utils/mapScale";
 
 function MapLegend({ bins, unit }) {
+  const u = unit || "";
   const legendItems = [
-    { label: `> ${bins[4]}${unit || '%'}`, value: 16 },
-    { label: `${bins[3]} – ${bins[4]}${unit || '%'}`, value: 12 },
-    { label: `${bins[2]} – ${bins[3]}${unit || '%'}`, value: 9 },
-    { label: `${bins[1]} – ${bins[2]}${unit || '%'}`, value: 7 },
-    { label: `${bins[0]} – ${bins[1]}${unit || '%'}`, value: 5 },
-    { label: `< ${bins[0]}${unit || '%'}`, value: 2 },
-    { label: "No data", value: null },
+    { label: `> ${bins[4]}${u}`,              value: bins[4] + 1 },
+    { label: `${bins[3]} – ${bins[4]}${u}`,   value: bins[3] + (bins[4] - bins[3]) / 2 },
+    { label: `${bins[2]} – ${bins[3]}${u}`,   value: bins[2] + (bins[3] - bins[2]) / 2 },
+    { label: `${bins[1]} – ${bins[2]}${u}`,   value: bins[1] + (bins[2] - bins[1]) / 2 },
+    { label: `${bins[0]} – ${bins[1]}${u}`,   value: bins[0] + (bins[1] - bins[0]) / 2 },
+    { label: `< ${bins[0]}${u}`,              value: bins[0] - 1 },
+    { label: "No data",                        value: null },
   ];
 
   return (
@@ -19,7 +20,7 @@ function MapLegend({ bins, unit }) {
           <span
             style={{
               ...styles.colorBox,
-              backgroundColor: getColor(item.value),
+              backgroundColor: getColor(item.value, bins),
             }}
           />
           <span>{item.label}</span>

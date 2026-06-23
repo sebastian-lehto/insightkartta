@@ -37,7 +37,14 @@ def calculate_indicator_change(
     if region_df.empty:
         return None
 
-    if region_df[["region", "year"]].duplicated().any():
+    if "region" in region_df.columns:
+        duplicate_index = ["region", "year"]
+    elif "region_code" in region_df.columns:
+        duplicate_index = ["region_code", "year"]
+    else:
+        duplicate_index = ["year"]
+
+    if region_df[duplicate_index].duplicated().any():
         raise ValueError(
             f"{dataset_name} contains duplicate region-year rows"
         )

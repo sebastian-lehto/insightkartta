@@ -33,17 +33,6 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
   // Get bins for color scale
   const bins = useMemo(() => getBins(meta, yearData), [meta, yearData]);
 
-  // Color scale
-  const getColor = (value, bins) => {
-    if (value == null) return "#ccc";
-    if (value > bins[4]) return "#800026";
-    if (value > bins[3]) return "#BD0026";
-    if (value > bins[2]) return "#E31A1C";
-    if (value > bins[1]) return "#FC4E2A";
-    if (value > bins[0]) return "#FD8D3C";
-    return "#FEB24C";
-  };
-
   const style = (feature) => {
     const regionName = feature.properties.Kunta;
     const value = dataMap[regionName];
@@ -70,7 +59,7 @@ function MapView({ data, year, onRegionSelect, unit, meta }) {
       <div>
         <strong>${regionName}</strong>
         <br />
-        <a href="/region/${feature.properties.Koodi}" target="_blank">
+        <a href="/region/${feature.properties.Koodi}">
           View insights
         </a>
       </div>

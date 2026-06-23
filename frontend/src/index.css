@@ -109,3 +109,223 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ─── Main dashboard insights panel ─────────────────────── */
+
+.insights-panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.insights-panel-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.insights-panel-text {
+  font-size: 15px;
+  color: var(--text-h);
+  line-height: 1.55;
+  margin-bottom: 0.25rem;
+}
+
+/* ─── Region insights page ───────────────────────────────── */
+
+.region-page {
+  padding: 2rem;
+  text-align: left;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+
+.back-link:hover {
+  color: var(--text-h);
+}
+
+.region-header {
+  margin-bottom: 2rem;
+}
+
+.region-header h1 {
+  margin: 0 0 0.25rem;
+}
+
+.region-header-subtitle {
+  font-size: 15px;
+  color: var(--text);
+  margin: 0;
+}
+
+.insight-section {
+  margin-bottom: 2.5rem;
+}
+
+.insight-section h2 {
+  margin-bottom: 1rem;
+}
+
+/* ─── Indicator grid ─────────────────────────────────────── */
+
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.indicator-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--bg);
+}
+
+.indicator-card--no-data {
+  opacity: 0.5;
+}
+
+.indicator-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.indicator-card-period {
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.indicator-card-divider {
+  border-top: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+.indicator-card-change {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 0.4rem;
+}
+
+.indicator-card-vs-national {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.indicator-card-national-value {
+  color: var(--text);
+}
+
+.indicator-card-no-data {
+  font-size: 13px;
+  color: var(--text);
+  font-style: italic;
+}
+
+/* ─── Chart tooltip ──────────────────────────────────────── */
+
+.chart-tooltip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.chart-tooltip-title {
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 2px;
+}
+
+/* ─── Correlation table ──────────────────────────────────── */
+
+.corr-description {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.corr-table-wrapper {
+  overflow-x: auto;
+}
+
+.corr-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 480px;
+  width: 100%;
+}
+
+.corr-th {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-h);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.corr-th-indicator {
+  text-align: left;
+  min-width: 160px;
+}
+
+.corr-td {
+  padding: 0.45rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+.corr-td-indicator {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-h);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.corr-none       { color: var(--text); }
+.corr-weak-pos   { color: #15803d; background: #f0fdf4; }
+.corr-weak-neg   { color: #b91c1c; background: #fef2f2; }
+.corr-mod-pos    { color: #14532d; background: #dcfce7; font-weight: 600; }
+.corr-mod-neg    { color: #7f1d1d; background: #fee2e2; font-weight: 600; }
+.corr-strong-pos { color: #052e16; background: #bbf7d0; font-weight: 700; }
+.corr-strong-neg { color: #450a0a; background: #fecaca; font-weight: 700; }
+
+@media (prefers-color-scheme: dark) {
+  .corr-weak-pos   { color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+  .corr-weak-neg   { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+  .corr-mod-pos    { color: #86efac; background: rgba(134, 239, 172, 0.15); }
+  .corr-mod-neg    { color: #fca5a5; background: rgba(252, 165, 165, 0.15); }
+  .corr-strong-pos { color: #bbf7d0; background: rgba(187, 247, 208, 0.2); }
+  .corr-strong-neg { color: #fecaca; background: rgba(254, 202, 202, 0.2); }
+}
+
+.corr-note {
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 0.5rem;
+}

@@ -1,20 +1,17 @@
 function InsightsPanel({ analysis }) {
   if (!analysis) return null;
 
-  const analysisEntries = Object.entries(analysis);
+  const insights = Object.values(analysis).flatMap(
+    (result) => result.insights ?? []
+  );
 
-  if (analysisEntries.length === 0) return null;
+  if (insights.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: "2rem" }}>
-      <h2>Insights</h2>
-
-      {analysisEntries.map(([analysisName, analysisResult]) => (
-        <div key={analysisName} style={{ marginBottom: "1rem" }}>
-          {analysisResult.insights?.map((insight, index) => (
-            <p key={`${analysisName}-${index}`}>{insight}</p>
-          ))}
-        </div>
+    <div className="insights-panel">
+      <div className="insights-panel-label">National trend</div>
+      {insights.map((text, i) => (
+        <p key={i} className="insights-panel-text">{text}</p>
       ))}
     </div>
   );

@@ -15,21 +15,23 @@ export function getBins(meta, data) {
 
   if (min === max) return [min];
 
-  const step = (max - min) / 5;
+  const step = (max - min) / 6;
   return [
     min + step,
     min + step * 2,
     min + step * 3,
     min + step * 4,
+    min + step * 5,
   ];
 }
 
 export function getColor(value, bins) {
   if (value == null) return "#ccc";
-  if (bins.length === 1) return "#FEB24C";
-  if (value > bins[3]) return "#800026";
-  if (value > bins[2]) return "#BD0026";
-  if (value > bins[1]) return "#E31A1C";
-  if (value > bins[0]) return "#FC4E2A";
+  if (bins.length < 2) return "#FEB24C";
+  if (value > bins[4]) return "#800026";
+  if (value > bins[3]) return "#BD0026";
+  if (value > bins[2]) return "#E31A1C";
+  if (value > bins[1]) return "#FC4E2A";
+  if (value > bins[0]) return "#FD8D3C";
   return "#FEB24C";
 }
