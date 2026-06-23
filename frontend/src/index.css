@@ -274,6 +274,12 @@ code {
 
 .corr-table-wrapper {
   overflow-x: auto;
+  cursor: grab;
+  user-select: none;
+}
+
+.corr-table-wrapper--dragging {
+  cursor: grabbing;
 }
 
 .corr-table {

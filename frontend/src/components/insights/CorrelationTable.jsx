@@ -23,13 +23,44 @@ export default function CorrelationTable({ correlationsData }) {
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
+
     const onWheel = (e) => {
       if (e.deltaY === 0) return;
       e.preventDefault();
       el.scrollLeft += e.deltaY;
     };
+
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const onMouseDown = (e) => {
+      isDragging = true;
+      startX = e.pageX;
+      startScrollLeft = el.scrollLeft;
+      el.classList.add("corr-table-wrapper--dragging");
+    };
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      el.scrollLeft = startScrollLeft - (e.pageX - startX);
+    };
+    const stopDragging = () => {
+      isDragging = false;
+      el.classList.remove("corr-table-wrapper--dragging");
+    };
+
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    el.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", stopDragging);
+
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", stopDragging);
+    };
   }, []);
 
   if (!correlationsData) return null;
