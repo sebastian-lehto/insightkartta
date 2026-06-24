@@ -15,6 +15,10 @@ export default function RegionPage() {
   const [periodIndex, setPeriodIndex] = useState(0);
 
   useEffect(() => {
+    // Resetting loading/error state before the fetch for the new regionCode
+    // is the standard "reset, then fetch" data-fetching effect pattern, not
+    // the cascading-render anti-pattern this rule otherwise targets.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInsight(null);
     setError(null);
     setPeriodIndex(0);
