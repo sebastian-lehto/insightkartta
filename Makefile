@@ -4,7 +4,7 @@
         pipeline pipeline-all elections-pipeline \
         clean-processed clean-analysis clean-insights clean \
         reset reset-all \
-        server frontend \
+        server frontend serve \
         test test-backend test-frontend test-e2e
 
 # Use .venv if it exists, otherwise fall back to python3.exe (Windows Python via
@@ -54,6 +54,7 @@ help:
 	@echo "  Dev servers:"
 	@echo "    make server            start FastAPI with --reload"
 	@echo "    make frontend          start Vite dev server"
+	@echo "    make serve             start FastAPI for production (no --reload, binds \$$PORT)"
 	@echo ""
 	@echo "  Tests:"
 	@echo "    make test              backend + frontend tests"
@@ -137,6 +138,11 @@ server:
 
 frontend:
 	cd frontend && npm run dev
+
+# Production server (used by the Dockerfile): no --reload, binds the port the
+# host platform assigns via $PORT (e.g. Render), falling back to 8000 locally.
+serve:
+	$(PYTHON) -m uvicorn backend.app.main:app --host 0.0.0.0 --port $${PORT:-8000}
 
 # ─── Tests ────────────────────────────────────────────────────────────────────
 

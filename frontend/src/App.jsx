@@ -21,6 +21,13 @@ function App() {
   const [year, setYear] = useState(null);
   const isInitialDatasetLoadRef = useRef(true);
 
+  // The backend free-tier deploy can cold-start (up to ~60s) on the first
+  // request after a period of inactivity, so this can't be treated as a
+  // typical sub-second loading flash — the dashboard needs to show that
+  // something is happening rather than rendering empty panels.
+  const [datasetsLoading, setDatasetsLoading] = useState(true);
+  const [datasetsError, setDatasetsError] = useState(false);
+
   useEffect(() => {
     const loadDatasets = async () => {
       try {
@@ -34,6 +41,9 @@ function App() {
         }
       } catch (error) {
         console.error("Failed to load datasets:", error);
+        setDatasetsError(true);
+      } finally {
+        setDatasetsLoading(false);
       }
     };
 
@@ -143,46 +153,57 @@ function App() {
         <RegionSearch onSelectRegion={handleSelectRegionFromSearch} />
       </nav>
 
-      <div className="dashboard-columns">
-        <div className="dashboard-left">
-          <InsightsPanel
-            regionData={chartData}
-            allData={data}
-            label={meta.label ?? selectedDataset}
-            unit={meta.unit}
-            regionName={selectedRegion}
-          />
-
-          <DataChart
-            data={chartData}
-            title={chartTitle}
-            unit={meta.unit}
-          />
+      {datasetsLoading ? (
+        <div className="dashboard-status">
+          <div className="dashboard-status-spinner" aria-hidden="true" />
+          <p>Waking up the server… this can take up to a minute on the first request.</p>
         </div>
+      ) : datasetsError ? (
+        <div className="dashboard-status">
+          <p>Couldn't reach the server. Please try refreshing in a moment.</p>
+        </div>
+      ) : (
+        <div className="dashboard-columns">
+          <div className="dashboard-left">
+            <InsightsPanel
+              regionData={chartData}
+              allData={data}
+              label={meta.label ?? selectedDataset}
+              unit={meta.unit}
+              regionName={selectedRegion}
+            />
 
-        <div className="dashboard-right">
-          {isReady && (
-            <>
-              <YearSlider
-                year={year}
-                minYear={yearBounds.minYear}
-                maxYear={yearBounds.maxYear}
-                onChange={setYear}
-              />
-              <div className="map-fill">
-                <MapView
-                  data={data}
+            <DataChart
+              data={chartData}
+              title={chartTitle}
+              unit={meta.unit}
+            />
+          </div>
+
+          <div className="dashboard-right">
+            {isReady && (
+              <>
+                <YearSlider
                   year={year}
-                  onRegionSelect={setSelectedRegion}
-                  unit={meta.unit}
-                  meta={meta}
-                  focusRegion={focusRegion}
+                  minYear={yearBounds.minYear}
+                  maxYear={yearBounds.maxYear}
+                  onChange={setYear}
                 />
-              </div>
-            </>
-          )}
+                <div className="map-fill">
+                  <MapView
+                    data={data}
+                    year={year}
+                    onRegionSelect={setSelectedRegion}
+                    unit={meta.unit}
+                    meta={meta}
+                    focusRegion={focusRegion}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 
