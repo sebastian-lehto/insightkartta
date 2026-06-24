@@ -3,20 +3,27 @@ from __future__ import annotations
 import pandas as pd
 
 
-def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
+def calculate_party_changes(
+    region_df: pd.DataFrame,
+    start_year: int,
+    end_year: int,
+) -> list[dict]:
     """
-    Calculate party-level election changes between the two latest
-    elections available for a municipality.
+    Calculate party-level election changes between two specific
+    elections for a municipality.
     """
 
-    years = sorted(region_df["year"].unique())
+    available_years = set(region_df["year"].unique())
 
-    if len(years) < 2:
+    if start_year not in available_years or end_year not in available_years:
         return []
 
-    latest_year = years[-1]
-    previous_year = years[-2]
+    latest_year = end_year
+    previous_year = start_year
 
+    # Joined on party_code rather than party_raw/party_name: the same party's
+    # English label has been re-translated between some election cycles (e.g.
+    # "Green League" -> "The Greens"), while party_code stays stable.
     latest = (
         region_df[region_df["year"] == latest_year][
             [
@@ -57,16 +64,16 @@ def calculate_party_changes(region_df: pd.DataFrame) -> list[dict]:
 
     merged = latest.merge(
         previous,
-        on="party_raw",
+        on="party_code",
         how="outer",
         suffixes=("_latest", "_previous"),
     )
 
+    merged["party_raw"] = merged["party_raw_latest"].fillna(
+        merged["party_raw_previous"]
+    )
     merged["party_name"] = merged["party_name_latest"].fillna(
         merged["party_name_previous"]
-    )
-    merged["party_code"] = merged["party_code_latest"].fillna(
-        merged["party_code_previous"]
     )
 
     merged["votes_latest"] = merged["votes_latest"].fillna(0)

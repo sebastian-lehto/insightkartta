@@ -1,7 +1,54 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function RegionSearch() {
+function SearchIcon() {
+  return (
+    <svg
+      className="region-search-icon"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden="true"
+    >
+      <circle cx="6.5" cy="6.5" r="4.5" />
+      <path d="M11 11l2.5 2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg
+      className="region-search-item-icon"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      aria-hidden="true"
+    >
+      <path d="M8 14s5-4.3 5-8.2A5 5 0 003 5.8C3 9.7 8 14 8 14z" strokeLinejoin="round" />
+      <circle cx="8" cy="5.8" r="1.6" />
+    </svg>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg
+      className="region-search-chevron"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden="true"
+    >
+      <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function RegionSearch({ onSelectRegion }) {
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -47,6 +94,20 @@ function RegionSearch() {
     setActiveIdx(0);
   };
 
+  const closeDropdown = () => {
+    setQuery("");
+    setOpen(false);
+  };
+
+  // The pin only ever pre-selects the region on the dashboard map/chart —
+  // it never navigates, unlike the rest of the row.
+  const handlePinClick = (e, name) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onSelectRegion?.(name);
+    closeDropdown();
+  };
+
   const handleKeyDown = (e) => {
     if (!open || filtered.length === 0) return;
     if (e.key === "ArrowDown") {
@@ -56,6 +117,9 @@ function RegionSearch() {
       e.preventDefault();
       setActiveIdx((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter" && filtered[activeIdx]) {
+      e.preventDefault();
+      // Enter always goes to the region's full insights page, same as
+      // clicking the name/code part of the row.
       wrapperRef.current
         ?.querySelector(".region-search-item--active .region-search-link")
         ?.click();
@@ -65,25 +129,10 @@ function RegionSearch() {
     }
   };
 
-  const handleSelect = () => {
-    setQuery("");
-    setOpen(false);
-  };
-
   return (
     <div className="region-search" ref={wrapperRef}>
       <div className="region-search-field">
-        <svg
-          className="region-search-icon"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          aria-hidden="true"
-        >
-          <circle cx="6.5" cy="6.5" r="4.5" />
-          <path d="M11 11l2.5 2.5" strokeLinecap="round" />
-        </svg>
+        <SearchIcon />
         <input
           ref={inputRef}
           className="region-search-input"
@@ -104,13 +153,24 @@ function RegionSearch() {
               className={`region-search-item${i === activeIdx ? " region-search-item--active" : ""}`}
               onMouseEnter={() => setActiveIdx(i)}
             >
+              <button
+                type="button"
+                className="region-search-pin"
+                title={`Show ${r.name} on the map`}
+                aria-label={`Show ${r.name} on the map`}
+                onClick={(e) => handlePinClick(e, r.name)}
+              >
+                <PinIcon />
+              </button>
               <Link
                 to={`/region/${r.code}`}
                 className="region-search-link"
-                onClick={handleSelect}
+                title={`View insights for ${r.name}`}
+                onClick={closeDropdown}
               >
                 <span className="region-search-name">{r.name}</span>
                 <span className="region-search-code">{r.code}</span>
+                <ChevronIcon />
               </Link>
             </li>
           ))}

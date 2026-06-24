@@ -77,20 +77,20 @@ def load_indicator_datasets() -> dict[str, pd.DataFrame]:
     return datasets
 
 
-def build_region_insight(
+def build_region_insight_period(
     region_df: pd.DataFrame,
     indicator_frames: dict[str, pd.DataFrame],
     baselines: dict[str, dict],
+    start_year: int,
+    end_year: int,
 ) -> dict:
     region_code = str(region_df["region_code"].iloc[0])
-    region_name = str(region_df["region_name"].iloc[0])
 
-    years = sorted(region_df["year"].unique())
-
-    latest_year = int(years[-1])
-    previous_year = int(years[-2]) if len(years) >= 2 else None
-
-    party_changes = calculate_party_changes(region_df)
+    party_changes = calculate_party_changes(
+        region_df,
+        start_year=start_year,
+        end_year=end_year,
+    )
 
     indicators: dict[str, dict] = {}
 
@@ -102,8 +102,8 @@ def build_region_insight(
         change = calculate_indicator_change(
             dataset_name=dataset_name,
             region_df=municipality_df,
-            start_year=previous_year,
-            end_year=latest_year,
+            start_year=start_year,
+            end_year=end_year,
         )
 
         if change is not None:
@@ -112,17 +112,43 @@ def build_region_insight(
     indicator_relationships = calculate_indicator_relationships(indicators, baselines)
 
     return {
-        "region": {
-            "code": region_code,
-            "name": region_name,
-        },
         "election_summary": {
-            "latest_year": latest_year,
-            "previous_year": previous_year,
+            "latest_year": end_year,
+            "previous_year": start_year,
         },
         "party_changes": party_changes,
         "indicators": indicators,
         "indicator_relationships": indicator_relationships,
+    }
+
+
+def build_region_insight(
+    region_df: pd.DataFrame,
+    indicator_frames: dict[str, pd.DataFrame],
+    baselines_by_period: dict[tuple[int, int], dict],
+    periods: list[tuple[int, int]],
+) -> dict:
+    region_code = str(region_df["region_code"].iloc[0])
+    region_name = str(region_df["region_name"].iloc[0])
+
+    # Most recent period first, since that's what region pages default to.
+    period_insights = [
+        build_region_insight_period(
+            region_df,
+            indicator_frames,
+            baselines_by_period[(start_year, end_year)],
+            start_year,
+            end_year,
+        )
+        for start_year, end_year in reversed(periods)
+    ]
+
+    return {
+        "region": {
+            "code": region_code,
+            "name": region_name,
+        },
+        "periods": period_insights,
     }
 
 
@@ -149,25 +175,11 @@ def write_region_insight(
     )
 
 
-def write_national_correlations(
-    correlations: dict,
-    election_year: int,
-    previous_election_year: int,
-) -> None:
-    output = {
-        str(election_year): {
-            "election_period": {
-                "start": previous_election_year,
-                "end": election_year,
-            },
-            "correlations": correlations,
-        }
-    }
-
+def write_national_correlations(correlations_by_year: dict) -> None:
     ANALYSIS_BASE.mkdir(parents=True, exist_ok=True)
     path = ANALYSIS_BASE / "election_indicator_correlations.json"
     path.write_text(
-        json.dumps(output, ensure_ascii=False, indent=2),
+        json.dumps(correlations_by_year, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     LOGGER.info("Written national correlations to %s", path)
@@ -201,17 +213,25 @@ def main() -> None:
             f"Election dataset missing required columns: {sorted(missing)}"
         )
 
-    election_years = sorted(df["year"].unique())
-    latest_year = int(election_years[-1])
-    previous_year = int(election_years[-2]) if len(election_years) >= 2 else None
+    election_years = [int(y) for y in sorted(df["year"].unique())]
+    periods = list(zip(election_years[:-1], election_years[1:]))
+
+    if not periods:
+        LOGGER.warning("Not enough election years to compute any period comparisons")
+        return
+
+    LOGGER.info("Comparing election periods: %s", periods)
 
     indicator_frames = load_indicator_datasets()
 
-    baselines = compute_indicator_baselines(
-        indicator_frames,
-        start_year=previous_year,
-        end_year=latest_year,
-    )
+    baselines_by_period = {
+        (start_year, end_year): compute_indicator_baselines(
+            indicator_frames,
+            start_year=start_year,
+            end_year=end_year,
+        )
+        for start_year, end_year in periods
+    }
 
     regions = sorted(df["region_code"].unique())
 
@@ -222,7 +242,9 @@ def main() -> None:
 
     for region in regions:
         region_df = df[df["region_code"] == region]
-        insight = build_region_insight(region_df, indicator_frames, baselines)
+        insight = build_region_insight(
+            region_df, indicator_frames, baselines_by_period, periods
+        )
         write_region_insight(insight, args.output_dir)
 
     LOGGER.info(
@@ -230,18 +252,23 @@ def main() -> None:
         len(regions),
     )
 
-    if previous_year is not None:
+    correlations_by_year = {}
+    for start_year, end_year in periods:
         correlations = calculate_national_correlations(
             elections_df=df,
             indicator_frames=indicator_frames,
-            election_year=latest_year,
-            previous_election_year=previous_year,
+            election_year=end_year,
+            previous_election_year=start_year,
         )
-        write_national_correlations(
-            correlations=correlations,
-            election_year=latest_year,
-            previous_election_year=previous_year,
-        )
+        correlations_by_year[str(end_year)] = {
+            "election_period": {
+                "start": start_year,
+                "end": end_year,
+            },
+            "correlations": correlations,
+        }
+
+    write_national_correlations(correlations_by_year)
 
 
 if __name__ == "__main__":

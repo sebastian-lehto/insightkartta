@@ -38,13 +38,13 @@ Two parallel data pipelines feed into a single API and frontend:
 ### Elections pipeline (custom)
 1. `fetch_municipal_elections.py` scrapes HTML from vaalit.fi into `backend/data/raw/municipal_elections_party_votes/<year>/`
 2. `normalize_party_votes.py` parses the HTML into `backend/data/processed/municipal_elections_party_votes/latest.csv`
-3. `generate_region_insights.py` produces two outputs:
-   - `backend/data/analysis/region_insights/<region_code>.json` — per-municipality insight JSON with party changes, raw indicator changes (`indicators`), and indicator-vs-national context (`indicator_relationships`)
-   - `backend/data/analysis/election_indicator_correlations.json` — national-level Pearson correlations between indicator changes and party vote share changes across all municipalities
+3. `generate_region_insights.py` derives every consecutive pair of election years present in the data (currently 2012, 2017, 2021, 2025 → periods `(2012,2017)`, `(2017,2021)`, `(2021,2025)`) and produces two outputs covering **all** of them:
+   - `backend/data/analysis/region_insights/<region_code>.json` — per-municipality insight JSON; now a `{"region": ..., "periods": [...]}` shape where `periods` is an array (most recent first), each entry having its own `election_summary`, `party_changes`, `indicators`, and `indicator_relationships`
+   - `backend/data/analysis/election_indicator_correlations.json` — national-level Pearson correlations, keyed by each period's end year (e.g. `"2017"`, `"2021"`, `"2025"`), not just the latest
 
 ### Shared output
 5. FastAPI serves datasets generically
-6. React frontend renders chart + map + insights using normalized data and metadata
+6. React frontend renders chart + map + insights using normalized data and metadata; the main-dashboard insights and the region page's election-period selection are both computed/derived **client-side** from data the API already returned in one shot (see §4.9 and the region page entry in §5)
 
 ---
 
@@ -101,14 +101,22 @@ frontend/
 
   src/
     components/
+      InsightsPanel.jsx      # main-dashboard insights — computed client-side, see §4.9
+      RegionSearch.jsx       # topbar typeahead; pin icon selects-on-map, rest of row navigates
+      MapView.jsx            # Leaflet map; focusRegion prop + PopupCloser, see §5.7
+      RegionPage.jsx         # /region/:regionCode; owns periodIndex state, see §5.7
+      RegionPopup.jsx        # ORPHANED — not imported anywhere, links to a route that
+                              # doesn't exist (/municipality/:code). Don't extend it.
+      RegionSelector.jsx     # ORPHANED — not imported anywhere, superseded by RegionSearch.
       insights/
-        RegionHeader.jsx     # region name + election period subtitle
+        RegionHeader.jsx     # region name + election-period switcher (pill per period)
         IndicatorGrid.jsx    # 4-column responsive grid, merges indicators + relationships
         IndicatorCard.jsx    # single indicator: human-readable name, period, national context
         PartyChangeChart.jsx # vote_share_change_pct bar chart, green/red bars
         CorrelationTable.jsx # national Pearson r table, fetched from /elections/correlations
     utils/
       mapScale.js            # single canonical colour scale — the only one
+      insights.js            # computes main-dashboard InsightsPanel text, see §4.9
     api.js
     App.jsx
 ```
@@ -148,41 +156,59 @@ The frontend works against a normalized row shape:
 
 ### 4.7 Region insight JSON shape
 
-Each `backend/data/analysis/region_insights/<region_code>.json` file contains:
+Each `backend/data/analysis/region_insights/<region_code>.json` file contains a `periods` array — one entry per consecutive election-year pair available in the data, **most recent first** — instead of a single flat period:
 
 ```json
 {
   "region": { "code": "KU091", "name": "Helsinki" },
-  "election_summary": { "latest_year": 2025, "previous_year": 2021 },
-  "party_changes": [ ... ],
-  "indicators": {
-    "unemployment": {
-      "election_start_year": 2021, "election_end_year": 2025,
-      "indicator_start_year": 2021, "indicator_end_year": 2024,
-      "start_value": 11.0, "end_value": 12.3,
-      "absolute_change": 1.3, "relative_change_pct": 11.8
-    }
-  },
-  "indicator_relationships": {
-    "unemployment": {
-      "election_period": { "start": 2021, "end": 2025 },
-      "regional_absolute_change": 1.3,
-      "national_absolute_change": 1.5,
-      "deviation_from_national": -0.2,
-      "relative_to_national": "similar",
-      "data_status": "complete"
-    }
-  }
+  "periods": [
+    {
+      "election_summary": { "latest_year": 2025, "previous_year": 2021 },
+      "party_changes": [ ... ],
+      "indicators": {
+        "unemployment": {
+          "election_start_year": 2021, "election_end_year": 2025,
+          "indicator_start_year": 2021, "indicator_end_year": 2024,
+          "start_value": 11.0, "end_value": 12.3,
+          "absolute_change": 1.3, "relative_change_pct": 11.8
+        }
+      },
+      "indicator_relationships": {
+        "unemployment": {
+          "election_period": { "start": 2021, "end": 2025 },
+          "regional_absolute_change": 1.3,
+          "national_absolute_change": 1.5,
+          "deviation_from_national": -0.2,
+          "relative_to_national": "similar",
+          "data_status": "complete"
+        }
+      }
+    },
+    { "election_summary": { "latest_year": 2021, "previous_year": 2017 }, "...": "..." },
+    { "election_summary": { "latest_year": 2017, "previous_year": 2012 }, "...": "..." }
+  ]
 }
 ```
 
-`indicators` contains the raw change data from `indicator_change_calculator.py`. `indicator_relationships` adds national context from `relationship_calculator.py`. Both sections are needed — do not remove either.
+`indicators` contains the raw change data from `indicator_change_calculator.py`. `indicator_relationships` adds national context from `relationship_calculator.py`. Both sections are needed — do not remove either, and both are now computed **per period** (baselines are no longer computed once globally; `compute_indicator_baselines` is called once per `(start_year, end_year)` pair in `generate_region_insights.py`'s `main()`).
 
 The `national_absolute_change` in `indicator_relationships` is the **mean of KU... municipality changes**, not the SSS national total. The SSS row for population is Finland's total population change (~104k), which makes every municipality look "below average". Mean-of-municipalities is the correct reference for per-municipality comparison across all indicator types.
 
+The API (`get_region_insights` in `insight_service.py`) does not take a period parameter — it just reads and returns the whole file, `periods` array and all. **Period selection happens entirely client-side** in `RegionPage.jsx` via a `periodIndex` state (defaults to `0`, i.e. most recent).
+
 ### 4.8 National correlations file
 
-`backend/data/analysis/election_indicator_correlations.json` is produced by `generate_region_insights.py` and served by `GET /elections/correlations`. It contains Pearson r between each indicator's change and each major party's vote share change across all municipalities, keyed by election year. Returns 404 from the API if the file has not been generated yet.
+`backend/data/analysis/election_indicator_correlations.json` is produced by `generate_region_insights.py` and served by `GET /elections/correlations`. It now contains **one entry per period**, keyed by that period's end year — e.g. `{"2017": {...}, "2021": {...}, "2025": {...}}` — not just the latest. `CorrelationTable.jsx` accepts a `selectedEndYear` prop and looks up `correlationsData[String(selectedEndYear)]`, falling back to the most recent key if that period isn't present (e.g. before the data has loaded). Returns 404 from the API if the file has not been generated yet.
+
+### 4.9 Dashboard insights are computed client-side, not from `GenericAnalysis`
+
+`InsightsPanel.jsx` (main dashboard) used to render the precomputed `analysis` field from `GET /{dataset_name}` (`GenericAnalysis`'s trend/peak text). That data is **always national** (`region_code == "SSS"`), but the dashboard chart shows whatever region the user has selected — so the panel's peak/trend numbers would silently disagree with the chart whenever a non-national region was selected. This was a real reported bug.
+
+Fixed by deleting that dependency: `InsightsPanel` now takes `regionData` (= the same `chartData` the chart renders), `allData` (the full unfiltered dataset, for the national-comparison insight), `label`, `unit`, and `regionName`, and computes everything via `computeInsights()` in `frontend/src/utils/insights.js`. This is a deliberate, permanent architectural choice — **do not re-wire `InsightsPanel` back to the backend's `analysis` field**; it must keep deriving from whatever is currently rendered so the two can never disagree.
+
+`computeInsights()` returns structured `{ type, direction?, text }` objects (not bare strings) so `InsightsPanel.jsx` can pick a per-type icon (trend arrow, peak/trough chevron, share/compare icon) without re-deriving meaning from text. It branches on `unit`: for `"%"` datasets it compares the region's value to the national rate as a percentage-point difference ("X points above/below the national rate"); for absolute-count datasets like population it instead computes the region's value as a **share of the national total** ("region's N accounted for X% of Finland's total"), because the national row for a count dataset is a sum, not an average, and a subtraction-based comparison there is meaningless (a real bug caught while building this — the first version said "Helsinki was 4,958,489 persons below the national average," which doesn't mean anything for a population total).
+
+`GenericAnalysis`'s output is still generated and still served in the API response — see §3.3 of `ARCHITECTURE.md` — it simply has no current consumer in the frontend.
 
 ### 4.4 CSV for processed data
 Processed storage is CSV. FastAPI and analysis code load from `backend/data/processed/<dataset>/latest.csv`. Do not assume parquet.
@@ -232,6 +258,20 @@ Known fixes:
 
 ### 5.6 Unit string format
 Unit strings in `datasets.yaml` should not have a leading space. The frontend adds its own separator. Example: `unit: "%"` not `unit: " %"`.
+
+### 5.7 RegionSearch has two distinct click targets — keep them split
+
+Each `RegionSearch` dropdown row has a pin-icon button and a text/code/chevron area, and they intentionally do **different things**:
+- the pin button calls `onSelectRegion(name)` (wired in `App.jsx` to update `selectedRegion` *and* a `focusRegion` token), which selects the region on the dashboard map/chart/insights — it never navigates.
+- clicking the rest of the row, or pressing Enter, follows a real `<Link to="/region/:code">` to that region's full insights page.
+
+This split exists because an earlier version made the *entire* row a single click target that only navigated, which made it impossible to just preview a region on the map without leaving the dashboard. If `RegionSearch` is refactored, preserve the split — do not collapse it back into one handler.
+
+`focusRegion` is consumed by `MapView`, which keeps a `layersByNameRef` map of every rendered region's Leaflet layer (populated in `onEachFeature`, reset whenever the GeoJSON remounts on year change). When `focusRegion` changes, `MapView` looks up that layer and applies the same `setStyle(SELECTED_STYLE)` + `layer.openPopup()` a real map click would — so selecting via the search pin behaves like clicking the region directly on the map, including opening its popup. Leaflet's popups default to `autoClose: true`, so opening a new one already closes whatever was open before; no extra cleanup code was needed for that part.
+
+Separately, `MapView` also renders a small `PopupCloser` (using `useMap()`) that calls `map.closePopup()` whenever the dataset's `data` prop changes. This was needed because switching datasets doesn't always remount the map's GeoJSON layer (only changing `year` does, via its `key={year}`), so a popup opened for some region under the old dataset could otherwise stay on screen after switching to a new dataset whose insights have already reset to national — a real reported bug.
+
+The `region-search-dropdown` is rendered with `z-index: 1500` specifically because Leaflet's own panes and controls go up to `z-index: 1000` (`.leaflet-top`/`.leaflet-bottom`, see `leaflet.css`); anything lower gets visually clipped under the map.
 
 ---
 
@@ -305,14 +345,14 @@ Lesson from implementation: PXWeb payloads for education required explicit `Tied
 Fully operational. Analysis runs via `GenericAnalysis`. Unit is `"persons"` (no leading space).
 
 ### 8.4 Municipal elections
-Fully operational but uses a custom pipeline entirely outside `datasets.yaml`. Scripts run in this order:
+Fully operational but uses a custom pipeline entirely outside `datasets.yaml`. Covers four election years (2012, 2017, 2021, 2025), compared as three consecutive periods. Scripts run in this order:
 1. `fetch_municipal_elections.py` — scrapes HTML
 2. `normalize_party_votes.py` — parses HTML into processed CSV with `region_code` column
-3. `generate_region_insights.py` — produces two outputs:
-   - 292 per-municipality JSONs in `backend/data/analysis/region_insights/`
-   - `backend/data/analysis/election_indicator_correlations.json`
+3. `generate_region_insights.py` — derives all consecutive election-year pairs from the data and produces two outputs covering every period:
+   - 292 per-municipality JSONs in `backend/data/analysis/region_insights/`, each with a `periods` array (see §4.7)
+   - `backend/data/analysis/election_indicator_correlations.json`, keyed by each period's end year (see §4.8)
 
-`generate_region_insights.py` derives its indicator dataset list from `datasets.yaml` (not hardcoded), so new StatFin datasets are automatically included as indicators and in the correlation analysis.
+`generate_region_insights.py` derives its indicator dataset list from `datasets.yaml` (not hardcoded), so new StatFin datasets are automatically included as indicators and in the correlation analysis. If a fifth election year is scraped in the future, this script needs no changes — it will automatically pick up the new `(2025, 2029)`-style period.
 
 `relationship_calculator.py` in `backend/services/` contains the core logic for both new outputs. It uses the mean of KU... municipality changes as the national baseline (not the SSS row) to ensure the comparison is meaningful for all indicator types including population.
 
@@ -371,6 +411,15 @@ Using `target="_blank"` on the Leaflet popup link causes the region page to open
 ### 10.12 Forgetting that `generate_region_insights.py` produces two outputs
 The script writes both per-region JSONs and `election_indicator_correlations.json`. If you change `relationship_calculator.py`, you must re-run `make region-insights` to regenerate both. The API endpoint `GET /elections/correlations` returns 404 until the file exists.
 
+### 10.13 Joining election-period comparisons on `party_raw` instead of `party_code`
+`calculate_party_changes` originally merged a party's latest-election row to its previous-election row on `party_raw` (the English label). Six major parties have had their English label re-translated between cycles (e.g. "Green League" → "The Greens" for VIHR). Joining on the label made those parties look like they jumped from 0 votes to their full total whenever a compared period crossed a relabeling boundary. `party_code` is stable across all four election years and has zero duplicates within any single region+year — it is the correct join key. Caught only after extending comparisons back to the 2012–2017 and 2017–2021 periods; the 2021–2025 period happened to not cross a relabeling boundary, which is why it went unnoticed for a while.
+
+### 10.14 Letting the main-dashboard InsightsPanel read backend `GenericAnalysis` output
+`GenericAnalysis` only ever computes national (`SSS`) trend/peak. The dashboard chart shows whichever region is selected. Wiring the panel straight to `GET /{dataset_name}`'s `analysis` field means the panel's numbers silently stop matching the chart the moment a non-national region is selected. Fixed by computing the panel's insights client-side from the same `chartData` the chart renders (`frontend/src/utils/insights.js`) — see §4.9. Do not re-wire it back to `analysis`.
+
+### 10.15 Collapsing RegionSearch's pin and link back into one click target
+See §5.7 — the pin (select-on-map) and the rest of the row (navigate to the region page) are deliberately separate controls. A single shared `<Link>`/`<button>` for the whole row was the original (buggy) implementation and made it impossible to preview a region without leaving the dashboard.
+
 ---
 
 ## 11. Important implementation preferences
@@ -401,6 +450,10 @@ If resuming work later, remember to check:
 9. whether `make region-insights` was run after changing `relationship_calculator.py` (needed to regenerate both the per-region JSONs and `election_indicator_correlations.json`)
 10. whether `GET /elections/correlations` returns 404 — if so, run `make region-insights`
 11. whether the `IndicatorCard` national comparison is using `national_absolute_change` from `indicator_relationships` (mean of municipalities) — not the SSS row directly
+12. whether region insight JSONs still use the `periods` array shape (§4.7) — not a flat single-period shape — and whether `RegionPage.jsx`'s `periodIndex` state still threads through to `RegionHeader`, `IndicatorGrid`, `PartyChangeChart`, and `CorrelationTable`'s `selectedEndYear`
+13. whether `calculate_party_changes` still joins on `party_code` (not `party_raw`/`party_name`) — see §10.13
+14. whether `InsightsPanel.jsx` still computes insights client-side via `frontend/src/utils/insights.js` rather than reading the backend's `analysis` field — see §4.9 / §10.14
+15. whether `RegionPopup.jsx` / `RegionSelector.jsx` have finally been deleted (they were already orphaned at the time this note was written) — if still present and still unused, they remain safe to delete
 
 ---
 

@@ -15,9 +15,9 @@ function App() {
   const [selectedDataset, setSelectedDataset] = useState("");
   const [data, setData] = useState([]);
   const [meta, setMeta] = useState({});
-  const [analysis, setAnalysis] = useState(null);
 
   const [selectedRegion, setSelectedRegion] = useState("KOKO MAA");
+  const [focusRegion, setFocusRegion] = useState(null);
   const [year, setYear] = useState(null);
 
   useEffect(() => {
@@ -47,11 +47,9 @@ function App() {
         const res = await fetchDataset(selectedDataset);
         const datasetData = res.data.data ?? [];
         const datasetMeta = res.data.meta ?? {};
-        const datasetAnalysis = res.data.analysis ?? null;
 
         setData(datasetData);
         setMeta(datasetMeta);
-        setAnalysis(datasetAnalysis);
 
         const years = datasetData.map((d) => d.year).filter((y) => y != null);
 
@@ -76,7 +74,6 @@ function App() {
         console.error(`Failed to load dataset '${selectedDataset}':`, error);
         setData([]);
         setMeta({});
-        setAnalysis(null);
         setYear(null);
         setSelectedRegion("");
       }
@@ -112,6 +109,11 @@ const chartData = useMemo(() => {
     };
   }, [data]);
 
+  const handleSelectRegionFromSearch = (name) => {
+    setSelectedRegion(name);
+    setFocusRegion({ name, token: Date.now() });
+  };
+
   const chartTitle =
     selectedRegion === "KOKO MAA"
       ? `${meta.label ?? selectedDataset} - Finland`
@@ -128,12 +130,18 @@ const chartData = useMemo(() => {
           selectedDataset={selectedDataset}
           onChange={setSelectedDataset}
         />
-        <RegionSearch />
+        <RegionSearch onSelectRegion={handleSelectRegionFromSearch} />
       </nav>
 
       <div className="dashboard-columns">
         <div className="dashboard-left">
-          <InsightsPanel analysis={analysis} />
+          <InsightsPanel
+            regionData={chartData}
+            allData={data}
+            label={meta.label ?? selectedDataset}
+            unit={meta.unit}
+            regionName={selectedRegion}
+          />
 
           <DataChart
             data={chartData}
@@ -158,6 +166,7 @@ const chartData = useMemo(() => {
                   onRegionSelect={setSelectedRegion}
                   unit={meta.unit}
                   meta={meta}
+                  focusRegion={focusRegion}
                 />
               </div>
             </>
