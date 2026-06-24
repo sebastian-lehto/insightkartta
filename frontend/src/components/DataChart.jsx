@@ -8,7 +8,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const yFormatter = (v) => {
+export const yFormatter = (v) => {
   if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
   if (v >= 1000) return `${(v / 1000).toFixed(0)}k`;
   return v;

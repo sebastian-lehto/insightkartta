@@ -4,7 +4,8 @@
         pipeline pipeline-all elections-pipeline \
         clean-processed clean-analysis clean-insights clean \
         reset reset-all \
-        server frontend
+        server frontend \
+        test test-backend test-frontend test-e2e
 
 # Use .venv if it exists, otherwise fall back to python3.exe (Windows Python via
 # WSL interop — the environment where project packages are currently installed).
@@ -54,6 +55,12 @@ help:
 	@echo "    make server            start FastAPI with --reload"
 	@echo "    make frontend          start Vite dev server"
 	@echo ""
+	@echo "  Tests:"
+	@echo "    make test              backend + frontend tests"
+	@echo "    make test-backend      pytest (backend/tests/)"
+	@echo "    make test-frontend     vitest (frontend/)"
+	@echo "    make test-e2e          playwright (e2e/)"
+	@echo ""
 	@echo "  Python in use: $(PYTHON)"
 	@echo "  Override:      make pipeline PYTHON=/path/to/python"
 	@echo ""
@@ -63,7 +70,7 @@ help:
 venv:
 	python3 -m venv .venv
 	.venv/bin/pip install --upgrade pip
-	.venv/bin/pip install fastapi uvicorn pyyaml pandas numpy requests beautifulsoup4
+	.venv/bin/pip install -e ".[test]"
 	@echo ""
 	@echo "venv ready. Future 'make' calls will use .venv/bin/python3 automatically."
 	@echo "To activate in your shell: source .venv/bin/activate"
@@ -130,3 +137,16 @@ server:
 
 frontend:
 	cd frontend && npm run dev
+
+# ─── Tests ────────────────────────────────────────────────────────────────────
+
+test-backend:
+	$(PYTHON) -m pytest backend/tests/
+
+test-frontend:
+	cd frontend && npm test
+
+test-e2e:
+	cd frontend && npm run test:e2e
+
+test: test-backend test-frontend

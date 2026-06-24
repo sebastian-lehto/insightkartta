@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { fetchDataset, fetchDatasets } from "./api";
 
@@ -19,6 +19,7 @@ function App() {
   const [selectedRegion, setSelectedRegion] = useState("KOKO MAA");
   const [focusRegion, setFocusRegion] = useState(null);
   const [year, setYear] = useState(null);
+  const isInitialDatasetLoadRef = useRef(true);
 
   useEffect(() => {
     const loadDatasets = async () => {
@@ -42,6 +43,11 @@ function App() {
   useEffect(() => {
     if (!selectedDataset) return;
 
+    // Only the very first dataset load should ever default the region; later
+    // switches always reset to the dataset's default view.
+    const isInitialLoad = isInitialDatasetLoadRef.current;
+    isInitialDatasetLoadRef.current = false;
+
     const loadDataset = async () => {
       try {
         const res = await fetchDataset(selectedDataset);
@@ -62,13 +68,21 @@ function App() {
         const hasWholeFinland = datasetData.some(
           (d) => d.region_name === "KOKO MAA"
         );
+        const defaultRegion = hasWholeFinland
+          ? "KOKO MAA"
+          : datasetData.length > 0
+          ? datasetData[0].region_name
+          : "";
 
-        if (hasWholeFinland) {
-          setSelectedRegion("KOKO MAA");
-        } else if (datasetData.length > 0) {
-          setSelectedRegion(datasetData[0].region_name);
+        if (isInitialLoad) {
+          // The user may have already picked a region (e.g. via the search
+          // pin) while this first load was still in flight — don't clobber
+          // that selection once the request finally resolves.
+          setSelectedRegion((prev) =>
+            datasetData.some((d) => d.region_name === prev) ? prev : defaultRegion
+          );
         } else {
-          setSelectedRegion("");
+          setSelectedRegion(defaultRegion);
         }
       } catch (error) {
         console.error(`Failed to load dataset '${selectedDataset}':`, error);

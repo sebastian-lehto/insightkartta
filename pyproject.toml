@@ -1,7 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "insightkartta"
 version = "0.1.0"
+requires-python = ">=3.10"
 dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pyyaml",
+    "pandas",
+    "numpy",
     "requests",
-    "pyyaml"
+    "beautifulsoup4",
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "httpx",
+]
+
+# backend/ has no __init__.py files and is run via `python -m backend.x` from
+# the repo root, not imported as an installed package — this pyproject.toml
+# exists purely to declare dependencies, not to package the code.
+[tool.setuptools]
+packages = []
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["."]

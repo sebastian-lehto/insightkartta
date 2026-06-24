@@ -280,6 +280,7 @@ When something fails, check in this order:
 15. Do older election periods (2012→2017, 2017→2021) show a major party jumping from 0 votes to its full total, or vice versa? Check whether `calculate_party_changes` is joining on `party_code` (correct) — if it's joining on `party_raw`/`party_name` again, a relabeled party (e.g. VIHR) will look brand new across the relabeling boundary.
 16. Does the main-dashboard `InsightsPanel`'s peak/trend text disagree with the chart right next to it? Check that it's still computing from `regionData`/`allData` via `frontend/src/utils/insights.js`, not reading `GET /{dataset_name}`'s `analysis` field (which is always national).
 17. Does the region page show the wrong correlation table for the selected period, or does the search dropdown render underneath the map? Check `CorrelationTable`'s `selectedEndYear` prop and the `region-search-dropdown` z-index (must stay above Leaflet's `1000`), respectively.
+18. Did a search-pin click on a freshly-loaded dashboard silently do nothing, or get reverted a moment later? Check `App.jsx`'s `isInitialDatasetLoadRef` guard and `MapView.jsx`'s `focusRegion` effect dependencies/`appliedFocusTokenRef` guard (§10.16/§10.17 in `CONTEXT.md`) — both exist specifically to prevent the initial dataset load, or a later dataset switch, from clobbering a region selection made via the search pin.
 
 This order avoids wasting time.
 
@@ -299,6 +300,7 @@ When resuming after a break, explicitly re-check:
 - whether geography level is consistent with the GeoJSON loaded by the frontend
 - whether `generate_region_insights.py` still produces a `periods` array (one entry per consecutive election-year pair) rather than a single flat period, and whether `make region-insights` was re-run after any change to `election_change_calculator.py` or `relationship_calculator.py`
 - whether `RegionPopup.jsx` / `RegionSelector.jsx` are still sitting unused in `frontend/src/components/` — safe to delete, not part of the current architecture
+- whether `make test` / `make test-e2e` still pass before considering any change to `relationship_calculator.py`, `election_change_calculator.py`, `insights.js`, `mapScale.js`, `RegionSearch.jsx`, `App.jsx`, or `MapView.jsx` complete
 
 ---
 
@@ -334,3 +336,17 @@ Before merging any change, ask:
 - does this make adding the next dataset easier or harder?
 
 If it makes the next dataset harder, it is probably the wrong change.
+
+---
+
+## 17. Testing rules
+
+1. Run tests with `make test-backend` (pytest), `make test-frontend` (vitest), `make test-e2e` (playwright), or `make test` for backend+frontend together.
+2. Backend tests must run against `backend/tests/fixtures/`, never real `backend/data/`. Use the `api_client` fixture in `conftest.py` (it monkeypatches every service's path constants and clears `load_config`'s `@lru_cache`) rather than hitting the real data directory or skipping cache-clearing.
+3. Test dependencies (`pytest`, `pytest-cov`, `httpx`) live in `pyproject.toml`'s `[project.optional-dependencies].test` group. `pyproject.toml` is the real backend dependency manifest — `make venv` installs from it. Do not reintroduce a hardcoded pip-install line in the Makefile, and do not add a separate `requirements.txt` alongside it.
+4. Frontend component/unit tests are colocated as `*.test.{js,jsx}` next to the file they test. Any new test file that renders JSX must rely on `frontend/src/test/setup.js` (already wired into every test run) rather than re-solving "React is not defined" locally — adding a plain `import React from "react"` to an individual test file does not fix it in this project's toolchain.
+5. Always call `afterEach(cleanup)` for component tests — already handled globally in `frontend/src/test/setup.js`, so don't add a second, file-local cleanup call; if a test file renders the same component twice and a query like `getByLabel` reports "multiple elements," check that the global setup file's `afterEach` hasn't been bypassed (e.g. a different vitest config, or `globals: true` not actually wired up the way you'd expect).
+6. If logic genuinely cannot be unit tested because it's inline inside a Recharts-wrapped component (Recharts doesn't render meaningfully under jsdom), pull it into a small named, exported, behavior-preserving function next to the component (see `DataChart.jsx`'s `yFormatter`, `PartyChangeChart.jsx`'s `sortPartyChanges`/`formatPartyCodeTick`) rather than leaving it untested or attempting to test it through a full Recharts render.
+7. Playwright e2e specs (`frontend/e2e/`) run against the real dev servers and real `backend/data/`, not fixtures — they're meant to catch integration-level and timing bugs that fixture-backed tests can't. `playwright.config.js`'s `webServer` entries shell out to `make server` and `npm run dev`; do not duplicate the Makefile's Python interpreter resolution logic inside the Playwright config.
+8. If an e2e test is flaky and "passes with a short delay added," do not add the delay. That is almost always a real race condition in production code, not a timing quirk in the test — see `CONTEXT.md` §10.16 and §10.17 for two real examples found exactly this way (`App.jsx`'s initial-load region-selection race, `MapView.jsx`'s focusRegion-vs-PopupCloser race). Find and fix the underlying effect/state-update ordering instead.
+9. Do not add Playwright/Selenium-style browser tests assuming a system-installed, version-matched Chrome/driver pair. Playwright bundles its own browser binaries (`npx playwright install`) specifically to avoid that failure mode.

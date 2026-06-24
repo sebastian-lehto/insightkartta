@@ -77,6 +77,14 @@ def load_indicator_datasets() -> dict[str, pd.DataFrame]:
     return datasets
 
 
+def derive_periods(election_years: list[int]) -> list[tuple[int, int]]:
+    """Pair up consecutive election years, e.g. [2012, 2017, 2021, 2025] ->
+    [(2012, 2017), (2017, 2021), (2021, 2025)]. Years must already be sorted
+    ascending and deduplicated.
+    """
+    return list(zip(election_years[:-1], election_years[1:]))
+
+
 def build_region_insight_period(
     region_df: pd.DataFrame,
     indicator_frames: dict[str, pd.DataFrame],
@@ -214,7 +222,7 @@ def main() -> None:
         )
 
     election_years = [int(y) for y in sorted(df["year"].unique())]
-    periods = list(zip(election_years[:-1], election_years[1:]))
+    periods = derive_periods(election_years)
 
     if not periods:
         LOGGER.warning("Not enough election years to compute any period comparisons")

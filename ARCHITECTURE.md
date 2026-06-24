@@ -418,5 +418,22 @@ InsightKartta is a config-driven analytics platform with:
 - a generic API with proper error handling
 - metadata-driven frontend rendering with a consistent colour scale
 - dashboard insights computed client-side from whatever is currently on screen, so they cannot drift from the chart they sit next to
+- automated test coverage at three layers (backend unit/integration, frontend unit/component, end-to-end) targeting the logic that has actually broken before
 
 That direction should be preserved. New StatFin datasets should strengthen the config-driven pattern. The elections pipeline is a known explicit exception.
+
+---
+
+## 14. Testing
+
+Three layers, each chosen to match what's actually risky rather than for blanket coverage:
+
+- **Backend (pytest + httpx, `backend/tests/`)**: pure-function unit tests for `relationship_calculator.py` and `election_change_calculator.py` (the two modules that produced real bugs this project has already had — see §3.3's data-quality notes), plus FastAPI `TestClient` contract tests for all four endpoints against a fixture data tree (`backend/tests/fixtures/`), not real `backend/data/`. `conftest.py` monkeypatches each service's path constants (`dataset_service.CONFIG_PATH`/`PROCESSED_BASE`/`ANALYSIS_BASE`, `insight_service.ANALYSIS_ROOT`/`CORRELATIONS_PATH`) to point at the fixtures and clears `load_config`'s `@lru_cache` before and after, since that cache otherwise leaks state between tests.
+- **Frontend (Vitest + Testing Library, colocated `*.test.{js,jsx}` files)**: pure-function tests for `utils/insights.js` and `utils/mapScale.js`, plus a component test for `RegionSearch`'s pin-vs-row click split (§4's "two distinct parts" behavior) using `@testing-library/user-event` and a `MemoryRouter`. `DataChart.jsx`'s y-axis formatter and `PartyChangeChart.jsx`'s sort/tick-formatting logic were each pulled out into small named, exported functions specifically so they could be unit tested without mounting Recharts (which doesn't render meaningfully under jsdom) — a deliberate, behavior-preserving testability refactor, not a design change.
+- **End-to-end (Playwright, `frontend/e2e/`)**: drives the real Vite + FastAPI dev servers (via `playwright.config.js`'s `webServer`, which reuses `make server`/`npm run dev` rather than duplicating their startup logic) against whatever data is actually in `backend/data/`. Covers three golden paths: the search pin/row split, a map popup opening via the search pin and closing when the dataset switches, and the region page's period switcher updating every section together.
+
+The e2e layer caught two real bugs during implementation, both fixed in production code (not worked around in the tests):
+- `App.jsx`'s initial dataset-load effect unconditionally reset `selectedRegion` to the dataset's default once the request resolved — so picking a region via the search pin while that first load was still in flight got silently clobbered back to national. Fixed with a ref that only protects the *first* load.
+- `MapView.jsx`'s `focusRegion` effect only ran once per focus request, so using the search pin before the map had finished mounting found nothing in `layersByNameRef` and silently did nothing. Fixed by also depending on `data`/`year`/`geoData` so it retries — but that alone introduced a second bug (re-opening a popup on every subsequent dataset switch, fighting `PopupCloser`), fixed by an `appliedFocusTokenRef` guard so a given focus request is only ever applied once.
+
+See `INSTRUCTIONS.md` §17 for testing rules and `CONTEXT.md` §10.16–10.18 for the full writeups of both bugs.

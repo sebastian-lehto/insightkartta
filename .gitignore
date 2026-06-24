@@ -49,9 +49,16 @@ npm-debug.log*
 .coverage
 htmlcov/
 
+# Frontend test/coverage output (vitest --coverage, playwright)
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
+
 # ── OS / editor noise ─────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+*Zone.Identifier*
 *.suo
 *.sln
 *.sw?

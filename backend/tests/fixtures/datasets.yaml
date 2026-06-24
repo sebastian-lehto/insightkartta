@@ -1,0 +1,26 @@
+datasets:
+  - name: unemployment
+    source: statfi
+    endpoint: fake/unemployment.px
+    payload:
+      query: []
+      response:
+        format: json-stat2
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+      rename:
+        unemployment_rate: value
+      types:
+        year: int
+      value_column: value
+      filters: []
+      join:
+        region_mapping: true
+    metadata:
+      label: "Unemployment Rate"
+      unit: "%"
+      visualization:
+        map:
+          bins: [4, 6, 8, 10, 15]

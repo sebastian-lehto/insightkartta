@@ -62,6 +62,14 @@ backend/
       serialization.py
     main.py
 
+  tests/
+    conftest.py              # monkeypatches data-path constants to fixtures/, clears load_config cache
+    fixtures/                # tiny hand-built datasets.yaml + processed/analysis JSON, tracked in git
+    test_election_change_calculator.py
+    test_relationship_calculator.py
+    test_generate_region_insights.py
+    test_api.py
+
   data/                      # reference data committed to git
     region_mapping.csv       # maps KU/MK codes to names — tracked in git
     party_mapping.csv        # maps party_raw to canonical names — tracked in git
@@ -117,8 +125,11 @@ frontend/
     utils/
       mapScale.js            # single canonical colour scale — the only one
       insights.js            # computes main-dashboard InsightsPanel text, see §4.9
-    api.js
-    App.jsx
+    test/
+      setup.js               # jest-dom matchers + RTL cleanup + React global, see §13
+
+  e2e/                       # Playwright specs — run against the real dev servers
+  playwright.config.js
 ```
 
 ---
@@ -420,6 +431,15 @@ The script writes both per-region JSONs and `election_indicator_correlations.jso
 ### 10.15 Collapsing RegionSearch's pin and link back into one click target
 See §5.7 — the pin (select-on-map) and the rest of the row (navigate to the region page) are deliberately separate controls. A single shared `<Link>`/`<button>` for the whole row was the original (buggy) implementation and made it impossible to preview a region without leaving the dashboard.
 
+### 10.16 App.jsx's initial dataset load clobbering a region picked before it resolved
+`App.jsx`'s dataset-load `useEffect` unconditionally set `selectedRegion` to the dataset's default (`"KOKO MAA"` or the first row) every time the fetch resolved — including the very first load on page mount. If a user (or a fast e2e test against a freshly-started dev server) picked a region via the search pin while that first request was still in flight, the load's completion would silently overwrite it back to national. Found by `frontend/e2e/dashboard-search.spec.js`. Fixed with an `isInitialDatasetLoadRef` ref: only the first load checks whether the current `selectedRegion` is still valid in the new data before defaulting it (via a functional `setSelectedRegion((prev) => ...)`, to read the truly-latest value rather than a stale closure); every subsequent dataset switch keeps resetting to the default as before.
+
+### 10.17 MapView's focusRegion effect needing to retry — and needing to stop retrying once it has
+`MapView`'s `focusRegion` effect (the "search pin acts like a map click" feature, see §5.7) only ran once per focus request and looked up `layersByNameRef`, which is empty until the GeoJSON layer has actually rendered. Using the search pin before the map had finished mounting (the dashboard's `isReady` gate, or `MapView`'s own async `geoData` fetch) found nothing and silently did nothing — found by `frontend/e2e/map-popup.spec.js`. Fixing this by adding `data`/`year`/`geoData` to the effect's dependency array (so it retries once they arrive) introduced a *second* bug: on every later dataset switch, the same effect would re-fire (since `data` changes on every switch) and re-open the popup for whichever region was last focused, fighting `PopupCloser`'s "close the popup when the dataset changes" behavior (§5.7). Fixed with an `appliedFocusTokenRef` that records which `focusRegion.token` has already been successfully applied — the effect still retries while it hasn't found a layer yet, but never re-applies the same token twice. Do not drop this guard if the effect's dependencies are touched again.
+
+### 10.18 Vitest test files leaking DOM into the next test (no `afterEach(cleanup)`)
+This project's `vite.config.js` does not set `test.globals: true`, so Testing Library's automatic cleanup-between-tests (which depends on detecting a global `afterEach`) never engages. Without an explicit `afterEach(cleanup)`, every test after the first in a file renders on top of the previous test's un-unmounted DOM — surfaced as `RegionSearch.test.jsx`'s second test failing with "Found multiple elements with the text of: Search for a region". Fixed once, globally, in `frontend/src/test/setup.js` (`afterEach(() => cleanup())`) rather than per test file.
+
 ---
 
 ## 11. Important implementation preferences
@@ -454,10 +474,26 @@ If resuming work later, remember to check:
 13. whether `calculate_party_changes` still joins on `party_code` (not `party_raw`/`party_name`) — see §10.13
 14. whether `InsightsPanel.jsx` still computes insights client-side via `frontend/src/utils/insights.js` rather than reading the backend's `analysis` field — see §4.9 / §10.14
 15. whether `RegionPopup.jsx` / `RegionSelector.jsx` have finally been deleted (they were already orphaned at the time this note was written) — if still present and still unused, they remain safe to delete
+16. whether `backend/tests/`, `frontend/src/**/*.test.{js,jsx}`, and `frontend/e2e/` still pass (`make test` / `make test-e2e`) after touching `relationship_calculator.py`, `election_change_calculator.py`, `insights.js`, `mapScale.js`, `RegionSearch.jsx`, `App.jsx`, or `MapView.jsx` — these are exactly the files the test suite targets because they've each broken for real before
+17. whether `App.jsx`'s `isInitialDatasetLoadRef` guard and `MapView.jsx`'s `appliedFocusTokenRef` guard are still in place (§10.16/§10.17) — both are easy to lose if those effects' dependency arrays are refactored without re-reading why they're shaped the way they are
 
 ---
 
-## 13. Summary for a future assistant
+## 13. Testing infrastructure
+
+Three layers, picked to match a project with zero pre-existing test infrastructure and a fairly unusual frontend toolchain (Vite 8 + Rolldown + a React Compiler babel preset):
+
+- **Backend**: pytest + `pytest-cov` + `httpx` (the last one only because FastAPI's `TestClient` requires it). Test dependencies live in `pyproject.toml`'s `[project.optional-dependencies].test` group — `pyproject.toml` is now the real dependency manifest; `make venv` installs from it (`pip install -e ".[test]"`) instead of the hardcoded pip-install line it used to have (see §10 fix below). `[tool.pytest.ini_options]` sets `pythonpath = ["."]` so `from backend...` imports resolve regardless of whether pytest is invoked as `pytest` or `python -m pytest` — `backend/` has no `__init__.py` files anywhere, so it only works at all when the repo root is on `sys.path`.
+- **Frontend unit/component**: Vitest (configured inside `vite.config.js`'s `test` key, not a separate config file) + `@testing-library/react` + `@testing-library/user-event` + jsdom. `frontend/src/test/setup.js` does two unrelated, easily-forgotten things: makes `React` a global (see §10.18's sibling issue — JSX in test files compiles to classic `React.createElement` calls under Vitest's transform pipeline even though the app itself uses the automatic runtime; a per-file `import React from "react"` was not enough, something downstream strips it) and calls `afterEach(cleanup)` (see §10.18).
+- **End-to-end**: Playwright, configured via `frontend/playwright.config.js`'s `webServer` array, which boots both dev servers by shelling out to `make server` and `npm run dev` rather than re-implementing their startup logic (so the e2e config never goes stale relative to the Makefile).
+
+Two testability-only refactors were made to support this, both confirmed behavior-preserving, not new logic:
+- `derive_periods()` was pulled out of `generate_region_insights.py`'s `main()` (it was inline) so the election-year pairing logic could be unit tested without running the whole script against real files.
+- `DataChart.jsx`'s `yFormatter` and `PartyChangeChart.jsx`'s `sortPartyChanges`/`formatPartyCodeTick` were pulled out of their components into named, exported functions, since Recharts doesn't render meaningfully under jsdom — there was no other way to unit test that logic.
+
+---
+
+## 14. Summary for a future assistant
 
 InsightKartta is a config-driven multi-dataset analytics platform. Most of the pipeline is generic: add a dataset to `datasets.yaml` and it automatically gets ingestion, transformation, analysis, and API exposure.
 

@@ -20,6 +20,7 @@ function PopupCloser({ watch }) {
 function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
   const selectedLayerRef = useRef(null); // { layer, baseStyle }
   const layersByNameRef = useRef({}); // regionName -> { layer, baseStyle }
+  const appliedFocusTokenRef = useRef(null); // focusRegion.token already applied
 
   const [geoData, setGeoData] = useState(null);
   useEffect(() => {
@@ -35,9 +36,20 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
   }, [year]);
 
   // Selecting a region elsewhere (e.g. the search bar's map-pin button)
-  // should behave like clicking it directly on the map.
+  // should behave like clicking it directly on the map. Also re-runs when
+  // the map's own data arrives (`data`/`year`/`geoData` — MapView fetches
+  // its own GeoJSON asynchronously after mounting), so a focus request made
+  // before the GeoJSON layer existed yet (and therefore found nothing in
+  // layersByNameRef) gets retried instead of silently doing nothing.
+  //
+  // appliedFocusTokenRef guards against the retry firing again on a later,
+  // unrelated data/geoData change (e.g. switching datasets): without it,
+  // re-applying setStyle/openPopup for an already-applied focusRegion would
+  // fight PopupCloser's "close the popup when data changes" behavior.
   useEffect(() => {
     if (!focusRegion?.name) return;
+    if (appliedFocusTokenRef.current === focusRegion.token) return;
+
     const entry = layersByNameRef.current[focusRegion.name];
     if (!entry) return;
 
@@ -50,7 +62,8 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
     selectedLayerRef.current = { layer, baseStyle };
     layer.setStyle(SELECTED_STYLE);
     layer.openPopup();
-  }, [focusRegion]);
+    appliedFocusTokenRef.current = focusRegion.token;
+  }, [focusRegion, data, year, geoData]);
 
   const yearData = useMemo(() => {
     return data.filter((d) => d.year === year && d.region !== "SSS");
