@@ -96,6 +96,14 @@ insightkartta/
 │   │   │   └── insight_service.py
 │   │   └── main.py
 │   │
+│   ├── tests/
+│   │   ├── conftest.py              ← swaps data paths to fixtures/, clears load_config cache
+│   │   ├── fixtures/                ← tiny hand-built datasets.yaml + processed/analysis JSON
+│   │   ├── test_election_change_calculator.py
+│   │   ├── test_relationship_calculator.py
+│   │   ├── test_generate_region_insights.py
+│   │   └── test_api.py
+│   │
 │   ├── data/
 │   │   ├── region_mapping.csv       ← tracked in git (reference data)
 │   │   ├── party_mapping.csv        ← tracked in git (reference data)
@@ -142,8 +150,13 @@ insightkartta/
 │       ├── utils/
 │       │   ├── mapScale.js
 │       │   └── insights.js          ← main-dashboard insight computation
+│       ├── test/
+│       │   └── setup.js             ← jest-dom matchers, RTL cleanup, React global
 │       ├── api.js
 │       └── App.jsx
+│
+├── frontend/e2e/                    ← Playwright specs (run against the real dev servers)
+├── frontend/playwright.config.js
 │
 ├── Makefile
 ├── README.md
@@ -161,8 +174,9 @@ Run all commands from the WSL terminal. From PowerShell use `wsl make <target>`.
 ### Setup (first time)
 
 ```bash
-make venv          # create .venv and install backend dependencies
+make venv          # create .venv, install backend deps + test deps from pyproject.toml
 cd frontend && npm install
+npx playwright install   # one-time e2e browser download (frontend/)
 ```
 
 ### StatFin pipeline
@@ -192,6 +206,25 @@ make reset-all     # clean + transform + elections-transform + analysis + region
 make server        # FastAPI with --reload on http://127.0.0.1:8000
 make frontend      # Vite dev server (from frontend/)
 ```
+
+---
+
+## Testing
+
+| Layer | Stack | What it covers |
+|---|---|---|
+| Backend unit/integration | pytest + httpx (`backend/tests/`) | Pure calculator logic (`relationship_calculator.py`, `election_change_calculator.py`), period derivation, and `/datasets`, `/{dataset_name}`, `/regions/{region}/insights`, `/elections/correlations` contracts via FastAPI's `TestClient` against a fixture data tree — never the real `backend/data/`. |
+| Frontend unit/component | Vitest + Testing Library (`frontend/src/**/*.test.{js,jsx}`) | Pure functions (`utils/insights.js`, `utils/mapScale.js`, extracted chart helpers) and `RegionSearch`'s pin-vs-row click split. |
+| End-to-end | Playwright (`frontend/e2e/`) | Golden-path flows against the real dev servers and real data: the search pin/row split, a region's map popup opening and closing on dataset switch, and the region page's period switcher updating every section together. |
+
+```bash
+make test-backend      # pytest
+make test-frontend     # vitest
+make test-e2e          # playwright (boots both dev servers itself)
+make test              # backend + frontend
+```
+
+Backend tests run against `backend/tests/fixtures/` (a small hand-built `datasets.yaml` + processed/analysis JSON), swapped in via `conftest.py` monkeypatching the services' path constants — real `backend/data/` is never touched or required. E2E tests run against whatever is actually in `backend/data/` at the time, since they're exercising the real app end to end.
 
 ---
 

@@ -1,0 +1,15 @@
+{
+  "2025": {
+    "election_period": { "start": 2021, "end": 2025 },
+    "correlations": {
+      "unemployment": {
+        "VIHR": {
+          "party_name": "The Greens",
+          "pearson_r": -0.12,
+          "classification": "weak_negative",
+          "n": 292
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "region": { "code": "KU091", "name": "Helsinki" },
+  "periods": [
+    {
+      "election_summary": { "latest_year": 2025, "previous_year": 2021 },
+      "party_changes": [
+        {
+          "party": "The Greens",
+          "party_name": "The Greens",
+          "party_code": "VIHR",
+          "votes_latest": 1200,
+          "votes_previous": 1000,
+          "vote_change": 200,
+          "vote_share_latest": 12.0,
+          "vote_share_previous": 10.0,
+          "vote_share_change_pct": 2.0
+        }
+      ],
+      "indicators": {
+        "unemployment": {
+          "dataset": "unemployment",
+          "election_start_year": 2021,
+          "election_end_year": 2025,
+          "indicator_start_year": 2021,
+          "indicator_end_year": 2025,
+          "start_value": 9.0,
+          "end_value": 9.5,
+          "absolute_change": 0.5,
+          "relative_change_pct": 5.56
+        }
+      },
+      "indicator_relationships": {
+        "unemployment": {
+          "election_period": { "start": 2021, "end": 2025 },
+          "regional_absolute_change": 0.5,
+          "national_absolute_change": 0.6,
+          "deviation_from_national": -0.1,
+          "relative_to_national": "similar",
+          "data_status": "complete"
+        }
+      }
+    }
+  ]
+}

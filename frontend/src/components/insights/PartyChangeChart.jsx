@@ -12,6 +12,16 @@ import {
 const COLOR_GAIN = "#16a34a";
 const COLOR_LOSS = "#dc2626";
 
+export function sortPartyChanges(partyChanges) {
+  return [...partyChanges]
+    .filter((p) => p.vote_share_change_pct != null)
+    .sort((a, b) => b.vote_share_change_pct - a.vote_share_change_pct);
+}
+
+export function formatPartyCodeTick(code) {
+  return code.length > 6 ? `${code.slice(0, 5)}…` : code;
+}
+
 function PartyTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
@@ -34,9 +44,7 @@ export default function PartyChangeChart({ partyChanges, electionSummary }) {
       ? `${electionSummary.previous_year} → ${electionSummary.latest_year}`
       : null;
 
-  const chartData = [...partyChanges]
-    .filter((p) => p.vote_share_change_pct != null)
-    .sort((a, b) => b.vote_share_change_pct - a.vote_share_change_pct);
+  const chartData = sortPartyChanges(partyChanges);
 
   return (
     <section className="insight-section">
@@ -51,7 +59,7 @@ export default function PartyChangeChart({ partyChanges, electionSummary }) {
         >
           <XAxis
             dataKey="party_code"
-            tickFormatter={(code) => code.length > 6 ? code.slice(0, 5) + "…" : code}
+            tickFormatter={formatPartyCodeTick}
             tick={{ fontSize: 13, fill: "var(--text)" }}
             axisLine={false}
             tickLine={false}
