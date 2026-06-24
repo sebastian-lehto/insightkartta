@@ -1,5 +1,7 @@
 # InsightKartta
 
+**Live**: [insightkartta.vercel.app](https://insightkartta.vercel.app) (frontend on Vercel; backend on Render — see [Deployment](#deployment))
+
 InsightKartta is a full-stack, config-driven data analysis application for exploring Finnish regional statistics from Statistics Finland (StatFin / PXWeb) alongside municipal election data.
 
 The project is designed as a portfolio-quality software engineering project. It includes:
@@ -107,7 +109,7 @@ insightkartta/
 │   ├── data/
 │   │   ├── region_mapping.csv       ← tracked in git (reference data)
 │   │   ├── party_mapping.csv        ← tracked in git (reference data)
-│   │   ├── raw/                     ← NOT in git (reproduced by ingestion)
+│   │   ├── raw/                     ← tracked in git (lets the Docker build run without network access — see Deployment)
 │   │   ├── processed/               ← NOT in git (reproduced by transformation)
 │   │   └── analysis/                ← NOT in git (reproduced by analysis scripts)
 │   │
@@ -135,6 +137,8 @@ insightkartta/
 │   ├── public/
 │   │   ├── kunnat.geojson
 │   │   └── maakunnat.geojson
+│   ├── vercel.json                  ← SPA rewrite (BrowserRouter routes need this on Vercel)
+│   ├── .env.example                 ← documents VITE_API_BASE_URL
 │   └── src/
 │       ├── components/
 │       │   ├── InsightsPanel.jsx    ← computed client-side, see utils/insights.js
@@ -147,17 +151,22 @@ insightkartta/
 │       │   │   ├── PartyChangeChart.jsx
 │       │   │   └── CorrelationTable.jsx
 │       │   └── ...
+│       ├── hooks/
+│       │   └── useKunnatGeoJson.js  ← shared kunnat.geojson fetch (RegionSearch + MapView)
 │       ├── utils/
 │       │   ├── mapScale.js
 │       │   └── insights.js          ← main-dashboard insight computation
 │       ├── test/
 │       │   └── setup.js             ← jest-dom matchers, RTL cleanup, React global
-│       ├── api.js
+│       ├── api.js                   ← baseURL from VITE_API_BASE_URL
 │       └── App.jsx
 │
 ├── frontend/e2e/                    ← Playwright specs (run against the real dev servers)
-├── frontend/playwright.config.js
+├── frontend/playwright.config.js    ← workers: 1 (suite shares one dev server, see Testing)
 │
+├── Dockerfile                       ← backend deploy image (Render), see Deployment
+├── .dockerignore
+├── backend/.env.example             ← documents ALLOWED_ORIGINS
 ├── Makefile
 ├── README.md
 ├── ARCHITECTURE.md
@@ -205,6 +214,7 @@ make reset-all     # clean + transform + elections-transform + analysis + region
 ```bash
 make server        # FastAPI with --reload on http://127.0.0.1:8000
 make frontend      # Vite dev server (from frontend/)
+make serve         # production server: no --reload, binds $PORT (used by the Dockerfile)
 ```
 
 ---
@@ -224,7 +234,7 @@ make test-e2e          # playwright (boots both dev servers itself)
 make test              # backend + frontend
 ```
 
-Backend tests run against `backend/tests/fixtures/` (a small hand-built `datasets.yaml` + processed/analysis JSON), swapped in via `conftest.py` monkeypatching the services' path constants — real `backend/data/` is never touched or required. E2E tests run against whatever is actually in `backend/data/` at the time, since they're exercising the real app end to end.
+Backend tests run against `backend/tests/fixtures/` (a small hand-built `datasets.yaml` + processed/analysis JSON), swapped in via `conftest.py` monkeypatching the services' path constants — real `backend/data/` is never touched or required. E2E tests run against whatever is actually in `backend/data/` at the time, since they're exercising the real app end to end. `playwright.config.js` deliberately runs with `workers: 1` — the whole suite shares one dev-server pair, and concurrent test pages against it caused real intermittent failures, not just slower ones.
 
 ---
 
@@ -271,6 +281,18 @@ Adding a dataset to this file automatically gives it ingestion, transformation, 
 | `backend/data/analysis/<dataset>.json` | `make analysis` | GenericAnalysis trend/average/peak for each StatFin dataset (national only; served via the API but no longer read by the dashboard frontend, which computes its own region-aware insights client-side) |
 | `backend/data/analysis/region_insights/<code>.json` | `make region-insights` | Per-municipality insight JSON — a `periods` array (most recent first), one entry per consecutive election period, each with party changes, indicator changes, and national comparisons |
 | `backend/data/analysis/election_indicator_correlations.json` | `make region-insights` | Pearson r between indicator changes and party vote share changes across all municipalities, keyed by each period's end year |
+
+---
+
+## Deployment
+
+Split deployment: **Vercel** (frontend, static) + **Render** (backend, Docker), each connected via native GitHub git integration — push to `main` auto-deploys both, every PR gets a Vercel preview. CI (`ci.yml`) is the correctness gate in front of this, enforced via branch protection on `main`.
+
+**Frontend (Vercel)**: root directory `frontend`, env var `VITE_API_BASE_URL` pointing at the Render backend. `frontend/vercel.json` rewrites all paths to `index.html`, which client-side-routed apps (`BrowserRouter`) need on static hosting — without it, a direct navigation to `/region/:regionCode` 404s.
+
+**Backend (Render)**: Docker-based web service built from the root-level `Dockerfile`, env var `ALLOWED_ORIGINS` pointing at the Vercel frontend. The build runs `make pipeline-all` against the already-committed `backend/data/raw/` (see the repository structure note above) — no network access to StatFin or vaalit.fi needed at build time — then starts the API with `make serve` (binds `$PORT`, no `--reload`). Render's free tier sleeps on inactivity, so the first request after a while can take up to ~60s; the dashboard shows an explicit loading state for this rather than rendering empty panels.
+
+To deploy your own copy: fork the repo, import it on [vercel.com](https://vercel.com) (root directory `frontend`) and create a Docker web service on [render.com](https://render.com) (root directory left blank — the `Dockerfile` is at the repo root), then set the two env vars above to point at each other's deployed URL.
 
 ---
 

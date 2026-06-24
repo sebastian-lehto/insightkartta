@@ -281,6 +281,9 @@ When something fails, check in this order:
 16. Does the main-dashboard `InsightsPanel`'s peak/trend text disagree with the chart right next to it? Check that it's still computing from `regionData`/`allData` via `frontend/src/utils/insights.js`, not reading `GET /{dataset_name}`'s `analysis` field (which is always national).
 17. Does the region page show the wrong correlation table for the selected period, or does the search dropdown render underneath the map? Check `CorrelationTable`'s `selectedEndYear` prop and the `region-search-dropdown` z-index (must stay above Leaflet's `1000`), respectively.
 18. Did a search-pin click on a freshly-loaded dashboard silently do nothing, or get reverted a moment later? Check `App.jsx`'s `isInitialDatasetLoadRef` guard and `MapView.jsx`'s `focusRegion` effect dependencies/`appliedFocusTokenRef` guard (§10.16/§10.17 in `CONTEXT.md`) — both exist specifically to prevent the initial dataset load, or a later dataset switch, from clobbering a region selection made via the search pin.
+19. Does the deployed frontend show "Couldn't reach the server," or does the browser devtools console show a CORS error? Check `VITE_API_BASE_URL` in Vercel's project settings (frontend) and `ALLOWED_ORIGINS` in Render's environment settings (backend) — see §18. This is not a code bug if both env vars are correctly set; it usually means one platform's URL changed and the other wasn't updated.
+20. Does a direct navigation (refresh, or a shared link) to `/region/:regionCode` 404 on the deployed Vercel site but work fine when navigated to from within the app? Check that `frontend/vercel.json`'s catch-all rewrite still exists — `BrowserRouter` only resolves that route client-side, see §18.
+21. Did an e2e spec fail intermittently in CI but pass on a bare re-run with no code change? Check `frontend/playwright.config.js`'s `workers` value before assuming it's "just flaky" — see §17.10/§18 and `CONTEXT.md` §10.19. The whole suite shares one `webServer`; more than 1 worker means concurrent test pages contending for it, which has caused real (not just slow) failures before.
 
 This order avoids wasting time.
 
@@ -299,8 +302,11 @@ When resuming after a break, explicitly re-check:
 - whether `run_analysis.py` was run after the last pipeline run
 - whether geography level is consistent with the GeoJSON loaded by the frontend
 - whether `generate_region_insights.py` still produces a `periods` array (one entry per consecutive election-year pair) rather than a single flat period, and whether `make region-insights` was re-run after any change to `election_change_calculator.py` or `relationship_calculator.py`
-- whether `RegionPopup.jsx` / `RegionSelector.jsx` are still sitting unused in `frontend/src/components/` — safe to delete, not part of the current architecture
 - whether `make test` / `make test-e2e` still pass before considering any change to `relationship_calculator.py`, `election_change_calculator.py`, `insights.js`, `mapScale.js`, `RegionSearch.jsx`, `App.jsx`, or `MapView.jsx` complete
+- whether `frontend/src/api.js`'s `VITE_API_BASE_URL` and `backend/app/main.py`'s `ALLOWED_ORIGINS` env-var wiring is still in place — see §18
+- whether `frontend/vercel.json`'s SPA rewrite still exists if `frontend/` gets restructured
+- whether `frontend/playwright.config.js` still has `workers: 1` — see §17.10
+- whether `backend/data/raw/` is still tracked in git (the deployed backend's build depends on it not needing network access) — see §18
 
 ---
 
@@ -350,3 +356,19 @@ If it makes the next dataset harder, it is probably the wrong change.
 7. Playwright e2e specs (`frontend/e2e/`) run against the real dev servers and real `backend/data/`, not fixtures — they're meant to catch integration-level and timing bugs that fixture-backed tests can't. `playwright.config.js`'s `webServer` entries shell out to `make server` and `npm run dev`; do not duplicate the Makefile's Python interpreter resolution logic inside the Playwright config.
 8. If an e2e test is flaky and "passes with a short delay added," do not add the delay. That is almost always a real race condition in production code, not a timing quirk in the test — see `CONTEXT.md` §10.16 and §10.17 for two real examples found exactly this way (`App.jsx`'s initial-load region-selection race, `MapView.jsx`'s focusRegion-vs-PopupCloser race). Find and fix the underlying effect/state-update ordering instead.
 9. Do not add Playwright/Selenium-style browser tests assuming a system-installed, version-matched Chrome/driver pair. Playwright bundles its own browser binaries (`npx playwright install`) specifically to avoid that failure mode.
+10. `playwright.config.js` must keep `workers: 1`. The whole e2e suite shares a single `webServer` pair (one Vite dev server, one uvicorn process) — there are no per-worker server instances. Without `workers: 1`, Playwright's CPU-count-based default (e.g. 2 on GitHub's 4-vCPU runners) puts concurrent test pages against that single shared backend, which has caused real, intermittent CI failures (not just slower ones) — see `CONTEXT.md` §10.19. If a future change makes per-worker server instances actually possible, this rule can be revisited; until then, do not raise `workers` to "speed up" the suite.
+
+---
+
+## 18. Deployment rules
+
+The app is deployed split: Vercel (frontend, static) + Render (backend, Docker), each connected via native GitHub git integration (auto-deploy on push to `main`, no custom GitHub Actions deploy job). CI (`ci.yml`) stays the correctness gate via branch protection on `main` — do not bypass branch protection to "ship faster."
+
+1. Never hardcode an API base URL or CORS origin again. `frontend/src/api.js` reads `import.meta.env.VITE_API_BASE_URL` (fallback `http://127.0.0.1:8000`); `backend/app/main.py` reads `ALLOWED_ORIGINS` (fallback `http://localhost:5173`, comma-separated for multiple origins). If either platform's URL ever changes, update the env var in that platform's dashboard — do not patch the code.
+2. `frontend/vercel.json`'s catch-all rewrite (`"source": "/(.*)"` → `/index.html`) must stay in place as long as the frontend uses `BrowserRouter`. Without it, every client-side route 404s on Vercel's static host on direct navigation (refresh, shared link) even though in-app navigation works fine. Do not remove it as "unused config."
+3. The root-level `Dockerfile` calls into the Makefile (`make pipeline-all PYTHON=python3`, `make serve PYTHON=python3`) rather than re-implementing pipeline or server invocation — same "don't duplicate the Makefile's logic" principle already applied to `playwright.config.js`'s `webServer`. If the Makefile's `pipeline-all` or `serve` targets change, the Dockerfile picks it up automatically; don't let the two drift by hardcoding steps in one place.
+4. `make serve` (production: binds `$PORT`, no `--reload`) is distinct from `make server` (dev: fixed port 8000, `--reload`). Don't merge them — Render needs the dynamic port binding and must never run with `--reload`.
+5. `backend/data/raw/` is tracked in git (run `git ls-files backend/data/raw | wc -l` to confirm — it'll be thousands of files) despite `.gitignore` listing that path. This is the current deliberate state: it's what lets the Render Docker build run `make pipeline-all` with zero network access to StatFin or vaalit.fi. Do not "clean this up" by untracking the directory without also changing the Dockerfile to call `make ingest elections-ingest pipeline-all` instead — that would make every deploy depend on live scraping access to vaalit.fi, which is slower and far more likely to fail a build.
+6. Corollary to #5: if you re-run `make ingest` or `make elections-ingest` to refresh the data, the new timestamped raw files will **not** be picked up by a plain `git add` because of the `.gitignore` rule — you'd need `git add -f`, and you should consider whether old stale raw snapshots in the same directory should be removed first (the pipeline doesn't do this automatically).
+7. The cold-start loading/error state in `App.jsx` (`datasetsLoading`/`datasetsError`) exists because Render's free tier sleeps after inactivity and the first request can take ~60s. Don't remove it as unnecessary UI complexity — it's specifically there for that case, not typical latency.
+8. If CORS errors appear only on the deployed site (never locally), check `ALLOWED_ORIGINS` on Render matches the *current* Vercel production URL exactly (scheme + host, no trailing slash) before assuming it's a code bug.
