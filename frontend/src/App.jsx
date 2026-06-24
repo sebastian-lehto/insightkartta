@@ -96,11 +96,7 @@ function App() {
     loadDataset();
   }, [selectedDataset]);
 
-  const regions = useMemo(() => {
-    return [...new Set(data.map((d) => d.region_name).filter(Boolean))];
-  }, [data]);
-
-const chartData = useMemo(() => {
+  const chartData = useMemo(() => {
     return data
       .filter((d) => d.region_name === selectedRegion)
       .sort((a, b) => a.year - b.year);

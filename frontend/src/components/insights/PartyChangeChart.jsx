@@ -12,12 +12,14 @@ import {
 const COLOR_GAIN = "#16a34a";
 const COLOR_LOSS = "#dc2626";
 
+// eslint-disable-next-line react-refresh/only-export-components -- exported for unit testing, see INSTRUCTIONS.md
 export function sortPartyChanges(partyChanges) {
   return [...partyChanges]
     .filter((p) => p.vote_share_change_pct != null)
     .sort((a, b) => b.vote_share_change_pct - a.vote_share_change_pct);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- exported for unit testing, see INSTRUCTIONS.md
 export function formatPartyCodeTick(code) {
   return code.length > 6 ? `${code.slice(0, 5)}…` : code;
 }
