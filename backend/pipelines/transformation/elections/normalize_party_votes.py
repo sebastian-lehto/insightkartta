@@ -321,7 +321,10 @@ def normalize_rows(manifests: list[dict]) -> pd.DataFrame:
             )
             continue
 
-        html_path = Path(html_path_value)
+        # Older manifests were written on Windows and store html_path with
+        # backslashes, which Path() treats as a literal filename character
+        # (not a separator) on POSIX — normalize before resolving.
+        html_path = Path(html_path_value.replace("\\", "/"))
         if not html_path.exists():
             LOGGER.warning(
                 "Skipping manifest for %s %s because html file does not exist: %s",
