@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useKunnatGeoJson } from "../hooks/useKunnatGeoJson";
 
 function SearchIcon() {
   return (
@@ -49,27 +50,23 @@ function ChevronIcon() {
 }
 
 function RegionSearch({ onSelectRegion }) {
-  const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
+  const geoJson = useKunnatGeoJson();
 
-  useEffect(() => {
-    fetch("/kunnat.geojson")
-      .then((r) => r.json())
-      .then((geo) => {
-        const list = geo.features
-          .map((f) => ({
-            name: f.properties.Kunta ?? f.properties.name_fi,
-            code: f.properties.Koodi,
-          }))
-          .filter((r) => r.name && r.code)
-          .sort((a, b) => a.name.localeCompare(b.name, "fi"));
-        setRegions(list);
-      });
-  }, []);
+  const regions = useMemo(() => {
+    if (!geoJson) return [];
+    return geoJson.features
+      .map((f) => ({
+        name: f.properties.Kunta ?? f.properties.name_fi,
+        code: f.properties.Koodi,
+      }))
+      .filter((r) => r.name && r.code)
+      .sort((a, b) => a.name.localeCompare(b.name, "fi"));
+  }, [geoJson]);
 
   const filtered =
     query.trim().length > 0
