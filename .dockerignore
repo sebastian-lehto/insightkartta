@@ -1,0 +1,8 @@
+.git
+.github
+frontend/
+backend/tests/
+.venv
+**/__pycache__
+**/*.pyc
+*.md
