@@ -1,8 +1,9 @@
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
-import { useMemo, useEffect, useState, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 
 import MapLegend from "./MapLegend";
 import { getBins, getColor } from "../utils/mapScale";
+import { useKunnatGeoJson } from "../hooks/useKunnatGeoJson";
 
 const SELECTED_STYLE = { weight: 3, color: "#fff", fillOpacity: 1 };
 const HOVER_STYLE    = { weight: 2.5, color: "#fff", fillOpacity: 1 };
@@ -22,12 +23,7 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
   const layersByNameRef = useRef({}); // regionName -> { layer, baseStyle }
   const appliedFocusTokenRef = useRef(null); // focusRegion.token already applied
 
-  const [geoData, setGeoData] = useState(null);
-  useEffect(() => {
-    fetch("/kunnat.geojson")
-      .then((res) => res.json())
-      .then((data) => setGeoData(data));
-  }, []);
+  const geoData = useKunnatGeoJson();
 
   // Clear selection when GeoJSON remounts
   useEffect(() => {

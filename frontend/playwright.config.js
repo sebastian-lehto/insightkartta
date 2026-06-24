@@ -5,7 +5,12 @@ import { defineConfig, devices } from "@playwright/test";
 // once in production-shaped data (see CONTEXT.md §5.7, §4.9).
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: true,
+  // All specs share the single dev-server/backend pair started below (see
+  // webServer) rather than per-worker instances, so running multiple
+  // workers means concurrent pages contend for the same Vite/uvicorn
+  // process — this caused real, intermittent failures (not just slow ones)
+  // in tests that depend on MapView's own GeoJSON fetch+parse.
+  workers: 1,
   reporter: "list",
   use: {
     baseURL: "http://localhost:5173",
