@@ -65,6 +65,14 @@ Typical flow:
 2. fetch dataset using configured endpoint and payload
 3. store wrapped raw JSON
 
+StatFin API format translation (`StatisticsFinlandClient` in `statfi.py`):
+The StatFin PXWeb API changed format after June 2026. Short table IDs are now required (`115x.px` not `statfin_tyokay_pxt_115x.px`), dimension codes became internal machine IDs (`alue_23_20250101`, `contentscode`), and content codes now include a subject prefix (`tyokay-tyollisyysaste`). The client handles this transparently:
+- `_to_short_endpoint()`: strips the long prefix from the table filename
+- `_get_table_variables()`: GETs the table metadata to discover actual dimension codes and values
+- `_translate_payload()`: maps `datasets.yaml` text labels (`"Alue"`, `"Tiedot"`) to actual dimension codes; maps short Tiedot values (`"tyollisyysaste"`) to full codes (`"tyokay-tyollisyysaste"`); silently drops area values that don't exist in the target table (e.g. `MA1`/`MA2` absent from some tables); uses first-word prefix fallback for dimension labels like `"Alue 2026"` that extend the canonical name
+
+`datasets.yaml` uses the original pre-change text labels and short metric codes — the translation is invisible to config authors.
+
 Design note:
 The ingestion layer should not know how the dataset will later be visualized.
 
@@ -90,6 +98,7 @@ Current direction:
 
 Expected generic responsibilities:
 - map raw columns such as `Alue` and `Vuosi` into internal names
+- normalize new-format API column codes to canonical names (`pxweb_transformer.py`'s `_normalize_dim_code` strips year qualifiers from text labels like "Alue 2026"; `_normalize_metric_code` strips subject prefix from codes like "tyokay-tyollisyysaste")
 - rename configured source fields
 - coerce types (for example `year -> int`)
 - normalize the selected metric into a standard `value` column
@@ -387,7 +396,8 @@ The following areas are known to be sensitive:
 - transformation errors when config is incomplete
 - frontend breakage if metadata is missing or inconsistent
 - the elections pipeline is entirely outside the config-driven flow and requires manual execution of multiple scripts in sequence
-- re-running `make ingest` or `make elections-ingest` to refresh raw data writes new timestamped files into `backend/data/raw/`, but `.gitignore` lists that directory — so the new files won't be picked up by a plain `git add`. The existing raw files are tracked anyway (see §15's note on this), so this only bites if you refresh the data and expect the new raw snapshot to be committed automatically; it won't be without `git add -f`.
+- re-running `make ingest` or `make elections-ingest` to refresh raw data writes new timestamped files into `backend/data/raw/`, but `.gitignore` lists that directory — so the new files won't be picked up by a plain `git add`.
+- StatFin PXWeb API format compatibility: short table IDs and machine-code dimension names are required by the current API; `statfi.py` auto-discovers these via GET before every POST so `datasets.yaml` can stay readable; if a dataset produces 400 errors the most common cause is an area code not present in that specific table (GET the short endpoint to check) The existing raw files are tracked anyway (see §15's note on this), so this only bites if you refresh the data and expect the new raw snapshot to be committed automatically; it won't be without `git add -f`.
 
 ---
 

@@ -78,6 +78,8 @@ When adding a StatFin dataset, confirm:
 - the query actually returns the intended data
 - if area selection is needed, it is provided
 - do not assume empty query works correctly just because it returns something
+- if the table has extra dimension breakdowns (e.g. age group, gender), add an explicit `SSS` filter for each — otherwise the transformer receives disaggregated rows instead of municipality totals; GET the short endpoint and inspect all variables to detect this
+- verify the Tiedot codes exist in the current API by checking the table's `contentscode` variable values — codes change between API versions (e.g. `osuus10` became `kaste3T8osuus`)
 
 ### Transformation
 - `dimensions.region` points to the correct source column
@@ -283,7 +285,8 @@ When something fails, check in this order:
 18. Did a search-pin click on a freshly-loaded dashboard silently do nothing, or get reverted a moment later? Check `App.jsx`'s `isInitialDatasetLoadRef` guard and `MapView.jsx`'s `focusRegion` effect dependencies/`appliedFocusTokenRef` guard (§10.16/§10.17 in `CONTEXT.md`) — both exist specifically to prevent the initial dataset load, or a later dataset switch, from clobbering a region selection made via the search pin.
 19. Does the deployed frontend show "Couldn't reach the server," or does the browser devtools console show a CORS error? Check `VITE_API_BASE_URL` in Vercel's project settings (frontend) and `ALLOWED_ORIGINS` in Render's environment settings (backend) — see §18. This is not a code bug if both env vars are correctly set; it usually means one platform's URL changed and the other wasn't updated.
 20. Does a direct navigation (refresh, or a shared link) to `/region/:regionCode` 404 on the deployed Vercel site but work fine when navigated to from within the app? Check that `frontend/vercel.json`'s catch-all rewrite still exists — `BrowserRouter` only resolves that route client-side, see §18.
-21. Did an e2e spec fail intermittently in CI but pass on a bare re-run with no code change? Check `frontend/playwright.config.js`'s `workers` value before assuming it's "just flaky" — see §17.10/§18 and `CONTEXT.md` §10.19. The whole suite shares one `webServer`; more than 1 worker means concurrent test pages contending for it, which has caused real (not just slow) failures before.
+21. Did an e2e spec fail intermittently in CI but pass on a bare re-run with no code change? Check `frontend/playwright.config.js`'s `workers` value before assuming it's "just flaky" — see §17.10/§18 and `CONTEXT.md` §10.19.
+22. Is a StatFin dataset failing with `400 Bad Request` during `make ingest`? In order: (a) check whether the Tiedot code exists in the current table — GET `https://pxdata.stat.fi/PXWeb/api/v1/fi/StatFin/<folder>/<short_id>.px` and inspect `contentscode` values; (b) check whether the table has extra dimensions (age, gender) that need `SSS` filters in `datasets.yaml`; (c) check if specific area codes in `all_supported_areas` are missing from the table (common for `MA1`/`MA2`) — `statfi.py`'s `_translate_payload` drops these silently but if the code predates that fix a manual test POST may reveal the cause; see `CONTEXT.md` §10.22–10.25. The whole suite shares one `webServer`; more than 1 worker means concurrent test pages contending for it, which has caused real (not just slow) failures before.
 
 This order avoids wasting time.
 
