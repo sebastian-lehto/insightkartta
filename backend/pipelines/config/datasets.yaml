@@ -377,11 +377,23 @@ datasets:
             filter: "item"
             values: *all_supported_areas
 
+        - code: "Ikä"
+          selection:
+            filter: "item"
+            values:
+              - "SSS"
+
+        - code: "Sukupuoli"
+          selection:
+            filter: "item"
+            values:
+              - "SSS"
+
         - code: "Tiedot"
           selection:
             filter: "item"
             values:
-              - "osuus10"
+              - "kaste3T8osuus"
 
       response:
         format: json
@@ -392,7 +404,7 @@ datasets:
         year: Vuosi
 
       rename:
-        osuus10: upper_secondary_or_higher_pct
+        kaste3T8osuus: upper_secondary_or_higher_pct
 
       types:
         year: int
@@ -409,7 +421,7 @@ datasets:
       unit: "%"
       visualization:
         map:
-          bins: [40, 50, 60, 70, 80]
+          bins: [67, 70, 73, 76, 80]
 
   - name: education_tertiary
     source: statfi
@@ -422,11 +434,23 @@ datasets:
             filter: "item"
             values: *all_supported_areas
 
+        - code: "Ikä"
+          selection:
+            filter: "item"
+            values:
+              - "SSS"
+
+        - code: "Sukupuoli"
+          selection:
+            filter: "item"
+            values:
+              - "SSS"
+
         - code: "Tiedot"
           selection:
             filter: "item"
             values:
-              - "osuus15"
+              - "kaste5T8osuus"
 
       response:
         format: json
@@ -437,7 +461,7 @@ datasets:
         year: Vuosi
 
       rename:
-        osuus15: tertiary_education_pct
+        kaste5T8osuus: tertiary_education_pct
 
       types:
         year: int
@@ -454,7 +478,7 @@ datasets:
       unit: "%"
       visualization:
         map:
-          bins: [20, 30, 40, 50, 60]
+          bins: [18, 22, 25, 30, 38]
 
   - name: population
     source: statfi
@@ -500,3 +524,273 @@ datasets:
       visualization:
         map:
           bins: [5000, 20000, 50000, 100000, 300000]
+
+  - name: employment_rate
+    source: statfi
+    endpoint: tyokay/statfin_tyokay_pxt_115x.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "tyollisyysaste"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        tyollisyysaste: employment_rate
+
+      types:
+        year: int
+
+      value_column: employment_rate
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Employment rate (18–64)"
+      unit: "%"
+      visualization:
+        map:
+          bins: [65, 70, 74, 78, 83]
+
+  - name: elderly_share
+    source: statfi
+    endpoint: vaerak/statfin_vaerak_pxt_11ra.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "vaesto_yli64_p"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        vaesto_yli64_p: elderly_share
+
+      types:
+        year: int
+
+      value_column: elderly_share
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Share of population aged 65+"
+      unit: "%"
+      visualization:
+        map:
+          bins: [20, 25, 31, 37, 44]
+
+  - name: foreign_background_share
+    source: statfi
+    endpoint: vaerak/statfin_vaerak_pxt_11ra.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "vaesto_tausta_ulk_p"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        vaesto_tausta_ulk_p: foreign_background_share
+
+      types:
+        year: int
+
+      value_column: foreign_background_share
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Share of foreign-background population"
+      unit: "%"
+      visualization:
+        map:
+          bins: [2, 4, 7, 15, 25]
+
+  - name: population_change_rate
+    source: statfi
+    endpoint: vaerak/statfin_vaerak_pxt_11ra.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "kokmuutos_p"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        kokmuutos_p: population_change_rate
+
+      types:
+        year: int
+
+      value_column: population_change_rate
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Annual population change rate"
+      unit: "%"
+      visualization:
+        map:
+          bins: [-3, -1.5, -0.7, 0, 1]
+
+  - name: median_income
+    source: statfi
+    endpoint: tjt/statfin_tjt_pxt_14ww.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "hkturaha18_med"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        hkturaha18_med: median_income
+
+      types:
+        year: int
+
+      value_column: median_income
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Median adult disposable income"
+      unit: "EUR"
+      visualization:
+        map:
+          bins: [22000, 23500, 25000, 27000, 30000]
+
+  - name: low_income_rate
+    source: statfi
+    endpoint: tjt/statfin_tjt_pxt_14ww.px
+
+    payload:
+      query:
+        - code: "Alue"
+          selection:
+            filter: "item"
+            values: *all_supported_areas
+
+        - code: "Tiedot"
+          selection:
+            filter: "item"
+            values:
+              - "rpt_aste"
+
+      response:
+        format: json
+
+    transformation:
+      dimensions:
+        region: Alue
+        year: Vuosi
+
+      rename:
+        rpt_aste: low_income_rate
+
+      types:
+        year: int
+
+      value_column: low_income_rate
+
+      filters: []
+
+      join:
+        region_mapping: true
+
+    metadata:
+      label: "Low-income population share"
+      unit: "%"
+      visualization:
+        map:
+          bins: [8, 11, 14, 17, 20]

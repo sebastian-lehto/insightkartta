@@ -381,6 +381,24 @@ Lesson from implementation: PXWeb payloads for education required explicit `Tied
 ### 8.3 Population
 Fully operational. Analysis runs via `GenericAnalysis`. Unit is `"persons"` (no leading space).
 
+### 8.5 Employment rate
+`employment_rate`: employment rate for 18–64 year olds (%). From `tyokay/115x.px` — same table as unemployment. Tiedot code `tyollisyysaste` (translated to `tyokay-tyollisyysaste` by `statfi.py`). Fully operational.
+
+### 8.6 Elderly share
+`elderly_share`: share of population aged 65+ (%). From `vaerak/11ra.px` — same table as population. Tiedot code `vaesto_yli64_p`. Fully operational.
+
+### 8.7 Foreign background share
+`foreign_background_share`: share of population with foreign background (%). From `vaerak/11ra.px`. Tiedot code `vaesto_tausta_ulk_p`. Fully operational.
+
+### 8.8 Population change rate
+`population_change_rate`: annual population change rate (%). From `vaerak/11ra.px`. Tiedot code `kokmuutos_p`. Can be negative for declining municipalities — the `bins` straddle zero, which is intentional and correct.
+
+### 8.9 Median income
+`median_income`: median disposable income of adults (EUR). From `tjt/14ww.px`. Tiedot code `hkturaha18_med`. Range is roughly 20k–39k EUR across municipalities.
+
+### 8.10 Low income rate
+`low_income_rate`: share of population below the low-income threshold (%). From `tjt/14ww.px`. Tiedot code `rpt_aste`. Fully operational.
+
 ### 8.4 Municipal elections
 Fully operational but uses a custom pipeline entirely outside `datasets.yaml`. Covers four election years (2012, 2017, 2021, 2025), compared as three consecutive periods. Scripts run in this order:
 1. `fetch_municipal_elections.py` — scrapes HTML
@@ -472,6 +490,18 @@ This project's `vite.config.js` does not set `test.globals: true`, so Testing Li
 ### 10.20 If an e2e test passes with a delay or longer timeout added, don't stop there
 This is the existing rule from `INSTRUCTIONS.md` §17.8, reaffirmed by §10.19: a 15s timeout on `expect(popup).toBeVisible()` still failed under worker contention, which is what proved the real cause was contention, not "needs more time." If padding the timeout doesn't even fully fix it, that's a strong signal the underlying issue isn't timing-related at all.
 
+### 10.22 StatFin PXWeb API breaking format change (post-June 2026)
+The StatFin API stopped accepting long table IDs (`statfin_tyokay_pxt_115x.px`) and changed dimension codes from text labels to internal machine IDs (`alue_23_20250101`, `timeperiod_y`, `contentscode`). Content codes now carry a subject prefix (`tyokay-tyollisyysaste`). `statfi.py` was rewritten to handle this: it converts the long endpoint to its short form, does a GET to auto-discover the table's actual variable codes, then translates the payload before the POST. The transformer (`pxweb_transformer.py`) normalizes column names in the response back to the canonical form (`Alue`, `Vuosi`, short metric code) so `apply_config_transformations()` still works. `datasets.yaml` continues to use the original text labels — the translation is transparent. Do not update `datasets.yaml` to use internal machine codes.
+
+### 10.23 Some StatFin tables omit certain area aggregates
+Not every table supports all codes in `all_supported_areas`. `MA1` (Manner-Suomi) and `MA2` are absent from some tables (`tyokay/115x.px`, `tjt/14ww.px`) but present in others (`vaerak/11ra.px`). `statfi.py`'s `_translate_payload` now silently drops any requested value that doesn't exist in the table's actual value list. A 400 response with no detail is the symptom — if a new dataset fails with 400, check whether any of the requested area codes are missing from the table's metadata (GET the short endpoint and inspect `variables[n]["values"]`).
+
+### 10.24 Some tables have extra dimension breakdowns requiring "SSS" filters
+`vkour/12bs.px` (education) has `Ikä` (age group) and `Sukupuoli` (gender) dimensions absent from most other tables. Querying without filtering these returns disaggregated data (one row per age × gender combination), which breaks the transformer. Filter both to `SSS` (total) in `datasets.yaml`. Also, this table labels its area dimension "Alue 2026" not "Alue" — `statfi.py`'s first-word prefix fallback and `pxweb_transformer.py`'s `text.split()[0]` normalizer handle this automatically; no `datasets.yaml` change needed.
+
+### 10.25 Education Tiedot codes changed in the current StatFin API
+`osuus10` and `osuus15` no longer exist in `vkour/12bs.px`. The current codes are `kaste3T8osuus` (at least upper secondary, ISCED 3–8) and `kaste5T8osuus` (at least tertiary, ISCED 5–8). Already updated in `datasets.yaml`. If these codes ever break again, GET `https://pxdata.stat.fi/PXWeb/api/v1/fi/StatFin/vkour/12bs.px` and inspect the `contentscode` variable's `values` and `valueTexts`.
+
 ### 10.21 Forgetting a host-level rewrite for a `BrowserRouter` SPA on static hosting
 Deployed to Vercel without `frontend/vercel.json`, direct navigation to `/region/:regionCode` (refresh, or a shared/bookmarked link) 404'd at the CDN before React Router ever got a chance to run — `BrowserRouter` only resolves routes client-side, after `index.html` has loaded. Fixed by adding a catch-all rewrite to `index.html` in `vercel.json`. Caught only by actually navigating to a region page on the live deployed URL, not by any existing automated test (the e2e suite drives a dev server, which doesn't have this static-hosting failure mode at all).
 
@@ -515,6 +545,9 @@ If resuming work later, remember to check:
 19. whether `frontend/src/api.js` and `backend/app/main.py` still read `VITE_API_BASE_URL`/`ALLOWED_ORIGINS` from env rather than hardcoded localhost values — see §4.10/§5.8/§15
 20. whether `frontend/vercel.json`'s catch-all rewrite is still present if `frontend/` gets restructured — without it, every client-side route 404s on Vercel (§5.10/§10.21)
 21. whether `backend/data/raw/` is still actually tracked in git (`git ls-files backend/data/raw | wc -l`) despite `.gitignore` listing it — the Render Dockerfile's network-free build depends on this; see §15
+22. whether the StatFin API format translation in `statfi.py` is still working — if a dataset fails with 400 and the endpoint is correct, the most common causes are: (a) an area code in `all_supported_areas` that doesn't exist in that table (§10.23), or (b) a Tiedot value whose code has changed (§10.25). GET the short endpoint to inspect available variables.
+23. whether tables with extra dimensions (like `Ikä`/`Sukupuoli` in `vkour/12bs.px`) have `SSS` filter entries in `datasets.yaml` — missing these causes the transformer to receive disaggregated rows instead of municipality totals (§10.24)
+24. whether `pxweb_transformer.py`'s `_normalize_dim_code` still uses `text.split()[0]` — this strips year suffixes like "Alue 2026" → "Alue"; reverting to returning the full text would break education datasets
 
 ---
 

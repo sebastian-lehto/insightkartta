@@ -29,8 +29,16 @@ class PXWebTransformer:
         dimension_cols = [col for col in columns if col["type"] in ("d", "t")]
         metric_cols = [col for col in columns if col["type"] == "c"]
 
-        dim_names = [col["code"] for col in dimension_cols]
-        metric_names = [col["code"] for col in metric_cols]
+        # Normalize codes for API format compatibility.
+        # Post-June 2026 API uses machine IDs (alue_23_20260101, timeperiod_y) for dimensions
+        # and subject-prefixed codes (tyokay-tyollisyysaste) for metrics. Use the human-readable
+        # text label for dimensions and strip the prefix for metrics so downstream config
+        # (datasets.yaml rename/filter keys) works unchanged across API versions.
+        dim_names = [
+            self._normalize_dim_code(col["code"], col.get("text", col["code"]))
+            for col in dimension_cols
+        ]
+        metric_names = [self._normalize_metric_code(col["code"]) for col in metric_cols]
 
         records: List[Dict[str, Any]] = []
 
@@ -106,6 +114,23 @@ class PXWebTransformer:
             records.append(record)
 
         return pd.DataFrame(records)
+
+    @staticmethod
+    def _normalize_dim_code(code: str, text: str) -> str:
+        # Machine-code dimensions start lowercase with underscores/digits (alue_23_20260101).
+        # Take only the first word of the text label so year-qualified labels like
+        # "Alue 2026" normalize to "Alue", matching datasets.yaml dimension keys.
+        if code and code[0].islower() and ("_" in code or any(c.isdigit() for c in code)):
+            return text.split()[0]
+        return code
+
+    @staticmethod
+    def _normalize_metric_code(code: str) -> str:
+        # Post-June 2026 metric codes carry a subject prefix: "tyokay-tyollisyysaste".
+        # Strip it so rename keys in datasets.yaml (e.g. "tyollisyysaste") still match.
+        if "-" in code:
+            return code.split("-", 1)[1]
+        return code
 
     @staticmethod
     def _flat_index_to_coords(flat_idx: int, dimensions: List[int]) -> List[int]:
