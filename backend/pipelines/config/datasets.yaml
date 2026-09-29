@@ -615,51 +615,6 @@ datasets:
         map:
           bins: [20, 25, 31, 37, 44]
 
-  - name: foreign_background_share
-    source: statfi
-    endpoint: vaerak/statfin_vaerak_pxt_11ra.px
-
-    payload:
-      query:
-        - code: "Alue"
-          selection:
-            filter: "item"
-            values: *all_supported_areas
-
-        - code: "Tiedot"
-          selection:
-            filter: "item"
-            values:
-              - "vaesto_tausta_ulk_p"
-
-      response:
-        format: json
-
-    transformation:
-      dimensions:
-        region: Alue
-        year: Vuosi
-
-      rename:
-        vaesto_tausta_ulk_p: foreign_background_share
-
-      types:
-        year: int
-
-      value_column: foreign_background_share
-
-      filters: []
-
-      join:
-        region_mapping: true
-
-    metadata:
-      label: "Share of foreign-background population"
-      unit: "%"
-      visualization:
-        map:
-          bins: [2, 4, 7, 15, 25]
-
   - name: population_change_rate
     source: statfi
     endpoint: vaerak/statfin_vaerak_pxt_11ra.px
