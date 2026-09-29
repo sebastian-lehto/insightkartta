@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap, useMapEvents } from "react-leaflet";
 import { useMemo, useEffect, useRef } from "react";
 
 import MapLegend from "./MapLegend";
@@ -8,27 +8,75 @@ import { useKunnatGeoJson } from "../hooks/useKunnatGeoJson";
 const SELECTED_STYLE = { weight: 3, color: "#fff", fillOpacity: 1 };
 const HOVER_STYLE    = { weight: 2.5, color: "#fff", fillOpacity: 1 };
 
-// Closes any open popup whenever `watch` (the dataset's data array) changes,
-// so switching datasets doesn't leave a stale region popup on screen.
+// Closes any open popup whenever the dataset changes, so stale region overlays
+// don't linger on the map after a data refresh or selection change.
 function PopupCloser({ watch }) {
   const map = useMap();
+
   useEffect(() => {
-    map.closePopup();
+    if (map && typeof map.closePopup === "function") {
+      map.closePopup();
+    }
   }, [watch, map]);
+
+  return null;
+}
+
+function MapPointerCleanup({ clearHoverState, activeHoverLayerRef }) {
+  useMapEvents({
+    mouseleave() {
+      clearHoverState(activeHoverLayerRef.current);
+    },
+    mouseout() {
+      clearHoverState(activeHoverLayerRef.current);
+    },
+  });
+
   return null;
 }
 
 function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
   const selectedLayerRef = useRef(null); // { layer, baseStyle }
   const layersByNameRef = useRef({}); // regionName -> { layer, baseStyle }
+  const activeTooltipLayerRef = useRef(null);
+  const activeHoverLayerRef = useRef(null);
   const appliedFocusTokenRef = useRef(null); // focusRegion.token already applied
 
   const geoData = useKunnatGeoJson();
+
+  const clearHoverState = (layer) => {
+    if (!layer) return;
+
+    const entry = Object.values(layersByNameRef.current).find((item) => item.layer === layer);
+    const restoreStyle = entry?.baseStyle ?? {
+      weight: 1,
+      color: "rgba(255,255,255,0.6)",
+      fillOpacity: 0.78,
+    };
+
+    if (selectedLayerRef.current?.layer === layer) {
+      layer.setStyle(SELECTED_STYLE);
+    } else {
+      layer.setStyle(restoreStyle);
+    }
+
+    layer.closeTooltip?.();
+
+    if (activeHoverLayerRef.current === layer) {
+      activeHoverLayerRef.current = null;
+    }
+
+    if (activeTooltipLayerRef.current === layer) {
+      activeTooltipLayerRef.current = null;
+    }
+  };
 
   // Clear selection when GeoJSON remounts
   useEffect(() => {
     selectedLayerRef.current = null;
     layersByNameRef.current = {};
+    activeTooltipLayerRef.current = null;
+    activeHoverLayerRef.current = null;
   }, [year]);
 
   // Selecting a region elsewhere (e.g. the search bar's map-pin button)
@@ -104,7 +152,7 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
       </div>`,
       {
         className: "map-tooltip",
-        sticky: true,
+        sticky: false,
         direction: "top",
         offset: [0, -6],
       }
@@ -124,18 +172,41 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
 
     layer.on({
       mouseover(e) {
-        e.target.setStyle(HOVER_STYLE);
-        e.target.bringToFront();
+        const currentTarget = e.target;
+
+        if (activeHoverLayerRef.current && activeHoverLayerRef.current !== currentTarget) {
+          clearHoverState(activeHoverLayerRef.current);
+        }
+
+        if (activeTooltipLayerRef.current && activeTooltipLayerRef.current !== currentTarget) {
+          activeTooltipLayerRef.current.closeTooltip?.();
+          activeTooltipLayerRef.current = null;
+        }
+
+        currentTarget.setStyle(HOVER_STYLE);
+        currentTarget.bringToFront();
+        activeHoverLayerRef.current = currentTarget;
+        activeTooltipLayerRef.current = currentTarget;
+        currentTarget.openTooltip();
       },
       mouseout(e) {
-        if (selectedLayerRef.current?.layer === e.target) {
-          e.target.setStyle(SELECTED_STYLE);
-        } else {
-          e.target.setStyle(baseStyle);
+        const currentTarget = e.target;
+
+        if (selectedLayerRef.current?.layer === currentTarget) {
+          currentTarget.setStyle(SELECTED_STYLE);
+          return;
         }
+
+        clearHoverState(currentTarget);
+      },
+      mouseleave(e) {
+        clearHoverState(e.target);
       },
       click(e) {
-        e.target.closeTooltip();
+        e.target?.closeTooltip?.();
+        if (activeTooltipLayerRef.current === e.target) {
+          activeTooltipLayerRef.current = null;
+        }
 
         if (selectedLayerRef.current && selectedLayerRef.current.layer !== layer) {
           selectedLayerRef.current.layer.setStyle(selectedLayerRef.current.baseStyle);
@@ -160,6 +231,10 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
       <TileLayer
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MapPointerCleanup
+        clearHoverState={clearHoverState}
+        activeHoverLayerRef={activeHoverLayerRef}
       />
       <PopupCloser watch={data} />
       {geoData && isDataReady && (
