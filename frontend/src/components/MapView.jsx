@@ -22,7 +22,7 @@ function PopupCloser({ watch }) {
   return null;
 }
 
-function MapPointerCleanup({ clearHoverState, activeHoverLayerRef, activeTooltipLayerRef }) {
+function MapPointerCleanup({ clearHoverState, activeHoverLayerRef }) {
   useMapEvents({
     mouseleave() {
       clearHoverState(activeHoverLayerRef.current);
@@ -235,7 +235,6 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
       <MapPointerCleanup
         clearHoverState={clearHoverState}
         activeHoverLayerRef={activeHoverLayerRef}
-        activeTooltipLayerRef={activeTooltipLayerRef}
       />
       <PopupCloser watch={data} />
       {geoData && isDataReady && (
