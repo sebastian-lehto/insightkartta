@@ -1,5 +1,6 @@
 .PHONY: help venv \
         ingest transform analysis \
+	postal-ingest postal-transform postal-analysis postal-pipeline \
         elections-ingest elections-transform region-insights \
         pipeline pipeline-all elections-pipeline \
         clean-processed clean-analysis clean-insights clean \
@@ -40,6 +41,7 @@ help:
 	@echo ""
 	@echo "  Combined:"
 	@echo "    make pipeline-all      StatFin pipeline + region-insights"
+	@echo "    make postal-pipeline   ingest + transform + analyze configured Paavo postal datasets"
 	@echo ""
 	@echo "  Clean (leaves raw data and reference CSVs untouched):"
 	@echo "    make clean             delete all processed CSVs + analysis JSON"
@@ -88,6 +90,19 @@ analysis:
 	$(PYTHON) -m backend.pipelines.run_analysis
 
 pipeline: transform analysis
+
+# Postal inputs are not committed, so production image builds fetch the
+# configured Paavo group before transforming it.
+postal-ingest:
+	$(PYTHON) -m backend.pipelines.run_ingestion --group postal_code --fail-on-error
+
+postal-transform:
+	$(PYTHON) -m backend.pipelines.run_transformation --group postal_code --fail-on-error
+
+postal-analysis:
+	$(PYTHON) -m backend.pipelines.run_analysis --group postal_code --fail-on-error
+
+postal-pipeline: postal-ingest postal-transform postal-analysis
 
 # ─── Elections pipeline ───────────────────────────────────────────────────────
 

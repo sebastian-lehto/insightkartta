@@ -7,6 +7,7 @@ from pathlib import Path
 from backend.pipelines.utils.config_loader import load_config
 from backend.pipelines.analysis.engine import AnalysisEngine
 from backend.pipelines.analysis.generic import GenericAnalysis
+from backend.pipelines.utils.dataset_selection import select_datasets
 
 
 PROCESSED_BASE_PATH = Path("backend/data/processed")
@@ -39,15 +40,10 @@ def save_analysis(dataset_name: str, results: dict) -> None:
     print(f"💾 Saved analysis to {path}")
 
 
-def main(dataset_names=None):
+def main(dataset_names=None, group=None, fail_on_error=False):
     config = load_config("backend/pipelines/config/datasets.yaml")
-    datasets = config.get("datasets", []) + config.get("postal_code_datasets", [])
-    if dataset_names:
-        configured_names = {dataset["name"] for dataset in datasets}
-        unknown_names = set(dataset_names) - configured_names
-        if unknown_names:
-            raise ValueError(f"Unknown dataset(s): {', '.join(sorted(unknown_names))}")
-        datasets = [dataset for dataset in datasets if dataset["name"] in dataset_names]
+    datasets = select_datasets(config, dataset_names=dataset_names, group=group)
+    failures = []
 
     for dataset in datasets:
         name = dataset["name"]
@@ -69,6 +65,10 @@ def main(dataset_names=None):
 
         except Exception as e:
             print(f"❌ Failed analysis for {name}: {e}")
+            failures.append(name)
+
+    if fail_on_error and failures:
+        raise RuntimeError(f"Analysis failed for dataset(s): {', '.join(failures)}")
 
 
 if __name__ == "__main__":
@@ -79,4 +79,7 @@ if __name__ == "__main__":
         dest="dataset_names",
         help="Dataset to analyze; may be provided multiple times.",
     )
-    main(parser.parse_args().dataset_names)
+    parser.add_argument("--group", help="Only process datasets in this config group.")
+    parser.add_argument("--fail-on-error", action="store_true", help="Exit non-zero if any selected dataset fails.")
+    args = parser.parse_args()
+    main(args.dataset_names, group=args.group, fail_on_error=args.fail_on_error)

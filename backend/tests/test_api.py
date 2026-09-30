@@ -27,6 +27,21 @@ def test_unknown_dataset_returns_404_not_500(api_client):
     assert res.status_code == 404
 
 
+def test_postal_comparison_returns_503_when_processed_data_is_missing(api_client, monkeypatch):
+    from backend.app.api import routes
+    from backend.app.services.dataset_service import PostalCodeDataUnavailableError
+
+    def unavailable(*args, **kwargs):
+        raise PostalCodeDataUnavailableError("Postal-code data is not available.")
+
+    monkeypatch.setattr(routes, "get_region_postal_code_comparison", unavailable)
+
+    res = api_client.get("/regions/KU091/postal-codes")
+
+    assert res.status_code == 503
+    assert res.json()["detail"] == "Postal-code data is not available."
+
+
 def test_region_insights_returns_periods_array(api_client):
     res = api_client.get("/regions/KU091/insights")
     assert res.status_code == 200

@@ -17,6 +17,7 @@ export default function RegionPage() {
   const [correlationsLoading, setCorrelationsLoading] = useState(true);
   const [postalCodes, setPostalCodes] = useState({ datasets: [], postal_codes: [], years: [] });
   const [postalCodesLoading, setPostalCodesLoading] = useState(true);
+  const [postalCodesError, setPostalCodesError] = useState(false);
   const [periodIndex, setPeriodIndex] = useState(0);
   const [activeView, setActiveView] = useState("postal");
 
@@ -46,13 +47,20 @@ export default function RegionPage() {
     // Keep the previous region's rows out of the next region's loading preview.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPostalCodesLoading(true);
+    setPostalCodesError(false);
     setPostalCodes({ datasets: [], postal_codes: [], years: [] });
     fetchRegionPostalCodes(regionCode)
       .then((res) => {
-        if (!cancelled) setPostalCodes(res.data || { datasets: [], postal_codes: [], years: [] });
+        if (!cancelled) {
+          setPostalCodes(res.data || { datasets: [], postal_codes: [], years: [] });
+          setPostalCodesError(false);
+        }
       })
       .catch(() => {
-        if (!cancelled) setPostalCodes({ datasets: [], postal_codes: [], years: [] });
+        if (!cancelled) {
+          setPostalCodes({ datasets: [], postal_codes: [], years: [] });
+          setPostalCodesError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setPostalCodesLoading(false);
@@ -115,6 +123,7 @@ export default function RegionPage() {
           years={postalCodes.years}
           selectedYear={postalCodes.year}
           loading={postalCodesLoading}
+          error={postalCodesError}
         />
       ) : (
         insight ? <>
