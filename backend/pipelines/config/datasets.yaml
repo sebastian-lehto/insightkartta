@@ -348,7 +348,7 @@ datasets:
 
       rename:
         tyottomyysaste: unemployment_rate
-      
+
       types:
         year: int
 
@@ -365,7 +365,7 @@ datasets:
       visualization:
         map:
           bins: [4, 6, 8, 10, 15]
-  
+
   - name: education_upper_secondary
     source: statfi
     endpoint: vkour/statfin_vkour_pxt_12bs.px
@@ -749,3 +749,401 @@ datasets:
       visualization:
         map:
           bins: [8, 11, 14, 17, 20]
+
+paavo:
+  history_endpoint: &paavo_history_endpoint https://pxdata.stat.fi/PxWeb/api/v1/fi/Postinumeroalueittainen_avoin_tieto/uusin/12f7.px
+  all_postal_areas_query: &paavo_all_postal_areas_query
+    code: "postinumeroalue_4_20260101"
+    selection:
+      filter: "all"
+      values: ["*"]
+  all_years_query: &paavo_all_years_query
+    code: "timeperiod_y"
+    selection:
+      filter: "all"
+      values: ["*"]
+  municipality_aliases: &paavo_municipality_aliases
+    Pertunmaa: Mäntyharju
+    Maarianhamina: "Maarianhamina - Mariehamn"
+    Honkajoki: Kankaanpää
+    Valtimo: Nurmes
+  postal_transformation: &paavo_postal_transformation
+    dimensions:
+      postal_code: postinumeroalue_4_20260101
+      year: timeperiod_y
+    derive:
+      region:
+        source: postinumeroalue_4_20260101_label
+        pattern: "\\(([^()]*)\\s*\\)$"
+        strip: true
+      postal_code_name:
+        source: postinumeroalue_4_20260101_label
+        pattern: "^\\d{5}\\s+(.+?)\\s+\\([^()]*\\)\\s*$"
+        strip: true
+    value_dimension: contentscode
+    rename: {}
+    types:
+      year: int
+      postal_code: string
+    value_column: value
+    filters:
+      - column: postal_code
+        exclude: ["SSS"]
+    join:
+      region_mapping: true
+      region_aliases: *paavo_municipality_aliases
+
+paavo_dataset_defaults: &paavo_dataset_defaults
+  source: paavo
+  endpoint: *paavo_history_endpoint
+  group: postal_code
+  transformation: *paavo_postal_transformation
+
+postal_code_datasets:
+  - name: postal_code_population
+    source: paavo
+    endpoint: *paavo_history_endpoint
+    group: postal_code
+
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection:
+            filter: "item"
+            values: ["he_vakiy"]
+
+      response:
+        format: json-stat2
+
+    transformation:
+      <<: *paavo_postal_transformation
+
+    metadata:
+      label: "Residents"
+      unit: "people"
+      level: postal_code
+      visualization:
+        summary: total
+        table:
+          sort: desc
+        map:
+          bins: [100, 250, 500, 1000, 2500]
+
+  - name: postal_code_median_income
+    source: paavo
+    endpoint: *paavo_history_endpoint
+    group: postal_code
+
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection:
+            filter: "item"
+            values: ["hr_mtu"]
+
+      response:
+        format: json-stat2
+
+    transformation:
+      <<: *paavo_postal_transformation
+
+    metadata:
+      label: "Residents' median income"
+      unit: "EUR"
+      level: postal_code
+      visualization:
+        summary: median
+        table:
+          sort: desc
+        map:
+          bins: [18000, 22000, 26000, 30000, 35000]
+
+  - name: postal_code_unemployment
+    source: paavo
+    endpoint: *paavo_history_endpoint
+    group: postal_code
+
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection:
+            filter: "item"
+            values: ["pt_tyott"]
+
+      response:
+        format: json-stat2
+
+    transformation:
+      <<: *paavo_postal_transformation
+
+    metadata:
+      label: "Unemployed residents"
+      unit: "people"
+      level: postal_code
+      visualization:
+        table:
+          sort: asc
+        map:
+          bins: [5, 15, 30, 60, 120]
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_average_age
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["he_kika"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Average age"
+      unit: "years"
+      level: postal_code
+      visualization:
+        map: {bins: [30, 35, 40, 45, 50]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_men
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["he_miehet"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Men"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_women
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["he_naiset"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Women"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_educated
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["ko_koul"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Residents with education"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [100, 250, 500, 1000, 2500]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_higher_education
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["ko_yl_kork"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Residents with higher education"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [20, 50, 100, 250, 500]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_average_income
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["hr_ktu"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Residents' average income"
+      unit: "EUR"
+      level: postal_code
+      visualization:
+        map: {bins: [20000, 25000, 30000, 35000, 45000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_households
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["te_taly"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Households"
+      unit: "households"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_household_size
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["te_takk"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Average household size"
+      unit: "persons/household"
+      level: postal_code
+      visualization:
+        map: {bins: [1, 1.5, 2, 2.5, 3]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_households_with_children
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["te_laps"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Households with children"
+      unit: "households"
+      level: postal_code
+      visualization:
+        map: {bins: [20, 50, 100, 250, 500]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_rental_households
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["te_vuok_as"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Rental households"
+      unit: "households"
+      level: postal_code
+      visualization:
+        map: {bins: [20, 50, 100, 250, 500]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_dwellings
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["ra_asunn"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Dwellings"
+      unit: "dwellings"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_average_dwelling_area
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["ra_as_kpa"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Average dwelling area"
+      unit: "m²"
+      level: postal_code
+      visualization:
+        map: {bins: [40, 55, 70, 85, 100]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_workplaces
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["tp_tyopy"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Workplaces"
+      unit: "jobs"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_employed
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["pt_tyoll"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Employed residents"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [50, 100, 250, 500, 1000]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_students
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["pt_opisk"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Students"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [10, 25, 50, 100, 250]}
+
+  - <<: *paavo_dataset_defaults
+    name: postal_code_retirees
+    payload:
+      query:
+        - *paavo_all_postal_areas_query
+        - *paavo_all_years_query
+        - code: "contentscode"
+          selection: {filter: "item", values: ["pt_elakel"]}
+      response: {format: json-stat2}
+    metadata:
+      label: "Retired residents"
+      unit: "people"
+      level: postal_code
+      visualization:
+        map: {bins: [20, 50, 100, 250, 500]}

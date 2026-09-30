@@ -245,6 +245,14 @@ function MapView({ data, year, onRegionSelect, unit, meta, focusRegion }) {
           onEachFeature={onEachFeature}
         />
       )}
+      {(!geoData || !isDataReady) && (
+        <div className="dashboard-map-skeleton dashboard-map-skeleton--overlay" role="status" aria-label="Loading map boundaries">
+          <span className="dashboard-map-shape dashboard-map-shape--one" />
+          <span className="dashboard-map-shape dashboard-map-shape--two" />
+          <span className="dashboard-map-shape dashboard-map-shape--three" />
+          <span className="visually-hidden">Loading map boundaries</span>
+        </div>
+      )}
       <MapLegend bins={bins} unit={unit} />
     </MapContainer>
   );

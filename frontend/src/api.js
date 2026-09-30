@@ -10,4 +10,6 @@ export const fetchDataset = (datasetName) => API.get(`/${datasetName}`);
 
 export const fetchRegionInsights = (region) => API.get(`/regions/${region}/insights`);
 
+export const fetchRegionPostalCodes = (region) => API.get(`/regions/${region}/postal-codes`);
+
 export const fetchElectionCorrelations = () => API.get("/elections/correlations");

@@ -1,3 +1,5 @@
+import { CorrelationTableSkeleton } from "../LoadingSkeletons";
+
 const INDICATOR_LABELS = {
   unemployment: "Unemployment",
   education_upper_secondary: "Upper secondary edu.",
@@ -15,8 +17,8 @@ const CLASSIFICATION_META = {
   strong_negative:   { label: "strong −",            className: "corr-strong-neg" },
 };
 
-export default function CorrelationTable({ correlationsData, selectedEndYear }) {
-  if (!correlationsData) return null;
+export default function CorrelationTable({ correlationsData, selectedEndYear, loading = false }) {
+  if (!correlationsData) return loading ? <CorrelationTableSkeleton /> : null;
 
   const years = Object.keys(correlationsData).sort().reverse();
   if (years.length === 0) return null;

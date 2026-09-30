@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 from datetime import datetime
@@ -18,11 +19,18 @@ def get_latest_file(dataset_path: Path):
     return files[-1]
 
 
-def main():
+def main(dataset_names=None):
     config = load_config("backend/pipelines/config/datasets.yaml")
     storage = ProcessedStorage()
+    datasets = config.get("datasets", []) + config.get("postal_code_datasets", [])
+    if dataset_names:
+        configured_names = {dataset["name"] for dataset in datasets}
+        unknown_names = set(dataset_names) - configured_names
+        if unknown_names:
+            raise ValueError(f"Unknown dataset(s): {', '.join(sorted(unknown_names))}")
+        datasets = [dataset for dataset in datasets if dataset["name"] in dataset_names]
 
-    for dataset in config["datasets"]:
+    for dataset in datasets:
         name = dataset["name"]
 
         raw_path = RAW_BASE_PATH / name
@@ -53,4 +61,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Transform ingested datasets.")
+    parser.add_argument(
+        "--dataset",
+        action="append",
+        dest="dataset_names",
+        help="Dataset to transform; may be provided multiple times.",
+    )
+    main(parser.parse_args().dataset_names)

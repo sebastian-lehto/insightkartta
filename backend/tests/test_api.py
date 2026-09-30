@@ -1,7 +1,11 @@
 def test_datasets_lists_configured_datasets(api_client):
     res = api_client.get("/datasets")
     assert res.status_code == 200
-    assert res.json() == [{"name": "unemployment", "label": "Unemployment Rate"}]
+    assert res.json() == [{
+        "name": "unemployment",
+        "label": "Unemployment Rate",
+        "group": "region",
+    }]
 
 
 def test_get_dataset_returns_data_meta_and_analysis(api_client):

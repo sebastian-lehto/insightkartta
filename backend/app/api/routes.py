@@ -4,7 +4,11 @@ from backend.app.services.insight_service import (
     get_region_insights,
     InsightNotFoundError,
 )
-from backend.app.services.dataset_service import get_dataset, list_datasets
+from backend.app.services.dataset_service import (
+    get_dataset,
+    get_region_postal_code_comparison,
+    list_datasets,
+)
 
 router = APIRouter()
 
@@ -25,6 +29,21 @@ def dataset(dataset_name: str):
         return get_dataset(dataset_name)
     except (KeyError, FileNotFoundError):
         raise HTTPException(status_code=404, detail=f"Dataset '{dataset_name}' not found")
+
+
+@router.get("/regions/{region}/postal-codes")
+def region_postal_codes(
+    region: str,
+    year: int | None = None,
+    sort_by: str | None = None,
+    sort_desc: bool = True,
+):
+    return get_region_postal_code_comparison(
+        region,
+        year=year,
+        sort_by=sort_by,
+        sort_desc=sort_desc,
+    )
 
 
 @router.get("/regions/{region}/insights")

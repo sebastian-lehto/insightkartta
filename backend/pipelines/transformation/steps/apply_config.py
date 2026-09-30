@@ -7,6 +7,18 @@ def apply_config_transformations(df, dataset_config):
             raise ValueError(f"Missing dimension column '{source_col}'")
         df[target_col] = df[source_col]
 
+    for target_col, rule in t.get("derive", {}).items():
+        source_col = rule["source"]
+        if source_col not in df.columns:
+            raise ValueError(f"Missing source column '{source_col}' for derived column '{target_col}'")
+        values = df[source_col].astype("string").str.extract(rule["pattern"], expand=False)
+        if rule.get("strip", False):
+            values = values.str.strip()
+        df[target_col] = values
+
+    for column, value in t.get("constants", {}).items():
+        df[column] = value
+
     rename_map = {
         old: new for old, new in t.get("rename", {}).items()
         if old in df.columns
