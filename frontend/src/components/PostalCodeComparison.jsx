@@ -73,7 +73,7 @@ function PostalComparisonSkeleton({ regionName }) {
   );
 }
 
-export default function PostalCodeComparison({ regionName, datasets, postalCodes, loading = false }) {
+export default function PostalCodeComparison({ regionName, datasets, postalCodes, loading = false, error = false }) {
   const [mapMetric, setMapMetric] = useState("");
   const [sortMetric, setSortMetric] = useState("");
   const [sortDirection, setSortDirection] = useState("desc");
@@ -118,8 +118,24 @@ export default function PostalCodeComparison({ regionName, datasets, postalCodes
     return <PostalComparisonSkeleton regionName={regionName} />;
   }
 
+  if (error) {
+    return (
+      <section className="postal-code-comparison postal-code-empty-state" role="alert">
+        <span className="postal-code-comparison-eyebrow">Postal-code analysis</span>
+        <h2>{regionName}</h2>
+        <p>Postal-code data is temporarily unavailable. Please try again later.</p>
+      </section>
+    );
+  }
+
   if (!datasets.length || !postalCodes.length || !years.length) {
-    return null;
+    return (
+      <section className="postal-code-comparison postal-code-empty-state" role="status">
+        <span className="postal-code-comparison-eyebrow">Postal-code analysis</span>
+        <h2>{regionName}</h2>
+        <p>No postal-code data is available for this region yet.</p>
+      </section>
+    );
   }
 
   const summaryCards = datasets

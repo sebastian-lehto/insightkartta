@@ -5,6 +5,7 @@ from backend.app.services.insight_service import (
     InsightNotFoundError,
 )
 from backend.app.services.dataset_service import (
+    PostalCodeDataUnavailableError,
     get_dataset,
     get_region_postal_code_comparison,
     list_datasets,
@@ -38,12 +39,15 @@ def region_postal_codes(
     sort_by: str | None = None,
     sort_desc: bool = True,
 ):
-    return get_region_postal_code_comparison(
-        region,
-        year=year,
-        sort_by=sort_by,
-        sort_desc=sort_desc,
-    )
+    try:
+        return get_region_postal_code_comparison(
+            region,
+            year=year,
+            sort_by=sort_by,
+            sort_desc=sort_desc,
+        )
+    except PostalCodeDataUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/regions/{region}/insights")

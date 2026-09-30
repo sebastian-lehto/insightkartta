@@ -6,6 +6,7 @@ from datetime import datetime
 from backend.pipelines.utils.config_loader import load_config
 from backend.pipelines.transformation.transform_runner import run_transformation
 from backend.pipelines.storage.processed import ProcessedStorage
+from backend.pipelines.utils.dataset_selection import select_datasets
 
 
 RAW_BASE_PATH = Path("backend/data/raw")
@@ -19,16 +20,11 @@ def get_latest_file(dataset_path: Path):
     return files[-1]
 
 
-def main(dataset_names=None):
+def main(dataset_names=None, group=None, fail_on_error=False):
     config = load_config("backend/pipelines/config/datasets.yaml")
     storage = ProcessedStorage()
-    datasets = config.get("datasets", []) + config.get("postal_code_datasets", [])
-    if dataset_names:
-        configured_names = {dataset["name"] for dataset in datasets}
-        unknown_names = set(dataset_names) - configured_names
-        if unknown_names:
-            raise ValueError(f"Unknown dataset(s): {', '.join(sorted(unknown_names))}")
-        datasets = [dataset for dataset in datasets if dataset["name"] in dataset_names]
+    datasets = select_datasets(config, dataset_names=dataset_names, group=group)
+    failures = []
 
     for dataset in datasets:
         name = dataset["name"]
@@ -41,6 +37,8 @@ def main(dataset_names=None):
 
             if latest_file is None:
                 print(f"⚠️ No raw files found for {name}, skipping...")
+                if fail_on_error:
+                    failures.append(name)
                 continue
 
             print(f"Processing {name} from {latest_file.name}")
@@ -58,6 +56,10 @@ def main(dataset_names=None):
 
         except Exception as e:
             print(f"❌ Failed {name}: {e}")
+            failures.append(name)
+
+    if fail_on_error and failures:
+        raise RuntimeError(f"Transformation failed for dataset(s): {', '.join(failures)}")
 
 
 if __name__ == "__main__":
@@ -68,4 +70,7 @@ if __name__ == "__main__":
         dest="dataset_names",
         help="Dataset to transform; may be provided multiple times.",
     )
-    main(parser.parse_args().dataset_names)
+    parser.add_argument("--group", help="Only process datasets in this config group.")
+    parser.add_argument("--fail-on-error", action="store_true", help="Exit non-zero if any selected dataset fails.")
+    args = parser.parse_args()
+    main(args.dataset_names, group=args.group, fail_on_error=args.fail_on_error)

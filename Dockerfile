@@ -13,10 +13,11 @@ RUN pip install --no-cache-dir .
 
 COPY backend/ backend/
 
-# backend/data/raw/ is committed to the repo, so this never needs network
-# access to StatFin or vaalit.fi at build time — it only transforms/analyzes
-# data that's already on disk.
-RUN make pipeline-all PYTHON=python3
+# StatFin and election raw inputs are committed. Paavo postal data is not, so
+# the postal-only target fetches it during the image build and generates
+# processed CSVs and analysis. Raw responses are removed from the image only.
+RUN make pipeline-all postal-pipeline PYTHON=python3 \
+    && rm -rf backend/data/raw/postal_code_*
 
 EXPOSE 8000
 

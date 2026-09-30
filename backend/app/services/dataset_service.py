@@ -13,6 +13,10 @@ PROCESSED_BASE = Path("backend/data/processed")
 ANALYSIS_BASE = Path("backend/data/analysis")
 
 
+class PostalCodeDataUnavailableError(RuntimeError):
+    """Raised when deployment data for the postal-code view is not prepared."""
+
+
 @lru_cache(maxsize=1)
 def load_config():
     with open(CONFIG_PATH) as f:
@@ -61,6 +65,7 @@ def get_region_postal_code_comparison(
     ]
     available_years = set()
     regional_frames = {}
+    processed_dataset_count = 0
 
     for config in postal_configs:
         dataset_name = config["name"]
@@ -71,6 +76,7 @@ def get_region_postal_code_comparison(
 
         if "postal_code" not in df.columns:
             continue
+        processed_dataset_count += 1
 
         region_mask = (
             df["region_code"].fillna("").astype(str).str.strip().str.lower().eq(region_key)
@@ -85,6 +91,11 @@ def get_region_postal_code_comparison(
         regional_frames[dataset_name] = (config, subset)
 
     ordered_years = sorted(available_years)
+    if not processed_dataset_count:
+        raise PostalCodeDataUnavailableError(
+            "Postal-code data is not available. Run the postal-pipeline build step."
+        )
+
     selected_year = year if year in available_years else (ordered_years[-1] if ordered_years else None)
     dataset_rows = []
     merged = {}

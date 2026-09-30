@@ -371,6 +371,21 @@ code {
   box-shadow: var(--shadow);
 }
 
+.postal-code-empty-state {
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.postal-code-empty-state p {
+  max-width: 38rem;
+  color: var(--text);
+  font-size: 14px;
+}
+
 .postal-code-comparison-header {
   display: flex;
   justify-content: space-between;
