@@ -11,19 +11,26 @@ class InsightNotFoundError(FileNotFoundError):
     """Raised when region insight data does not exist."""
 
 
+def _load_json(path: Path, missing_message: str) -> dict:
+    if not path.exists():
+        raise InsightNotFoundError(missing_message)
+
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, ValueError, TypeError) as exc:
+        raise InsightNotFoundError(f"Invalid JSON in {path}: {exc}") from exc
+
+
 def get_region_insights(region: str) -> dict:
     path = ANALYSIS_ROOT / f"{region}.json"
-
-    if not path.exists():
-        raise InsightNotFoundError(
-            f"No region insights found for region {region}"
-        )
-
-    return json.loads(path.read_text(encoding="utf-8"))
+    return _load_json(
+        path,
+        f"No region insights found for region {region}",
+    )
 
 
 def get_election_correlations() -> dict:
-    if not CORRELATIONS_PATH.exists():
-        raise InsightNotFoundError("Election indicator correlations not yet generated")
-
-    return json.loads(CORRELATIONS_PATH.read_text(encoding="utf-8"))
+    return _load_json(
+        CORRELATIONS_PATH,
+        "Election indicator correlations not yet generated",
+    )

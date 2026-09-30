@@ -218,6 +218,36 @@ code {
   margin: 0 0 0.6rem;
 }
 
+.region-view-tabs {
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  margin: 0 0 1.25rem;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.region-view-tab {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.region-view-tab--active {
+  border-color: var(--border);
+  background: var(--panel);
+  color: var(--text-h);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
 .region-period-switcher {
   display: flex;
   flex-direction: column;
@@ -328,6 +358,508 @@ code {
   font-size: 13px;
   color: var(--text);
   font-style: italic;
+}
+
+/* ─── Postal code comparison ────────────────────────────── */
+
+.postal-code-comparison {
+  margin-top: 2rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.postal-code-comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.postal-code-comparison-eyebrow {
+  display: inline-block;
+  margin-bottom: 0.4rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.postal-code-comparison-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.postal-insight-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 0.65rem;
+  margin: 0 0 1rem;
+}
+
+.postal-insight-card {
+  display: flex;
+  min-height: 86px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.7rem 0.8rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-soft);
+}
+
+.postal-insight-card span,
+.postal-insight-card small {
+  color: var(--text);
+  font-size: 11px;
+}
+
+.postal-insight-card strong {
+  color: var(--text-h);
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.postal-year-control {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem 0.55rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.postal-year-label-row,
+.postal-year-bounds {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postal-year-label-row {
+  color: var(--text-h);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.postal-year-label-row output {
+  color: var(--accent);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.postal-year-control input {
+  display: block;
+  width: 100%;
+  margin: 0.45rem 0 0;
+  accent-color: var(--accent);
+}
+
+.postal-year-bounds {
+  color: var(--text);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.postal-code-sort-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.postal-code-sort-select,
+.postal-code-sort-button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  background: var(--panel);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.postal-code-sort-button {
+  cursor: pointer;
+}
+
+.postal-code-sort-button:hover,
+.postal-code-sort-select:hover {
+  border-color: var(--accent-border);
+}
+
+.postal-code-comparison-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.postal-code-comparison-content > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.postal-code-map-title {
+  margin: 0 0 0.55rem;
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.postal-code-map-column,
+.postal-code-comparison-table-wrap {
+  min-width: 0;
+}
+
+.postal-table-controls {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 11px;
+}
+
+.postal-table-controls .postal-code-sort-select,
+.postal-table-controls .postal-code-sort-button {
+  padding: 0.35rem 0.5rem;
+  font-size: 11px;
+}
+
+.postal-code-map,
+.postal-map-status {
+  height: 410px;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #edf2f2;
+}
+
+.postal-skeleton {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e5ebee;
+}
+
+.postal-skeleton::after,
+.postal-map-skeleton-region::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+  animation: postal-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes postal-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+.postal-skeleton-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.postal-skeleton-label { width: 64px; height: 12px; }
+.postal-skeleton-select { width: 180px; height: 38px; border: 1px solid var(--border); }
+.postal-skeleton-short { width: 64%; height: 11px; }
+.postal-skeleton-value { width: 78%; height: 22px; }
+.postal-skeleton-caption { width: 42%; height: 10px; }
+.postal-skeleton-year { width: 44px; height: 22px; }
+.postal-skeleton-slider { width: 100%; height: 6px; margin: 0.8rem 0 0.45rem; border-radius: 999px; }
+.postal-skeleton-bound { width: 30px; height: 9px; }
+
+.postal-insight-card--skeleton {
+  align-items: flex-start;
+  border-left-color: var(--border);
+}
+
+.postal-year-control--skeleton .postal-year-label-row {
+  min-height: 22px;
+}
+
+.postal-map-skeleton {
+  position: relative;
+  height: 410px;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: #edf2f2;
+  background-image: linear-gradient(rgba(255,255,255,.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.24) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.postal-map-skeleton-region {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  background: #d7e1e0;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(58, 83, 91, 0.08);
+}
+
+.postal-map-skeleton-region--one {
+  left: 22%; top: 17%; width: 43%; height: 54%;
+  clip-path: polygon(14% 0, 70% 4%, 94% 22%, 79% 41%, 100% 58%, 70% 78%, 56% 100%, 29% 88%, 9% 66%, 0 33%);
+}
+
+.postal-map-skeleton-region--two {
+  left: 48%; top: 32%; width: 31%; height: 43%;
+  clip-path: polygon(19% 0, 88% 10%, 100% 40%, 75% 57%, 83% 89%, 36% 100%, 0 68%, 14% 38%);
+  opacity: 0.82;
+}
+
+.postal-map-skeleton-region--three {
+  left: 29%; top: 57%; width: 29%; height: 25%;
+  clip-path: polygon(7% 13%, 46% 0, 100% 29%, 81% 90%, 38% 100%, 0 57%);
+  opacity: 0.68;
+}
+
+.postal-map-skeleton-legend {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 92px;
+  height: 76px;
+  border: 1px solid #d6dee1;
+  background: rgba(255,255,255,.92);
+  box-shadow: var(--shadow);
+}
+
+.postal-table-skeleton {
+  width: 100%;
+  min-width: 0;
+  max-height: 434px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  box-sizing: border-box;
+}
+
+.postal-table-skeleton-toolbar,
+.postal-table-skeleton-heading,
+.postal-table-skeleton-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--border);
+  min-width: 460px;
+  box-sizing: border-box;
+}
+
+.postal-table-skeleton-toolbar {
+  display: flex;
+  min-height: 36px;
+  justify-content: space-between;
+  background: var(--panel);
+}
+
+.postal-table-skeleton-toolbar .postal-skeleton-select { width: 145px; height: 30px; }
+.postal-table-skeleton-heading .postal-skeleton { height: 12px; }
+.postal-table-skeleton-row .postal-skeleton { height: 11px; }
+.postal-table-skeleton-row .postal-skeleton:first-child { width: 56%; }
+.postal-table-skeleton-row:nth-child(even) { background: #fafcfc; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.postal-code-leaflet-map {
+  height: 100%;
+  width: 100%;
+  background: #edf2f2;
+}
+
+.postal-map-status {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 1rem;
+  color: var(--text);
+  text-align: center;
+}
+
+.postal-map-legend {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 500;
+  max-height: calc(100% - 20px);
+  overflow-y: auto;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+  color: var(--text-h);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.postal-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.postal-map-legend-title {
+  margin-bottom: 4px;
+  color: var(--text-h);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.postal-map-legend-swatch {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 11px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 2px;
+}
+
+.postal-map-tooltip {
+  border: 0;
+  border-radius: 4px;
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.postal-code-comparison-table-wrap {
+  max-height: 434px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.postal-code-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 460px;
+  font-size: 13px;
+}
+
+.postal-code-comparison-table th,
+.postal-code-comparison-table td {
+  padding: 0.7rem 0.7rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.postal-code-comparison-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--panel);
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.postal-code-comparison-table tbody tr:hover {
+  background: var(--surface-soft);
+}
+
+.postal-code-comparison-table tbody tr.is-active {
+  background: var(--accent-bg);
+}
+
+@media (max-width: 760px) {
+  .election-cards-skeleton {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-columns--skeleton {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+  }
+
+  .dashboard-columns--skeleton .dashboard-left,
+  .dashboard-columns--skeleton .dashboard-right {
+    padding: 1rem;
+  }
+
+  .dashboard-columns--skeleton .dashboard-left {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dashboard-columns--skeleton .dashboard-map-skeleton {
+    min-height: 300px;
+  }
+
+  .postal-code-comparison {
+    padding: 1rem;
+  }
+
+  .postal-code-comparison-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .postal-code-comparison-controls {
+    justify-content: flex-start;
+  }
+
+  .region-view-tabs {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .region-view-tab {
+    flex: 1;
+    padding-inline: 0.4rem;
+  }
+
+  .postal-code-comparison-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .postal-code-map,
+  .postal-map-status,
+  .postal-map-skeleton {
+    height: 330px;
+  }
+
+  .postal-code-comparison-table-wrap {
+    max-height: 360px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .postal-skeleton::after,
+  .postal-map-skeleton-region::after,
+  .ui-skeleton::after {
+    animation: none;
+    transform: none;
+    opacity: 0.25;
+  }
 }
 
 /* ─── Chart tooltip ──────────────────────────────────────── */
@@ -516,6 +1048,189 @@ code {
 }
 
 @keyframes dashboard-status-spin {
+.dashboard-loading {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-loading-message {
+  flex: 0 0 auto;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  text-align: center;
+}
+
+.dashboard-columns--skeleton {
+  min-height: 480px;
+}
+
+.ui-skeleton {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e5ebee;
+}
+
+.ui-skeleton::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent);
+  animation: postal-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-heading {
+  width: min(65%, 220px);
+  height: 18px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-heading--wide { width: min(82%, 380px); }
+.skeleton-copy { width: 94%; height: 11px; margin: 0.65rem 0; }
+.skeleton-copy--short { width: 65%; }
+
+.dashboard-insights-skeleton { min-height: 132px; }
+
+.dashboard-chart-skeleton {
+  min-height: 350px;
+  margin-bottom: 1rem;
+}
+
+.dashboard-chart-skeleton-plot {
+  height: 260px;
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2%;
+  padding: 0.6rem 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 50px, rgba(100,116,139,.1) 51px);
+}
+
+.dashboard-chart-skeleton-bar {
+  flex: 1;
+  min-width: 4px;
+  border-radius: 3px 3px 0 0;
+}
+
+.dashboard-chart-skeleton-axis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.6rem;
+}
+
+.dashboard-chart-skeleton-axis .ui-skeleton { width: 28px; height: 9px; }
+
+.dashboard-slider-skeleton {
+  padding: 0.9rem 1rem 0.7rem;
+  margin-bottom: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.dashboard-slider-skeleton > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.55rem;
+}
+
+.dashboard-slider-skeleton > div:last-child .ui-skeleton { width: 36px; height: 9px; }
+.skeleton-slider-track { height: 6px; margin-top: 1rem; border-radius: 999px; }
+
+.dashboard-map-skeleton {
+  position: relative;
+  flex: 1;
+  min-height: 330px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: #edf2f2;
+  background-image: linear-gradient(rgba(255,255,255,.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.24) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.dashboard-map-skeleton--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 800;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.dashboard-map-shape {
+  position: absolute;
+  display: block;
+  border: 2px solid rgba(255,255,255,.95);
+  background: #d7e1e0;
+  box-shadow: 0 2px 8px rgba(58,83,91,.08);
+}
+
+.dashboard-map-shape--one {
+  left: 26%; top: 10%; width: 39%; height: 66%;
+  clip-path: polygon(14% 0, 70% 4%, 94% 22%, 79% 41%, 100% 58%, 70% 78%, 56% 100%, 29% 88%, 9% 66%, 0 33%);
+}
+.dashboard-map-shape--two {
+  left: 47%; top: 24%; width: 31%; height: 48%;
+  clip-path: polygon(19% 0, 88% 10%, 100% 40%, 75% 57%, 83% 89%, 36% 100%, 0 68%, 14% 38%);
+  opacity: .82;
+}
+.dashboard-map-shape--three {
+  left: 34%; top: 59%; width: 28%; height: 24%;
+  clip-path: polygon(7% 13%, 46% 0, 100% 29%, 81% 90%, 38% 100%, 0 57%);
+  opacity: .68;
+}
+
+.dashboard-map-legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 92px;
+  height: 88px;
+  border: 1px solid #d6dee1;
+  background: rgba(255,255,255,.92);
+}
+
+.election-insights-skeleton .insight-section { margin-bottom: 2.5rem; }
+.election-cards-skeleton { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.election-card-skeleton { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+.election-card-value { width: 58%; height: 28px; }
+
+.election-chart-skeleton {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 0.8rem;
+  padding: 1.25rem 1.5rem 1.8rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 56px, rgba(100,116,139,.1) 57px);
+}
+
+.election-chart-zero-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--border);
+}
+
+.election-chart-bar { width: 5.5%; max-width: 38px; z-index: 1; border-radius: 3px 3px 0 0; opacity: .8; }
+.election-chart-bar--1 { transform: translateY(12%); }
+.election-chart-bar--2 { transform: translateY(-10%); }
+
+.correlation-skeleton { width: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: 6px; }
+.correlation-skeleton-row { display: grid; grid-template-columns: minmax(100px, 1.5fr) repeat(5, minmax(48px, 1fr)); gap: 1px; min-width: 520px; border-bottom: 1px solid var(--border); }
+.correlation-skeleton-cell { height: 34px; border-radius: 0; }
+.correlation-skeleton-cell--label { opacity: .72; }
+
   to {
     transform: rotate(360deg);
   }
@@ -549,6 +1264,8 @@ code {
   background: var(--panel);
   box-shadow: var(--shadow);
 }
+
+.map-fill .leaflet-container { position: relative; }
 
 /* ─── Data chart ─────────────────────────────────────────── */
 

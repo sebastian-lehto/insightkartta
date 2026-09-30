@@ -9,12 +9,14 @@ import MapView from "./components/MapView";
 import InsightsPanel from "./components/InsightsPanel";
 import RegionPage from "./components/RegionPage";
 import RegionSearch from "./components/RegionSearch";
+import { DashboardSkeleton } from "./components/LoadingSkeletons";
 
 function App() {
   const [datasets, setDatasets] = useState([]);
   const [selectedDataset, setSelectedDataset] = useState("");
   const [data, setData] = useState([]);
   const [meta, setMeta] = useState({});
+  const [dataLoading, setDataLoading] = useState(true);
 
   const [selectedRegion, setSelectedRegion] = useState("KOKO MAA");
   const [focusRegion, setFocusRegion] = useState(null);
@@ -32,7 +34,9 @@ function App() {
     const loadDatasets = async () => {
       try {
         const res = await fetchDatasets();
-        const availableDatasets = res.data;
+        const availableDatasets = (res.data ?? []).filter(
+          (dataset) => dataset.group !== "postal_code"
+        );
 
         setDatasets(availableDatasets);
 
@@ -61,6 +65,7 @@ function App() {
     const loadDataset = async () => {
       try {
         const res = await fetchDataset(selectedDataset);
+        if (cancelled) return;
         const datasetData = res.data.data ?? [];
         const datasetMeta = res.data.meta ?? {};
 
@@ -95,15 +100,25 @@ function App() {
           setSelectedRegion(defaultRegion);
         }
       } catch (error) {
+        if (cancelled) return;
         console.error(`Failed to load dataset '${selectedDataset}':`, error);
         setData([]);
         setMeta({});
         setYear(null);
         setSelectedRegion("");
+      } finally {
+        if (!cancelled) setDataLoading(false);
       }
     };
 
+    let cancelled = false;
+    // Dataset switches replace the data view; keep a shape preview while the new selection loads.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDataLoading(true);
     loadDataset();
+    return () => {
+      cancelled = true;
+    };
   }, [selectedDataset]);
 
   const chartData = useMemo(() => {
@@ -154,55 +169,54 @@ function App() {
       </nav>
 
       {datasetsLoading ? (
-        <div className="dashboard-status">
-          <div className="dashboard-status-spinner" aria-hidden="true" />
-          <p>Waking up the server… this can take up to a minute on the first request.</p>
-        </div>
+        <DashboardSkeleton message="Waking up the server… this can take up to a minute on the first request." />
       ) : datasetsError ? (
         <div className="dashboard-status">
           <p>Couldn't reach the server. Please try refreshing in a moment.</p>
         </div>
       ) : (
-        <div className="dashboard-columns">
-          <div className="dashboard-left">
-            <InsightsPanel
-              regionData={chartData}
-              allData={data}
-              label={meta.label ?? selectedDataset}
-              unit={meta.unit}
-              regionName={selectedRegion}
-            />
+        dataLoading ? <DashboardSkeleton /> : (
+          <div className="dashboard-columns">
+            <div className="dashboard-left">
+              <InsightsPanel
+                regionData={chartData}
+                allData={data}
+                label={meta.label ?? selectedDataset}
+                unit={meta.unit}
+                regionName={selectedRegion}
+              />
 
-            <DataChart
-              data={chartData}
-              title={chartTitle}
-              unit={meta.unit}
-            />
-          </div>
+              <DataChart
+                data={chartData}
+                title={chartTitle}
+                unit={meta.unit}
+              />
+            </div>
 
-          <div className="dashboard-right">
-            {isReady && (
-              <>
-                <YearSlider
-                  year={year}
-                  minYear={yearBounds.minYear}
-                  maxYear={yearBounds.maxYear}
-                  onChange={setYear}
-                />
-                <div className="map-fill">
-                  <MapView
-                    data={data}
+            <div className="dashboard-right">
+              {isReady && (
+                <>
+                  <YearSlider
                     year={year}
-                    onRegionSelect={setSelectedRegion}
-                    unit={meta.unit}
-                    meta={meta}
-                    focusRegion={focusRegion}
+                    minYear={yearBounds.minYear}
+                    maxYear={yearBounds.maxYear}
+                    onChange={setYear}
                   />
-                </div>
-              </>
-            )}
+                  <div className="map-fill">
+                    <MapView
+                      data={data}
+                      year={year}
+                      onRegionSelect={setSelectedRegion}
+                      unit={meta.unit}
+                      meta={meta}
+                      focusRegion={focusRegion}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )
       )}
     </div>
   );

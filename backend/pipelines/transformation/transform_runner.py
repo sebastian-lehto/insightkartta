@@ -7,7 +7,7 @@ from .steps.normalize import select_required_columns
 
 def run_transformation(raw_data: dict, config: dict) -> pd.DataFrame:
     # Step 1: PXWeb → DataFrame
-    df = PXWebTransformer(raw_data).transform()
+    df = PXWebTransformer(raw_data, config).transform()
 
     # Step 2: Apply config-driven transformations
     df = apply_config_transformations(df, config)

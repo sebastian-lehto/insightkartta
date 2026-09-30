@@ -1,3 +1,4 @@
+import argparse
 import json
 import numpy as np
 import pandas as pd
@@ -38,10 +39,17 @@ def save_analysis(dataset_name: str, results: dict) -> None:
     print(f"💾 Saved analysis to {path}")
 
 
-def main():
+def main(dataset_names=None):
     config = load_config("backend/pipelines/config/datasets.yaml")
+    datasets = config.get("datasets", []) + config.get("postal_code_datasets", [])
+    if dataset_names:
+        configured_names = {dataset["name"] for dataset in datasets}
+        unknown_names = set(dataset_names) - configured_names
+        if unknown_names:
+            raise ValueError(f"Unknown dataset(s): {', '.join(sorted(unknown_names))}")
+        datasets = [dataset for dataset in datasets if dataset["name"] in dataset_names]
 
-    for dataset in config["datasets"]:
+    for dataset in datasets:
         name = dataset["name"]
         label = dataset.get("metadata", {}).get("label", name)
 
@@ -64,4 +72,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Analyze processed datasets.")
+    parser.add_argument(
+        "--dataset",
+        action="append",
+        dest="dataset_names",
+        help="Dataset to analyze; may be provided multiple times.",
+    )
+    main(parser.parse_args().dataset_names)

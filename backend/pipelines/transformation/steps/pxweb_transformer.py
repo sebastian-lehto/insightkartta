@@ -5,9 +5,10 @@ from typing import Dict, Any, List
 class PXWebTransformer:
     """Transformer for PXWeb JSON - supports both column-based and dimension-based formats."""
 
-    def __init__(self, raw_data: Dict[str, Any]):
+    def __init__(self, raw_data: Dict[str, Any], config: Dict[str, Any] | None = None):
         # Handle wrapper from ingestion
         self.data = raw_data.get("data", raw_data)
+        self.config = config or {}
 
     def transform(self) -> pd.DataFrame:
         """Transform PXWeb data to DataFrame, detecting and handling both formats."""
@@ -79,8 +80,11 @@ class PXWebTransformer:
             # Build dimensional key by converting flat index to multi-dimensional coordinates
             coords = self._flat_index_to_coords(idx, self.data["size"])
 
+            value_dimension = self.config.get("transformation", {}).get("value_dimension")
+
             # Map coordinates to dimension values
             for i, dim_name in enumerate(id_order):
+                source_dim_name = dim_name
                 dim_data = dimensions[dim_name]
                 dim_categories = dim_data["category"]
                 
@@ -89,9 +93,26 @@ class PXWebTransformer:
                     # Reverse lookup: find label for this index position
                     category_index = coords[i]
                     index_to_label = {v: k for k, v in dim_categories["index"].items()}
-                    record[dim_name] = index_to_label.get(category_index, str(category_index))
+                    category_code = index_to_label.get(category_index, str(category_index))
+                    labels = dim_categories.get("label", {})
+                    if dim_name == value_dimension or source_dim_name == value_dimension:
+                        record["indicator"] = category_code
+                        record["indicator_label"] = labels.get(category_code, category_code)
+                    else:
+                        record[dim_name] = category_code
+                        if source_dim_name != dim_name:
+                            record[source_dim_name] = category_code
+                        if category_code in labels:
+                            record[f"{dim_name}_label"] = labels[category_code]
+                            if source_dim_name != dim_name:
+                                record[f"{source_dim_name}_label"] = labels[category_code]
                 else:
                     record[dim_name] = str(coords[i])
+
+            if value_dimension:
+                record["value"] = self._numeric_value(value)
+                records.append(record)
+                continue
 
             # Add the value (usually has a generic name like "Tiedot")
             # Find the metric column name from the last dimension
@@ -106,7 +127,7 @@ class PXWebTransformer:
                         metric_name = index_to_label.get(coords[-1])
 
             if metric_name:
-                record[metric_name] = value
+                record[metric_name] = self._numeric_value(value)
             else:
                 # Fallback to generic name
                 record["value"] = value
@@ -114,6 +135,13 @@ class PXWebTransformer:
             records.append(record)
 
         return pd.DataFrame(records)
+
+    @staticmethod
+    def _numeric_value(value):
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return None
 
     @staticmethod
     def _normalize_dim_code(code: str, text: str) -> str:
