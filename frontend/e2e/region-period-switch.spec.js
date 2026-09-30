@@ -8,7 +8,9 @@ test("switching the region page's period pill updates every section", async ({ p
   // KU091 = Helsinki, expected to have all three election periods generated.
   await page.goto("/region/KU091");
 
-  const tabs = page.getByRole("tab");
+  await page.getByRole("tab", { name: "Election insights" }).click();
+
+  const tabs = page.getByRole("tablist", { name: "Election period" }).getByRole("tab");
   await expect(tabs.first()).toBeVisible();
   const tabCount = await tabs.count();
   test.skip(tabCount < 2, "Region has fewer than 2 periods to switch between");
