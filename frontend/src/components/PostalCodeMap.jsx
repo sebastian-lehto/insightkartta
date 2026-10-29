@@ -72,6 +72,7 @@ export default function PostalCodeMap({
   postalCodes,
   activePostalCode,
   onPostalCodeHover,
+  onPostalCodeSelect,
 }) {
   const { geoJson, error } = usePostalCodesGeoJson();
   const rowsByCode = useMemo(
@@ -144,6 +145,9 @@ export default function PostalCodeMap({
       mouseout() {
         onPostalCodeHover(null);
         layer.setStyle(style(feature));
+      },
+      click() {
+        onPostalCodeSelect(code);
       },
     });
   };

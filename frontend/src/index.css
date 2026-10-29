@@ -803,6 +803,12 @@ code {
 
 .postal-code-comparison-table tbody tr.is-active {
   background: var(--accent-bg);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.postal-code-comparison-table tbody tr {
+  cursor: pointer;
+  scroll-margin-block: 0.5rem;
 }
 
 @media (max-width: 760px) {

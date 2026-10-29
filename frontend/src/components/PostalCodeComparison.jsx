@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PostalCodeMap from "./PostalCodeMap";
 import { formatPostalCodeValue } from "../utils/formatPostalCodeValue";
 import { normalizePostalCode } from "../utils/postalCodeMap";
@@ -78,7 +78,10 @@ export default function PostalCodeComparison({ regionName, datasets, postalCodes
   const [sortMetric, setSortMetric] = useState("");
   const [sortDirection, setSortDirection] = useState("desc");
   const [activePostalCode, setActivePostalCode] = useState(null);
+  const [selectedPostalCode, setSelectedPostalCode] = useState(null);
   const [viewYear, setViewYear] = useState(null);
+  const tableScrollRef = useRef(null);
+  const rowElementsRef = useRef(new Map());
 
   const years = useMemo(() => {
     const available = new Set();
@@ -113,6 +116,23 @@ export default function PostalCodeComparison({ regionName, datasets, postalCodes
 
     return sorted;
   }, [activeSortMetric, sortDirection, yearRows]);
+
+  useEffect(() => {
+    if (!selectedPostalCode) return;
+
+    const code = normalizePostalCode(selectedPostalCode);
+    const row = rowElementsRef.current.get(code);
+    const container = tableScrollRef.current;
+    if (!row || !container) return;
+
+    const rowBounds = row.getBoundingClientRect();
+    const containerBounds = container.getBoundingClientRect();
+    const rowCenter = rowBounds.top - containerBounds.top + rowBounds.height / 2;
+    container.scrollTo({
+      top: container.scrollTop + rowCenter - container.clientHeight / 2,
+      behavior: "smooth",
+    });
+  }, [selectedPostalCode, sortedRows]);
 
   if (loading) {
     return <PostalComparisonSkeleton regionName={regionName} />;
@@ -227,10 +247,11 @@ export default function PostalCodeComparison({ regionName, datasets, postalCodes
             postalCodes={yearRows}
             activePostalCode={activePostalCode}
             onPostalCodeHover={setActivePostalCode}
+            onPostalCodeSelect={setSelectedPostalCode}
           />
         </div>
 
-        <div className="postal-code-comparison-table-wrap">
+        <div className="postal-code-comparison-table-wrap" ref={tableScrollRef}>
           <div className="postal-table-controls">
             <label htmlFor="postal-table-sort">Sort table</label>
             <select
@@ -262,13 +283,21 @@ export default function PostalCodeComparison({ regionName, datasets, postalCodes
               {sortedRows.map((row) => (
                 <tr
                   key={row.postal_code}
+                  ref={(element) => {
+                    const code = normalizePostalCode(row.postal_code);
+                    if (element) rowElementsRef.current.set(code, element);
+                    else rowElementsRef.current.delete(code);
+                  }}
                   className={
-                    normalizePostalCode(activePostalCode) === normalizePostalCode(row.postal_code)
+                    [activePostalCode, selectedPostalCode].some(
+                      (code) => code && normalizePostalCode(code) === normalizePostalCode(row.postal_code)
+                    )
                       ? "is-active"
                       : ""
                   }
                   onMouseEnter={() => setActivePostalCode(row.postal_code)}
                   onMouseLeave={() => setActivePostalCode(null)}
+                  onClick={() => setSelectedPostalCode(row.postal_code)}
                 >
                   <td>{row.postal_code}</td>
                   {datasets.map((dataset) => (
